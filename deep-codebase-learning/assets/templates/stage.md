@@ -15,7 +15,7 @@
 
 ## 前置知识与阻塞
 
-实际已有证据、suspected/confirmed gap、未解误解与 detour 返回点引用。
+按初学者默认列“概念/语言或框架机制→为何现在需要→独立掌握证据或未验证→最小补充→返回源码点”。教学默认不等于 confirmed gap；保留 suspected/confirmed gap、未解误解与 detour 返回点引用。
 
 ## Exit Criteria
 

@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "skill_version": "1.1.0",
+  "skill_version": "1.2.0",
   "project": {
     "name": null,
     "root_hint": ".",
     "revision": {"branch": null, "commit": null},
     "identity_sources": []
   },
-  "learner": {"goal": "作者级理解并独立重建核心系统", "background": "unknown", "language": null},
+  "learner": {"goal": "作者级理解并独立重建核心系统", "background": "unknown", "teaching_default": "beginner", "language": null},
   "mode": "learning",
   "phase": "INIT",
   "current": {"stage": null, "topic": null, "source_refs": []},

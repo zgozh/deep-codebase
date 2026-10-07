@@ -31,7 +31,7 @@
 
 state 的必需字段：`schema_version`、`skill_version`、`project`（name、root_hint、revision、identity_sources）、`learner`（背景已知/未知、目标、语言）、`mode`、`phase`、`current`（stage/topic/source_refs）、`return_points`、`awaiting`、`next_action`、`focus_files`、`journal`（active_file/last_event/next_sequence）、`open_loops`、`pending_commit`、`updated_at`。
 
-初始化时按实际用户语言和目标填写 learner，未知背景保持 unknown；模板文本不构成用户能力证据，也不锁定教学语言。日期使用 ISO 8601，未发生的时间用 null，不虚构历史。
+初始化时按实际用户语言和目标填写 learner，未知背景保持 unknown；`learner.teaching_default=beginner` 表示教学策略，不是用户能力事实。旧 schema v1 没有该可选字段也按 beginner 教学，当前更新 state 时可补入，不重置历史。模板文本不构成用户能力证据，也不锁定教学语言。日期使用 ISO 8601，未发生的时间用 null，不虚构历史。
 
 - 路径相对项目根；root_hint 只帮助发现迁移，不能作为唯一身份或失效依据。模块/Stage/Concept/Event ID 稳定且全项目唯一。迁移目录时优先根据源码身份与布局判断，不盲写旧绝对路径。
 - state/focus_files/journal/rubric/next_action 中的学习记忆路径统一相对项目根，如 `.codelearn/stages/S01.md`；Markdown点击链接则相对所在文档。读取或恢复写入前解析路径，记忆写入必须位于当前项目 `.codelearn/`，不得跟随逃出该目录的软链接；source_refs 位于当前项目内。超范围路径作为未知/冲突处理，不自动访问。

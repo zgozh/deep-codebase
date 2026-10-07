@@ -22,3 +22,5 @@
 每个 required 条件有证据；未通过不能用 optional/N/A 替换。记录 mastery/coverage delta、note 质量结果、next_action。
 
 笔记评审另记 review_method（导师自检/实际第二审查者/用户核对）、checked_scope、逐项事实出处及 unchecked_claims。质量 pass 与 source/runtime verification 分开，不凭自检提升学习者能力；主题/阶段草稿中的 waiting 不能冒充 Stage 通过。
+
+存在 Mermaid 时记录 diagram_check（自检/解析/渲染）、工具/版本、最终图定位/检查结果与未测项；语法通过不证明业务正确，已知 syntax error 未修复则文章门禁 fail。

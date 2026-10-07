@@ -40,9 +40,13 @@ If HTTPS access is unavailable and GitHub SSH is already configured, use `git@gi
 
 ## How learning works
 
+**The teaching default is always beginner.** Unverified project concepts, features, architecture, language features, frameworks, and underlying principles are explained before they are relied on. The tutor owns a complete, repository-specific learning route and its prerequisites; you do not need to diagnose your gaps or choose the next lesson. Existing independent evidence can reduce repetition for that concept, without assuming expertise in other areas.
+
 The agent builds architecture and feature maps, creates a repository-specific roadmap, and starts with a small learning unit. It traces real user actions or events through the system, including the UI return path when a frontend exists. It expands code progressively, explains design trade-offs, and detects prerequisite gaps. Knowledge detours return to the saved source location.
 
 You predict behavior, inspect code, attempt experiments, answer questions, and restate flows. Acknowledgment is not mastery. Coverage, knowledge mastery, and reconstruction ability are tracked separately. Important components outside the main flows are covered by a horizontal audit. Completion requires an independently designed and runnable Mini Version.
+
+Mermaid diagrams must follow the official syntax for their diagram type and be checked before delivery. Available tools should parse or render the final code; untested target rendering stays explicit. Basic syntax is the default when renderer compatibility is unknown. Known syntax errors must be repaired. See the [diagram protocol](deep-codebase-learning/references/diagrams.md).
 
 ## Durable learning memory
 

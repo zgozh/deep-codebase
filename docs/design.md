@@ -14,24 +14,40 @@ coverage 的六种深度是 discovered / seen / explained / traced / understood 
 
 Roadmap 使用稳定 Stage ID，允许根据新模块、知识缺口和错序修订。每阶段有能力目标、实际源码范围、动态 Exit Criteria、实验与评审要求。自动化管理不会替学习者作答。
 
+教学始终默认 beginner：未验证的领域先解释必要概念和前置机制，由导师安排完整依赖路线，不把“背景未知”当作用户已懂。`learner.background=unknown` 保存事实未知，可选 `learner.teaching_default=beginner` 保存策略；缺该字段的旧 schema v1 采用相同默认，不迁移或清零历史。只在已有独立证据的部分缩短重复讲授，完整路线的范围与最终能力门禁保留。
+
 ```mermaid
 flowchart TD
-    A[识别项目与局部恢复] --> B[地图和动态路线]
-    B --> C[一个业务链教学单元]
-    C --> D{是否有阻塞知识缺口}
-    D -- 有 --> E[知识绕行与独立检测]
+    A["识别项目与局部恢复"]
+    B["初学者概念地图和动态路线"]
+    C["必要概念与一个业务链教学单元"]
+    D{"是否有阻塞知识缺口"}
+    E["知识绕行与独立检测"]
+    F["预测 / 实验 / 测验 / 复述"]
+    G["提取事件并持久化"]
+    H{"阶段学习门禁"}
+    I["重写文章与质量门禁"]
+    J["下一阶段或横向审计"]
+    K["独立设计与可运行 Mini Version"]
+    L["项目综合验收"]
+    A --> B
+    B --> C
+    C --> D
+    D -->|有| E
     E --> C
-    D -- 无 --> F[预测 / 实验 / 测验 / 复述]
-    F --> G[提取事件并持久化]
-    G --> H{阶段学习门禁}
-    H -- 未通过 --> C
-    H -- 通过 --> I[重写文章与质量门禁]
-    I --> J[下一阶段或横向审计]
-    J --> K[独立设计与可运行 Mini Version]
-    K --> L[项目综合验收]
+    D -->|无| F
+    F --> G
+    G --> H
+    H -->|未通过| C
+    H -->|通过| I
+    I --> J
+    J --> K
+    K --> L
 ```
 
 图是能力闭环概览，不强制每次交互经过全部节点；每轮有意义交互都保存。详细 [教学](../deep-codebase-learning/references/teaching.md)、[评估](../deep-codebase-learning/references/evaluation.md)、[笔记](../deep-codebase-learning/references/notes.md) 是 Agent 执行协议。
+
+图表使用 [Mermaid 协议](../deep-codebase-learning/references/diagrams.md) 约束官方语法与目标版本兼容；质量门禁记录自检/解析/渲染证据。图语法合法与业务正确、学习者已理解是不同判断。
 
 ## Schema v1 的职责
 
