@@ -16,6 +16,8 @@ Roadmap 使用稳定 Stage ID，允许根据新模块、知识缺口和错序修
 
 教学始终默认 beginner：未验证的领域先解释必要概念和前置机制，由导师安排完整依赖路线，不把“背景未知”当作用户已懂。`learner.background=unknown` 保存事实未知，可选 `learner.teaching_default=beginner` 保存策略；缺该字段的旧 schema v1 采用相同默认，不迁移或清零历史。只在已有独立证据的部分缩短重复讲授，完整路线的范围与最终能力门禁保留。
 
+默认讲授从项目全景开始，真实课堂在对话中。扫描/备课文章与 learner-facing teaching 分开记录；前者不批准复述/预测题。每个题目检查讲过的概念、可作答的材料和教学价值。恢复决策优先最新反馈与缺失层级，再处理旧 awaiting；正常待教学/待评估不视为失败，不机械进入 QUIZ/REMEDIAL。阶段能力门禁仍保留，但不成为逐轮听讲的门票。
+
 ```mermaid
 flowchart TD
     A["识别项目与局部恢复"]
