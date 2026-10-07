@@ -36,6 +36,8 @@ Continue learning.
 
 If automatic selection does not activate the skill, explicitly ask Codex to `Use $deep-codebase-learning to teach me this repository`. Other agents use their own invocation syntax. See [manual installation](docs/usage.md).
 
+If HTTPS access is unavailable and GitHub SSH is already configured, use `git@github.com:zgozh/deep-codebase.git` as the source instead. Downloaded local repositories are also supported.
+
 ## How learning works
 
 The agent builds architecture and feature maps, creates a repository-specific roadmap, and starts with a small learning unit. It traces real user actions or events through the system, including the UI return path when a frontend exists. It expands code progressively, explains design trade-offs, and detects prerequisite gaps. Knowledge detours return to the saved source location.

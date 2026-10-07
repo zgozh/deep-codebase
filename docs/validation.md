@@ -21,6 +21,16 @@ npx skills add . --list
 
 这只列出Skill，不写目标Agent安装目录。真正安装与跨Agent行为应分别验证，不能从CLI发现成功推断兼容性。
 
+### v1.0.1 发布检查记录
+
+- 仓库校验实际通过：33个发布文件，65个本地链接/锚点，JSON/YAML、版本、初始模板与暂存范围一致。
+- 本机官方skill-creator的quick_validate实际返回 `Skill is valid!`。
+- `npx skills add . --list` 实际只发现 `deep-codebase-learning`。
+- 推送后 `npx skills add git@github.com:zgozh/deep-codebase.git --list` 实际成功克隆远端并只发现该Skill。
+- 本环境Git HTTPS克隆遇到连接重置，已验证SSH入口；这属于访问环境问题，不是Skill执行失败。其他环境可按自身Git访问方式安装。
+
+这些是本地与远端发现检查，不代表GitHub Actions结果、市场收录或所有Agent行为通过。
+
 ## 已有行为证据
 
 最初v1在Codex环境的独立代理上下文中完成A/C/D文件协议模拟，B由另一个全新上下文仅依赖源码和 `.codelearn/` 恢复。模拟项目包含19个源文件，无完整可运行环境。

@@ -38,6 +38,8 @@ npx skills add zgozh/deep-codebase --list
 
 如果没有自动选中 Skill，在 Codex 中显式说 `使用 $deep-codebase-learning 带我学习当前项目`。其他 Agent 的显式调用方式由其产品决定。手动复制安装和 Windows 步骤见 [使用指南](docs/usage.md)。
 
+已配置GitHub SSH、但本机HTTPS访问不可用时，可将安装源替换为 `git@github.com:zgozh/deep-codebase.git`。也支持下载后从本地目录安装。
+
 ## 学习过程中会发生什么
 
 | 环节 | 你获得的能力或记录 |

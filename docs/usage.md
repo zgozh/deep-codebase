@@ -12,6 +12,14 @@ npx skills add zgozh/deep-codebase --skill deep-codebase-learning -g
 
 `--skill` 指定本仓库中的 Skill，`-g` 表示用户级安装；`-a codex` 可限定 Codex，`-y` 可跳过安装器确认。省略 `-g` 则安装到当前项目。安装器支持的 Agent 和目录以 [其官方文档](https://github.com/vercel-labs/skills) 为准；本项目不声称所有 Agent 已经过行为测试。
 
+本机HTTPS访问不可用、但已经配置GitHub SSH访问时，可使用完整SSH地址：
+
+```bash
+npx skills add git@github.com:zgozh/deep-codebase.git --skill deep-codebase-learning -g
+```
+
+SSH访问需要你的GitHub密钥权限；不要求把密钥或token写入Skill。无法使用SSH时也可下载仓库并从本地目录安装：`npx skills add ./deep-codebase --skill deep-codebase-learning -g`。
+
 没有 Node/npm 也可以直接复制整个 Skill 文件夹。下面是本项目已采用的 Codex 用户目录；若设置了 `CODEX_HOME`，按自己的配置使用其 `skills/`。
 
 ### macOS / Linux 手动安装
