@@ -1,0 +1,6 @@
+interface:
+  display_name: "Deep Codebase Learning"
+  short_description: "Learn real codebases through flows, evidence, and reconstruction"
+  default_prompt: "使用 $deep-codebase-learning 带我深度学习当前项目；已有 .codelearn/ 时恢复进度并继续。"
+policy:
+  allow_implicit_invocation: true

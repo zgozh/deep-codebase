@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "skill_version": "1.0.1",
+  "project": {
+    "name": null,
+    "root_hint": ".",
+    "revision": {"branch": null, "commit": null},
+    "identity_sources": []
+  },
+  "learner": {"goal": "作者级理解并独立重建核心系统", "background": "unknown", "language": null},
+  "mode": "learning",
+  "phase": "INIT",
+  "current": {"stage": null, "topic": null, "source_refs": []},
+  "return_points": [],
+  "awaiting": null,
+  "next_action": {
+    "type": "PROJECT_SCAN",
+    "target": "repository",
+    "reason": "建立有实际源码证据的项目地图与动态路线",
+    "load": [],
+    "completion_condition": "项目范围与首个 Stage 教学合同已保存"
+  },
+  "focus_files": [],
+  "journal": {"active_file": null, "last_event": null, "next_sequence": 1},
+  "open_loops": [],
+  "pending_commit": null,
+  "updated_at": null
+}
