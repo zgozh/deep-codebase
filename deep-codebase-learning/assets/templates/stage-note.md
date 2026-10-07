@@ -1,6 +1,6 @@
-# Stage 技术笔记
+# 技术学习笔记
 
-填标题、Stage ID、源版本/hash、source_valid、status draft/validated/needs_revalidation、相关事件范围、评审路径及更新时间；删除说明。按实际 Stage 调整章节，不能伪造未存在内容或学习者证据。
+填标题、kind（topic/stage/session/project）、Stage/Topic/Session ID、讲解边界、源版本/hash、source_valid、status draft/validated/needs_revalidation、verification unverified/source_checked/runtime_checked/needs_revalidation、review_method、review_ref、checked_scope、unchecked_claims、相关事件范围、最后整理事件及更新时间；删除说明。首写 draft + unverified，自检通过不等于事实或能力认证。按实际范围调整章节，不能伪造未存在内容或学习者证据。
 
 ## 1. 本阶段解决的问题与系统位置
 

@@ -4,7 +4,7 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design and memory](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-`deep-codebase-learning` is an Agent Skill that teaches through real feature flows, checks understanding with learner evidence, and stores durable progress in the target project's `.codelearn/` directory. Teaching follows the learner's language; detailed maintainer documentation is currently in Chinese.
+`deep-codebase-learning` is an Agent Skill that teaches through real feature flows, checks understanding with learner evidence, and stores durable progress in the target project's `.codelearn/` directory. Keep studying in one conversation or resume in a new one. Teaching follows the learner's language; detailed maintainer documentation is currently in Chinese.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -28,7 +28,7 @@ Open a fresh conversation in the repository you want to study:
 Help me deeply learn this codebase.
 ```
 
-In a later conversation in that same repository:
+In the current conversation or a later one in that same repository:
 
 ```text
 Continue learning.
@@ -48,7 +48,25 @@ You predict behavior, inspect code, attempt experiments, answer questions, and r
 
 `.codelearn/` contains state, roadmap, project map, stage contracts, coverage, mastery, journals, knowledge bridges, notes, and reviews. Meaningful exchanges are saved automatically. Resume loads relevant records rather than the entire history.
 
-Journals preserve structured learning events. Stage notes are technical articles rebuilt from source evidence, questions, misconceptions, experiments, and the learner's own understanding. Learning and note quality gates must both pass before a stage completes.
+Journals preserve structured learning events. Notes are technical articles rebuilt from source evidence, questions, misconceptions, experiments, and the learner's own understanding.
+
+### Automatic detailed notes and explicit requests
+
+Each meaningful turn checks for a writing boundary. When an important topic's purpose, mechanism or flow, source evidence, and key limits have been explained and teaching shifts into questions, verification, or the next topic, a detailed topic article is saved in `.codelearn/notes/topics/`. The tutor identifies this boundary without requiring a learner request. Important tracing, detour, or experiment boundaries also trigger it. This works in one continuous conversation and does not wait for a stage to pass. Pending learner verification stays explicit. Related topics accumulating at a natural boundary trigger a reading index and checkpoint update; stage acceptance triggers a comprehensive stage article.
+
+You can also say:
+
+```text
+Summarize the current topic in detailed notes.
+Write detailed notes on what we just discussed.
+Summarize the current stage.
+Summarize this learning session.
+Recheck this note against its sources.
+```
+
+By default, detailed content is written to `.codelearn/notes/`, with a short reply and file link. An unfinished stage can have a draft; pending questions and the next learning action are preserved. Notes explain mechanisms, important code and data changes, design reasons, failure or change impacts, and actual learner questions and corrections, rather than compressing the chat.
+
+**Generated notes are candidates to check, whether automatic or explicitly requested.** Article quality (`draft/validated`) and scoped factual verification (`unverified/source_checked/runtime_checked`) are separate. Tutor self-review is not independent verification, learner mastery, or proof that unrun experiments succeeded. Learning and note quality gates must both pass before a stage completes. See the [note protocol](deep-codebase-learning/references/notes.md).
 
 ## Boundaries and validation
 

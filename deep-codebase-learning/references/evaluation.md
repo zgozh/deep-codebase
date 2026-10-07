@@ -45,7 +45,7 @@ Restate 要学习者自己讲出起点、各层职责、关键数据/状态转�
 
 逐条检查 Stage criteria：关键 Topic/Source Path 到目标、必要原理的独立表现、无阻塞 gap/误解、综合 Quiz/Restate、required experiment、分区 coverage audit、source_valid。证据 ID 链接实际记录；optional 未做与 N/A 不伪装通过，required blocked 就保持 in_progress。
 
-学习门禁通过后进入 STAGE_SUMMARY，用 [Notes 协议](notes.md) 编写与审计。质量门禁通过且无关键 stale 证据，再写阶段 review、状态 complete 并自动安排下一个合适动作。正常教学到需要用户新回答时结束本轮；自主推进不意味着代答全部测验。
+重要 Topic 讲解收束即按 [Notes 协议](notes.md) 写详细主题文章；显式总结也可提前写 Stage 草稿，缺失的能力/实验仍 waiting，phase/awaiting 保留，不能因有笔记就完成阶段。学习门禁通过后才进入 STAGE_SUMMARY，综合并审计 Stage 文章。质量门禁通过且关键事实实际核对、无关键 stale 证据，再写阶段 review、状态 complete 并自动安排下一个合适动作。文章的 validated 是质量状态，不是独立验证或能力证据。正常教学到需要用户新回答时结束本轮；自主推进不意味着代答全部测验。
 
 ## Reconstruction
 

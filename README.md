@@ -4,7 +4,7 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-`deep-codebase-learning` 是一个 Agent Skill。它把学习组织成真实业务链，用源码和学习者的表现判断理解程度，并把进度保存在目标项目的 `.codelearn/` 中。换一个会话后，可以继续学习。
+`deep-codebase-learning` 是一个 Agent Skill。它把学习组织成真实业务链，用源码和学习者的表现判断理解程度，并把进度保存在目标项目的 `.codelearn/` 中。可以一直在同一个会话学习；换会话后也能恢复。
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -30,7 +30,7 @@ npx skills add zgozh/deep-codebase --list
 带我深度学习这个项目。
 ```
 
-以后在同一个项目的新会话说：
+在当前会话或以后同一个项目的新会话说：
 
 ```text
 继续学习。
@@ -66,11 +66,35 @@ npx skills add zgozh/deep-codebase --list
 ├── mastery/         # 独立能力证据与复习日期
 ├── journal/         # 结构化认知变化，不是完整聊天记录
 ├── knowledge/       # 知识桥梁、问题与误解
-├── notes/           # 重新编写的正式技术文章
+├── notes/           # 主题、阶段及按需会话文章，含核对状态
 └── reviews/         # 实验、测验、文章门禁与重建记录
 ```
 
-有价值的交互自动保存，无需 `save progress`。Journal 记录学习过程；Notes 根据源码、问题、错误、实验及真实个人理解重新组织。阶段必须同时通过学习验收和文章质量检查，才会推进。
+有价值的交互自动保存，无需 `save progress`。Journal 记录学习过程；Notes 根据源码、问题、错误、实验及真实个人理解重新组织。
+
+### 自动详细笔记与显式总结
+
+每轮都会判断是否到达整理边界，同一会话连续学习也适用：
+
+| 时机 | 自动产物 |
+|---|---|
+| 重要主题的目的、机制/执行链、源码依据和关键边界已说明，转入问答/验证、准备换主题或完成重要追踪/绕行/实验 | `notes/topics/` 的详细主题文章；不等待阶段验收，掌握待验证也先写 |
+| 多个相关主题积累到自然边界或上下文紧张 | 检查主题笔记已落盘，更新阅读索引、检查点与下一动作 |
+| 阶段学习验收通过 | 综合详细阶段文章，并检查质量；学习与笔记门禁都通过才推进 |
+
+随时可以显式说：
+
+```text
+总结当前主题。
+详细总结刚才的内容。
+总结当前阶段。
+总结当前会话。
+重新核对这份笔记。
+```
+
+默认把详细内容写入 `.codelearn/notes/`，聊天里给简洁结论与文件链接。阶段未完成也可以生成草稿，原待答题和下一学习动作会保留。详细文章应解释完整机制、关键代码与数据变化、Why、失效/修改影响，以及真实问题和错误纠正；不是聊天摘要或关键词列表。
+
+**自动和显式笔记默认都作为待核对的候选内容。** `draft/validated` 表达文章质量状态；`unverified/source_checked/runtime_checked` 表达实际核对及其范围。导师自检通过不代表独立验证或你已经掌握，未运行实验和未知作者意图不会被写成事实。完整规则见 [使用指南](docs/usage.md) 和 [笔记协议](deep-codebase-learning/references/notes.md)。
 
 ## 一小段示例
 

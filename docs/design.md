@@ -44,7 +44,7 @@ flowchart TD
 | mastery | 分领域规范概念记录、能力证据、误解、复习日期 |
 | journal | 分Stage分片的认知增量与提交恢复信息 |
 | knowledge | 知识桥梁、个人问题和深度边界 |
-| notes | 重建后的独立技术知识文章 |
+| notes | 主题/阶段/按需会话文章，索引保存事件边界、质量与事实核对状态 |
 | reviews | 测验、实验、阶段/文章门禁、审计、重建与恢复证据 |
 
 模板默认 null/空列表是尚无事实。概念记录见 [concept.json](../deep-codebase-learning/assets/templates/concept.json)，其 target 只是待调整起点；没有真实回答不能填入假证据。日期字段是 ISO 日期或 null，待回答的即时动作写 next_action。
@@ -55,7 +55,11 @@ flowchart TD
 
 Conversation 是临时交互。Journal 记录问题、当时理解、纠正、提示程度、预测/观察、未解项及能力变化。Notes 将源码、这些记录和真实用户表述重新编排成技术文章，不是事件列表或聊天摘要。
 
-阶段完成有两道门：学习能力通过，再检查文章能否仅凭源码和 `.codelearn/` 独立读懂。文章缺个人证据时返回教学；不能让AI润色出一段“我的复述”冒充用户回答。
+重要主题的讲解边界先触发详细文章，独立能力尚未验证也保存已有机制与待解项；阶段能力通过后再综合 Stage Note。显式主题/阶段/会话总结同样允许提前生成草稿，并保留原待答题与返回点。固定一个会话学习不影响这些触发。
+
+笔记质量、事实核对、学习者能力是三个不同判断：quality status 首写 draft，自检通过可 validated；verification 首写 unverified，实际逐项核对才 source_checked，真实运行仅覆盖指定范围。导师自检不等于独立审查。阶段完成仍有两道门：学习能力通过，再检查文章能否仅凭源码和 `.codelearn/` 独立读懂，且关键事实实际核对、来源有效。文章缺个人证据时保留草稿、返回教学；不能让AI润色出一段“我的复述”冒充用户回答。
+
+这些是 Markdown 文章与评审元数据的扩展，state schema 仍为 v1。旧笔记缺 verification 时按 unverified 使用，修订当前文档时补字段，不批量迁移历史。会话事件边界与整理去重索引存在 journal/notes index，无须后台程序或新增全局状态机。
 
 ## 文件提交与恢复
 

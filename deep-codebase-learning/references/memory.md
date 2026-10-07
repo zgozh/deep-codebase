@@ -17,7 +17,10 @@
   journal/<stage-id>-001.md  事件分片，append 优先
   knowledge/index.md         gap/误解/问题/术语的可搜索索引
   knowledge/<topic-id>.md    知识桥梁与个人理解
-  notes/<stage-id>.md        正式技术文章
+  notes/index.md             已生成文章、事件边界、核对状态与阅读入口
+  notes/topics/<stage-topic>.md  重要主题的详细文章，可先于能力验证生成
+  notes/sessions/<session-id>.md 显式会话整理（按实际事件范围）
+  notes/<stage-id>.md        阶段综合文章，未完成时可有草稿
   notes/deep-dive.md         完成后的总知识地图与跨模块综合
   reviews/<review-id>.md     Quiz/实验/阶段评审/审计/重建证据
 ```
@@ -68,7 +71,7 @@ Session checkpoint 保留上述位置，不增加用户操作。阶段结束自�
 
 事件额外有 `status: pending|committed`、`writes` 与必要 `deltas`：记录受影响文件/条目、旧值→新值及足够恢复的内容。writes 是路径清单，不复制整份 Notes。L0→L1 可以是讲过；L3 及以上须包含用户独立表现。一个 answer 不意味着其他概念都提升。
 
-每片约 100 个事件或 32 KiB 时开新片；这是导航阈值，不删除旧事件。阶段评审记录其使用的事件范围/文件以便 Notes 重建。只读近期尾部与相关 ID；历史可 `rg` 搜索。重要 Topic closure 的正式知识内容写 knowledge 或阶段草稿，不能仅留一行日志。
+每片约 100 个事件或 32 KiB 时开新片；这是导航阈值，不删除旧事件。阶段评审记录其使用的事件范围/文件以便 Notes 重建。只读近期尾部与相关 ID；历史可 `rg` 搜索。重要 Topic 讲解收束按 [笔记协议](notes.md) 写详细主题文章，不能仅留一行日志；notes/index.md 记录稳定 ID、文章路径、覆盖事件/最后整理事件、quality/verification、未解项。显式会话总结需要事件边界：首次进入该会话的 journal checkpoint 记录 session ID/首事件；已有会话边界缺失时只写可恢复的范围，不猜完整历史。会话元信息存在 journal/notes index，不扩充或迁移 state schema。
 
 ## PRE-TURN LOAD
 
@@ -90,7 +93,7 @@ Session checkpoint 保留上述位置，不增加用户操作。阶段结束自�
 2. **EXTRACT**：提取新事实、出处、用户理解、错误/纠正、问题、预测、实际结果；不要捏造未运行观察。
 3. **EVALUATE**：按证据判断 mastery/coverage 变化、gap/misconception、源码有效性。无独立回答时不提升 L2+。
 4. **PERSIST**：先追加 pending 事件（writes/deltas），再写 state.pending_commit 指向它；按条目更新 projections：coverage、mastery、knowledge、相关 review/stage/roadmap/note；检查 JSON 可解析、引用可定位、差异正确，尤其核对 coverage/Concept ID 对应的实际路径与符号（文件存在不能证明 ID 指向正确）；把事件改 committed；**最后**更新 state（last_event/next_sequence/current/awaiting/next_action，清 pending）。尚未收到的问题写 awaiting，不能写成已经答对。回复已准备不证明学习者看过或理解，最多记录 teaching 与待答状态。
-5. **CHECKPOINT**：Topic 闭环时保存个人 restatement 或“尚待验证”、机制、关键证据及当前有效性；明显结束/切阶段/内容积累时保存 session checkpoint 和 next_action。
+5. **CHECKPOINT**：每轮判断重要 Topic 的讲解收束与学习闭环，二者分开；讲解收束或显式总结时按 [笔记协议](notes.md) 写详细文章，即使独立复述/实验仍 waiting。保留个人 restatement 或“尚待验证”、机制、关键证据及当前有效性；明显结束/切阶段/内容积累时保存 session checkpoint、笔记阅读入口和 next_action。同一会话正常持续也执行，不能等新会话或所有 Stage 门禁通过才写主题笔记。
 6. **STAGE CHECK**：核对该 Stage exit criteria，有缺口则 next_action=remedial；通过才进入笔记生成/门禁。
 7. **PLAN**：生成下一最合理动作并持久化；如 checkpoint/stage/note 又产生增量，在本次提交结束前纳入对应事件和状态，不能把它们留到下次才保存。
 

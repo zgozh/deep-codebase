@@ -1,13 +1,49 @@
-# 自动技术笔记与质量门禁
+# 自动与显式技术笔记、核对与质量门禁
 
 ## 触发与分工
 
-- Topic Closure：关键机制形成闭环时，更新 journal/knowledge/mastery/coverage；有价值的知识桥梁与个人理解在 knowledge 写清楚，不必每个 trivial topic 写文章。
+- Topic Teaching Closure：重要 Topic 的当前讲解范围收束时，自动创建或更新详细主题文章；不等 Stage 完成、测验通过或换会话。机制已讲清但学习者未独立验证，也要写，明确“已讲解、掌握待验证”。具体判据见下节。
+- Topic Learning Closure：用户独立证据使关键机制形成理解闭环时，更新 journal/knowledge/mastery/coverage，并补入已有主题文章；与讲解结束分开记录。
 - Session Checkpoint：用户结束、重要 Topic 结束、切 Stage、当前内容积累或上下文紧张，保存 current/awaiting/next_action 与未解项；无需“帮我保存”。每轮提交使突发结束也能恢复，不能假设宿主一定提前通知上下文压缩。
+- Session Notes：多个相关主题积累到自然边界或上下文开始紧张时，先确保重要主题文章已落盘，再更新 notes/index.md 的阅读入口和未解项。不每隔固定轮数复制全部历史；固定一个会话也会周期性沉淀。
 - Stage Completion：learning exit criteria 通过自动进入 STAGE_SUMMARY，编写详细 Stage Note，质量门禁不通过就修订。无需等待用户说总结。
 - Project Completion：全部能力门禁通过后生成 Deep Dive 和 Reconstruction Review，检查通过才标 PROJECT_COMPLETE。
 
 Journal 是结构化认知过程；Notes 是重新编排的正式技术知识。不能复制事件列表、压缩对话或把 AI讲过的术语堆在一起当 Stage Note。
+
+## 重要主题何时自动写笔记
+
+每轮 POST-TURN CHECKPOINT 都判断，而非只在恢复或 Stage 完成时判断。满足下面两项，就在结束本轮或切下一个主题前写入：
+
+1. 当前 Topic 是 Critical/Important，或涉及完整业务链、关键设计/基础原理、真实误解纠正或重要实验，值得未来独立回读。短小术语释义和 trivial helper 默认并入已有文档。
+2. 当前范围的“问题/系统位置 → 机制或执行链 → 关键源码依据 → 为什么/关键边界”已经说明，并出现收束信号：解释告一段落准备转入预测/问答/复述验证、下一步准备换 Topic、完成一次重要追踪/知识绕行/实验，或用户说“这块差不多了”“接着学下一个”“整理一下”。不要求用户主动发出信号；导师判断解释边界也触发。用户这些话只提示讲解边界，不构成掌握证据。
+
+同一主题连续多轮仍在展开时更新 journal/knowledge；不要每条消息重写整篇。已经有文章则只补新机制、纠正、真实答案或实验，不重复生成一份。按 Stage/Topic 稳定 ID 命名并在 notes/index.md 登记来源事件范围、最后整理事件、当前边界和下次动作；无新内容时复用入口，但显式要求重写/加深时按要求修订。
+
+主题文章写 `.codelearn/notes/topics/<stage-id>-<topic-id>.md`，使用 [技术笔记模板](../assets/templates/stage-note.md) 中实际适用章节。Stage 总文章仍是 `.codelearn/notes/<stage-id>.md`；综合主链、跨主题关系和个人认知，引用主题文章的细节，不能只串链接或复制摘要。Topic 尚有未解项时写“未验证/待追踪”，不要等待全懂才保存已有成果。
+
+## 显式总结
+
+以下是自然语言意图，不是要求用户记忆的 CLI 命令；同义表达也适用。已有学习目录或正在本 Skill 中学习时处理，不因一次普通代码问答启动整套课程。
+
+| 用户表达 | 范围与落盘位置 |
+|---|---|
+| “总结当前主题”“详细总结刚才的内容”“把这块整理成详细笔记” | 当前 Topic 的主题文章；仅有局部解释时先保存部分笔记并列缺口 |
+| “总结当前阶段” | 当前 Stage 文章；未过学习门禁仍生成 draft，列出缺失的 Quiz/复述/实验，阶段保持 in_progress |
+| “总结当前会话” | `.codelearn/notes/sessions/<stable-session-id>.md`；按当前会话 journal 事件范围组织技术内容，长内容链接主题文章，并保留关键机制、个人纠正与下一步 |
+| “重新核对这份笔记” | 重读该文所依赖的相关源码/记录，逐项修订证据与核对结果；不自动运行无授权实验 |
+
+未指定范围的“总结一下”，默认最近讨论的 Topic 并简短说明所采用范围；有明确指代就用它，不反复追问。没有完整会话事件时明确可恢复的范围，不猜被压缩掉的历史。用户明确要求“只在聊天里简短总结，不写文件”时尊重，只保留必要学习事件；默认详细笔记写文件，对话给简洁结论和文件链接，不倾倒全文。
+
+显式总结是一次可返回的写作动作：先持久化当前问题/阶段/绕行返回栈/next_action，再整理文章并记录 note 事件，不将当前 phase 强制改成 STAGE_SUMMARY。保留原 awaiting，不自动判题或换 Topic；对话自然说明下一步仍待处理的动作。
+
+## 默认待核对，而非默认可信
+
+无论自动还是显式生成，先标 `status=draft`。笔记元数据另记 `verification=unverified|source_checked|runtime_checked|needs_revalidation`、`review_method`、`review_ref`、`checked_scope`、`unchecked_claims` 与源版本/hash。首写默认 unverified；实际重新对照源码/来源事件后才可标 source_checked；仅在已有真实运行证据所覆盖的范围记 runtime_checked，不能把一个实验成功扩展为整篇都经运行验证。
+
+内容质量门禁与事实核对分开。`status=validated` 只表示文章质量自检通过，必须写明是 tutor self-review，**不是独立审查、学习者掌握或全部内容真实性认证**。没有第二审查者/用户核对时不得声称独立验证；不要求用户为每篇笔记点批准。源码注释、旧 Notes 或 AI先前的解释不能单独证明运行行为；关键事实回到实际源码/官方资料，未知和作者动机推断保留标注。后续解释以当前源码为准，不能因 Notes 存在就当作事实。
+
+已有 v1 笔记缺少 verification 时保守视为 unverified，不批量改写历史或重置 state。生成或修订受影响文章时补核对元数据；源码变更将其 verification 与 status 标 needs_revalidation，保留旧依据与修订记录。
 
 ## 写作方法
 
@@ -15,13 +51,15 @@ Journal 是结构化认知过程；Notes 是重新编排的正式技术知识。
 
 按真实 Stage 覆盖：问题、系统位置、架构/完整链、关键 Class/Method/Interface、输入输出/状态、重要数据结构与 Entity/DTO/VO、配置来源/消费者、异常返回、底层原理、Why/Alternative/trade-off、其他模块关系；再把“我的关键问题、原理解→纠正、gap 补充、Aha、实验预测/观察/解释、Quiz、真实 restatement、自己实现方案、当前能力与待解项”嵌入适当位置。
 
-没有的结构不编造；真实未发生的个人问答/Aha 不硬补，说明无相应事件。有些维度 N/A 有理由。**缺失 required 实验/复述/能力证据是 Stage 未通过，不是用 N/A 模板绕过。** 一般段落写因果与机制，路径列表/图只是支撑；半年后读者要能重建核心运行过程。
+没有的结构不编造；真实未发生的个人问答/Aha 不硬补，说明无相应事件。有些维度 N/A 有理由。**缺失 required 实验/复述/能力证据是 Stage 未通过，不是用 N/A 模板绕过，也不是禁止提前写草稿。** 一般段落写因果与机制，路径列表/图只是支撑；半年后读者要能重建核心运行过程。
+
+“详细”按内容深度判断，不硬设字数或标题数：至少能独立复原当前范围的输入→处理→输出/错误链，并解释重要符号/数据变化、一个关键 Why 与失效或改动影响。问题较大则分节展开调用方/被调用方、配置、状态、异常、底层原理和适用替代方案；个人问题、错误与纠正带来源事件。只列关键词、路径箭头、对话结论或“本轮讲了什么”不合格。
 
 初始理解与最终理解分开；引用个人要点标“学习者表述”，AI改写标“整理”且不改变含义。不要把 AI的建议当用户独立设计。源码事实标 code-confirmed、实际观察 runtime-confirmed、文档 documented、设计判断 inferred、未查清 unknown。源码变化时保留旧解释与修订说明，不无声抹除认知历史。
 
 ## Note Quality Gate
 
-在 `.codelearn/reviews/<stage-id>-note-quality.md` 记录每项 pass/fail/N/A、章节定位与理由。使用 [review 模板](../assets/templates/review.md)。检查：
+在 `.codelearn/reviews/<stage-id>-note-quality.md`（主题文章加 topic-id，会话文章加 session-id）记录每项 pass/fail/N/A、章节定位与理由、审查方法及核对范围。使用 [review 模板](../assets/templates/review.md)。主题/部分草稿按当前范围检查；缺学习证据明确 waiting，不能因此宣告 Stage 完成。检查：
 
 1. 业务目的、系统位置、架构及完整调用/数据/返回链可独立读懂。
 2. 关键类、方法/接口、数据结构有职责、机制与实际源码定位。
@@ -31,8 +69,9 @@ Journal 是结构化认知过程；Notes 是重新编排的正式技术知识。
 6. 实验含预测/实际观察/解释/范围，Quiz 含真实表现和提示，Restatement 确实来自用户。
 7. Mastery 与 evidence 一致，未解问题、未覆盖/未运行范围及 source validity 清楚。
 8. 删除全部聊天记录后，只有源码和 `.codelearn/`，半年后仍能恢复该阶段机制、设计判断和个人关键理解。
+9. 草稿/质量状态与事实核对、学习能力明确分开；关键事实有实际检查的出处，推断/未知/未运行范围不会被包装成已证实。
 
-第 8 项是最终独立阅读测试：遮住对话，仅沿文章引用尝试重建业务链、复述一个关键原理和定位一个改动点。答案依赖“如前所述/聊天里讲过”或失效引用就 fail。修正文档能修的缺失；若缺学习者证据，返回 REMEDIAL/RESTATE 等教学，不能润色造证据。
+第 8 项是最终脱离对话阅读检查：遮住对话，仅沿文章引用尝试重建业务链、复述一个关键原理和定位一个改动点。同一导师自检不叫独立审查。答案依赖“如前所述/聊天里讲过”或失效引用就 fail。修正文档能修的缺失；若缺学习者证据，保留草稿和待验证项，回到原待答题或 REMEDIAL/RESTATE 等教学，不能润色造证据。
 
 生成文章本身不提升 mastery。质量门禁 pass 才将 note status=validated；完成 Stage 要同时通过学习门禁和笔记门禁。大量文章可分章节文件，用总入口链接，保持证据索引与独立可读性。
 
