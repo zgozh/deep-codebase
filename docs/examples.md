@@ -146,7 +146,7 @@ return httpClient.sendAsync(request, handler)
 
 逐项核对真实片段、初学者桥梁、执行/数据/状态/返回链、前置顺序和事实边界；关键项缺失先改写。源码访问受阻时说明缺哪些证据并保留待教范围，不伪造通过。长链只对当前小目标验收，未展开部分保留 next_action；门禁通过也不意味着用户已经 Applied/Verified。
 
-## I：未教概念与逐句跟读
+## I：未教概念与逐句跟读（历史示范）
 
 v1.4.1 的验收示范，以下是假设夹具提供的完整片段，不是实际读取目标项目的报告：
 
@@ -181,3 +181,216 @@ function remaining(stock, requested) { // { 开始函数体，即调用后要执
 涉及框架或浏览器 API 的实际课不能省略另一层：先解释 API（供项目代码调用的平台接口）提供的能力，再沿实际注册/调用/回调说明何时介入、怎样把值或事件交给项目。不存在这类调用的纯计算片段不虚构平台参与。
 
 不合格：只重复“这是函数，返回剩余库存”；把 `const`、`return`、调用、回调等常见词默认已懂；加“计算一下”这类注释但不解释符号与过程；把仅出现过的名称记为已教；要求用户先列出陌生词。自检必须补齐新术语、逐句注释、过程/效果与概念区别，访问不到调用点时明确范围，不伪造完整链路。
+
+## J：v1.5.0 详细教学验收示范
+
+以下三个完整小课是**公开虚构教学材料**，路径、标识与内容均是假设。示范中的注释为教学添加，不是私人项目摘录；没有运行、部署或真实学习效果证据。实际课堂须读真实源码并用真实源行锚点，不能将这些假设路径当已存在。示范既检查课堂也检查笔记，不能只用关键词出现判通过。
+
+### J1：滚动停止后，提示为什么淡出
+
+本课只解决一个因果问题：滚动时把提示变亮，每次滚动重新计算等待时间，最后一次滚动后等待约 300 毫秒再变淡。不展开整个页面、路由和应用状态库。
+
+先认识三个不同的东西。浏览器把页面元素保存成可读写对象，这种页面结构叫 DOM（Document Object Model，文档对象模型）；本例 `hint` 指向其中的提示元素。元素的 `class` 属性是空格分隔的名字，CSS（Cascading Style Sheets，层叠样式表）按这些名字选中元素并规定外观；名字本身没有“变亮”能力。`hideTimer` 则保存一次待执行工作的编号，在 JavaScript 内存中；它既不是元素也不是 CSS 名称。要取消旧工作，需要这个编号。
+
+“函数”是可以重复调用的一组语句；写定义只是保存做法，执行要等调用。“回调”是在现在把函数交给另一个执行者，让其在事件发生或等待结束后调用。这里有两次交付：注册滚动处理函数给浏览器；滚动发生后再把淡出函数交给计时器。`setTimeout` 是浏览器提供的接口，登记稍后工作并立即返回编号，不在当前函数里阻塞等待。`clearTimeout` 用编号取消尚未执行的计时器。其规则分别见 [MDN setTimeout 的参数、返回值和延迟限制](https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout#parameters) 与 [clearTimeout](https://developer.mozilla.org/en-US/docs/Web/API/Window/clearTimeout)。
+
+假设页面先创建提示，随后执行下面脚本；这是明确的演示前提。HTML（HyperText Markup Language，网页标记语言）用标签建立元素：`<div ...>` 开始，`</div>` 结束，中间为显示文字。`id` 是本例唯一查找名；`class` 是样式使用的名字。引号包围属性值，`=` 将值交给属性。
+
+```html
+<!-- 教学注释：创建提示元素；hint 是查找用 ID，scroll-hint 是初始样式名。 -->
+<div id="hint" class="scroll-hint">正在浏览</div>
+```
+
+下面假设片段来自 `demo/scroll.js`；每个重要语句都带解释。
+
+```javascript
+// 教学注释：const 给一个不再重新赋值的名字；= 将右侧结果存入该名字。
+// document 是浏览器提供的当前页面对象；点号选择它的接口。
+// getElementById("hint") 按字符串 ID 找元素，括号表示立即调用，找不到返回 null。
+const hint = document.getElementById("hint");
+// 教学注释：let 声明以后可改值的变量；null 在此明确表示没有待取消的计时器。
+let hideTimer = null;
+
+// 教学注释：function 定义函数，onScroll 是名字；() 不声明参数；{} 包围执行语句。
+function onScroll() {
+  // 教学注释：if 只在括号内条件成立时执行分支；=== 表示严格相等。
+  // hint 找不到时返回，结束这次处理；没有 return 值即返回 undefined。
+  if (hint === null) return;
+  // 教学注释：classList 是元素 class 名的操作接口；add 添加 active，不替换原名字。
+  hint.classList.add("active");
+  // 教学注释：编号不是 null 才取消旧计时器；让新一次滚动重新开始等待。
+  if (hideTimer !== null) window.clearTimeout(hideTimer);
+  // 教学注释：window 是浏览器页面窗口对象，setTimeout 登记稍后工作。
+  // () => {...} 创建无参数箭头函数并交给计时器，此刻不执行函数体。
+  // 逗号分隔函数与 300 两个输入，300 的单位为毫秒；返回的编号存入 hideTimer。
+  hideTimer = window.setTimeout(() => {
+    // 教学注释：等待到期后浏览器执行此处；remove 只删 active，保留 scroll-hint。
+    hint.classList.remove("active");
+    // 教学注释：本次待执行工作已结束，变量回到“没有待取消计时器”。
+    hideTimer = null;
+  }, 300);
+} // 教学注释：函数定义结束，此处本身不代表滚动已经发生。
+
+// 教学注释：把函数值 onScroll（没有调用括号）登记为 scroll 事件处理者。
+// 浏览器以后把事件送到 document 时才调用它；当前只做注册，返回 undefined。
+document.addEventListener("scroll", onScroll);
+```
+
+`===` 比较两个值是否严格相等，`!==` 比较是否不严格相等；这里分别判“元素缺失”和“有旧编号”。字符串由引号包围；分号结束语句。本例两个 if 后不写花括号，只控制紧随的一条语句，不包住后面的全部代码。两个检查不能混为一谈：找不到元素时没有可以改样式的对象；有旧计时器时则要防止旧工作过早删掉类名。滚动回调本可接收浏览器传来的事件对象，本例无需读取它，所以没有命名参数；`hideTimer` 和 `hint` 来自外层脚本变量，不是浏览器作为参数传入。内层箭头函数稍后仍能访问这些外层名字，这种保留外层访问关系的机制叫闭包。它访问的是当前变量，不是另造一份 DOM 或全局状态库。
+
+注册不是执行：`onScroll` 将函数交给浏览器，`onScroll()` 才是现在调用。`addEventListener` 建立事件到函数的联系，不主动制造滚动；本例未请求捕获阶段，也未传其他选项。其登记和回调参数规则见 [MDN addEventListener 的参数与回调](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener#parameters)。
+
+假设 `demo/scroll.css` 提供实际外观消费者：
+
+```css
+/* 教学注释：点号在 CSS 表示按 class 名选择，不是 JavaScript 对象成员访问。 */
+.scroll-hint {
+  /* 教学注释：opacity 控制不透明程度；冒号连接属性与值，0.2 表示较淡。 */
+  opacity: 0.2;
+}
+/* 教学注释：两个 class 选择器连在一起，要求同一个元素同时有这两个名字。 */
+.scroll-hint.active {
+  /* 教学注释：同一属性在更具体的匹配规则中设为 1，元素完全不透明。 */
+  opacity: 1;
+}
+```
+
+因此脚本并未直接设置亮度，它改变 DOM 的 class；CSS 匹配改变后的名字，才影响外观。`classList` 修改 class 的机制可复查 [DOM Standard 的 classList](https://dom.spec.whatwg.org/#dom-element-classlist)，类名匹配见 [MDN class selectors](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/Class_selectors)。本例无动画过渡规则，只有两个透明度状态，不能称“渐变动画”。
+
+静态推演：初始化时 `hideTimer=null`，只有基础类所以较淡。假设第一次滚动在 t=0：加 `active` 变亮，登记计时器 A。t=100ms 又滚动：`active` 已有，仍保留；取消 A，登记计时器 B。t=300ms 是 A 原定时间，已取消不会由 A 淡出。B 最早到 t=400ms 才具备执行条件；执行时删 `active`、编号置空，恢复基础透明度。若只有 t=0 一次滚动，则其待执行工作最早约 t=300ms 执行。300ms 是等待阈值，不是准点保证；当前代码执行、浏览器调度和后台限速等可让它更晚。见 [MDN 延迟超过指定值的原因](https://developer.mozilla.org/en-US/docs/Web/API/Window/setTimeout#reasons_for_delays_longer_than_specified)。这都是示范推导，没有观察真实浏览器。
+
+这段没有网络/存储写入。若脚本先于元素创建，查找会是 null，后续分支会返回；本例前提因此重要，不能凭文件名断言加载顺序。若删掉取消旧计时器的语句，多次滚动后旧计时器可能在新等待结束前删类，破坏“最后一次滚动后等待”的目标。实际项目下一查证点是页面加载顺序、事件绑定位置与 CSS 是否加载，而不是一口气展开全部页面框架。
+
+### J2：配置值怎样到达消费对象
+
+本课的因果目标是“一份配置里的名称，怎样成为服务返回的文字”。以下是假设 **Spring Boot 3.5 系列**示例，已读其对应官方章节；不声称使用者项目也为这个版本，不声称示例部署值生效。Java 是示例语言，Spring 是创建/组织应用对象的框架，Spring Boot 提供启动和配置支持。
+
+类是对象的结构/行为定义；对象是按类创建的一份实际数据与方法。字段是每个对象保存值的位置，方法是对象提供的操作。`BadgeProperties` 定义保存名称的结构，`BadgeService` 是使用名称的对象。“依赖”是某对象工作所需的另一个对象；“注入”是创建者把所需对象传入，不是服务偷偷创建自己的配置副本。框架管理的对象称 bean；字段类型和构造器本身不证明该对象已经注册。
+
+假设所有文件在 `example` 包（组织类名的命名空间），配置为加载到本次应用配置环境的 `application.yml`：
+
+```yaml
+# 教学注释：badge 是键前缀；缩进使 name 属于它，完整键是 badge.name。
+badge:
+  # 教学注释：冒号后是文字值；加载到环境后才可能被后续绑定读取。
+  name: 学习沙盒
+```
+
+配置绑定是把配置环境的值转存进有类型的对象。这里前缀 `badge` 与字段 `name` 对应完整键，框架利用 setter（写字段的方法）赋值；getter（读字段的方法）返回现值。用 getter/setter 暴露属性的写法叫 JavaBean 属性。相关规则见 [Spring Boot 3.5 JavaBean Properties Binding](https://docs.spring.io/spring-boot/3.5/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.java-bean-binding)。
+
+```java
+// 教学注释：package 声明此类属于 example；分号结束声明。
+package example;
+// 教学注释：import 引用框架的注解类型，导入并不创建/注册任何对象。
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+// 教学注释：@ 给类附加框架读取的元数据；"badge" 指要绑定的键前缀。
+@ConfigurationProperties("badge")
+public class BadgeProperties { // public 可从其他类访问；class 定义结构，{} 为类体。
+    // 教学注释：private 只在此类内部访问；String 表示文字；= 设置初始字段值。
+    private String name = "默认名称";
+    // 教学注释：方法无参数，返回类型 String；getter 在此为手写，没有生成工具。
+    public String getName() {
+        return name; // 教学注释：读取这个对象当前字段，交回调用者；不是取配置文件。
+    }
+    // 教学注释：void 表示不交回结果；String name 声明接收本次传入的文字参数。
+    public void setName(String name) {
+        // 教学注释：this.name 指当前对象字段，右侧 name 是参数，赋值更新字段。
+        this.name = name;
+    }
+}
+```
+
+只到这里仍没有实际注册依据。假设启动类继续明确启用该类型，并提供消费对象的创建方法：
+
+```java
+package example; // 教学注释：与另外两类位于同一个包。
+import org.springframework.boot.SpringApplication; // 教学注释：引用启动框架的接口类。
+import org.springframework.boot.autoconfigure.SpringBootApplication; // 教学注释：引用应用配置注解。
+import org.springframework.boot.context.properties.EnableConfigurationProperties; // 教学注释：引用启用绑定类型的注解。
+import org.springframework.context.annotation.Bean; // 教学注释：引用声明受管理对象创建方法的注解。
+
+@SpringBootApplication // 教学注释：声明这是 Boot 应用配置，启动时框架处理它。
+@EnableConfigurationProperties(BadgeProperties.class) // 教学注释：明确注册并绑定这个属性类型。
+public class DemoApplication {
+    // 教学注释：static 方法属于类；main 是 Java 启动入口；String[] 是文字数组，args 为启动参数。
+    public static void main(String[] args) {
+        // 教学注释：立即调用 run，用此类配置和启动参数创建应用上下文（管理对象的容器）。
+        SpringApplication.run(DemoApplication.class, args);
+    }
+    @Bean // 教学注释：框架处理配置时登记此方法产生的 BadgeService 对象。
+    // 教学注释：框架按参数类型提供已管理的 BadgeProperties，不是方法自己从 YAML 读。
+    public BadgeService badgeService(BadgeProperties properties) {
+        // 教学注释：new 创建服务对象，构造器接收同一配置对象；return 将服务交给框架管理。
+        return new BadgeService(properties);
+    }
+}
+```
+
+`.class` 在 Java 是代表一个类型的对象，用来告诉框架要处理哪种类；不等于创建一个 `BadgeProperties` 实例。数组符号 `[]` 表示可放多个值；`main` 声明不能证明入口真的已运行，示例只展示启动路径。注册依据是启动处理的应用配置与 `@EnableConfigurationProperties`，服务注册依据是 `@Bean`，不是导入、字段或构造器。启用规则见 [Boot 3.5 Enabling @ConfigurationProperties-annotated Types](https://docs.spring.io/spring-boot/3.5/reference/features/external-config.html#features.external-config.typesafe-configuration-properties.enabling)。`@Bean` 方法参数按类型取容器依赖的规则见 [Spring Framework 6.2 的 Bean Dependencies](https://docs.spring.io/spring-framework/reference/6.2/core/beans/java/bean-annotation.html#beans-java-dependencies)。
+
+```java
+package example; // 教学注释：同包内能直接使用本例属性类，无需另外 import。
+public class BadgeService {
+    // 教学注释：保存一个配置对象引用；final 禁止此字段以后改指向别的对象，不冻结对象内容。
+    private final BadgeProperties properties;
+    // 教学注释：与类同名且无返回类型的是构造器；new 时调用，接收创建者给的依赖。
+    public BadgeService(BadgeProperties properties) {
+        this.properties = properties; // 教学注释：左是字段，右是参数；保存引用不是复制配置。
+    }
+    public String label() { // 教学注释：无参数方法，调用后返回一个文字值。
+        // 教学注释：点号找对象方法，() 立即调用 getter；+ 将两段文字连接，return 交给调用者。
+        return "当前环境：" + properties.getName();
+    }
+}
+```
+
+静态推演按本例前提：启动入口调用框架；框架登记属性类型，创建对象后字段先有“默认名称”；配置环境中存在 `badge.name=学习沙盒`，绑定将该文字交给 setter；框架把属性对象传给服务创建方法，构造器保存引用。以后某调用者调用服务 `label()`，getter 读取字段，方法返回“当前环境：学习沙盒”。未调用 `label` 就不会因注册自动输出这句话。本例未提供 HTTP 路由/UI 调用者，不能宣称页面显示了它；真实项目下一查证点是服务的实际调用点与返回消费位置。
+
+默认字段值是对象初始化值，不等于当前部署配置。是否加载此 YAML、激活何种配置组合、是否有环境变量/命令行覆盖，要按真实项目确认；本例只作假设。字段可经 setter 改变，但不能据此断言框架会自动热更新。getter 为本例明确手写；真实项目若来自生成器，必须读生成注解/插件及版本，解释生成来源，不用“有 getter”冒称其作者与执行链。
+
+### J3：检索到的文字怎样成为模型输入
+
+本课只解决资料到输入的桥梁。检索是从已有资料中选出相关内容，生成是模型根据输入产出新的回答；两者不是同一步。RAG（Retrieval-Augmented Generation，检索增强生成）把选到的资料放进模型输入，帮助生成时参考。这里不讲向量算法，因为没有展示向量检索，也不把尚未教的 AI 内部记成进度。
+
+假设已有检索步骤交回两个短文本：“借阅期限为 14 天。”“每次可续借 1 次。”问题为“最多可续借几次？”。以下 `demo/prompt.py` 是虚构 Python 演示；Python 用缩进表示函数体，字符串是引号包围的文字，列表是按顺序存放多项值的容器。
+
+```python
+# 教学注释：def 定义函数；括号声明两个参数名，冒号后缩进内容在调用时执行。
+def build_prompt(question, passages):
+    # 教学注释："\n" 是换行字符；点号选字符串方法，join 用换行连接列表中的每段文字。
+    # = 把连接结果赋给本次调用的局部名字 context；不修改原 passages 列表。
+    context = "\n".join(passages)
+    # 教学注释：+ 拼接文字，括号让表达式跨行；先放要求，再放资料，再放本次问题。
+    prompt = (
+        "只根据资料回答；资料不足就说明。\n资料：\n"
+        + context
+        + "\n问题：" + question
+    )
+    return prompt  # 教学注释：把组装后的字符串交回调用者；没有调用模型。
+
+# 教学注释：[] 创建列表，逗号分隔两项；这些是假设检索结果，不是这里生成出来的回答。
+retrieved = ["借阅期限为 14 天。", "每次可续借 1 次。"]
+# 教学注释：现在调用函数，两个实参依次进入 question/passages，返回值保存为 model_input。
+model_input = build_prompt("最多可续借几次？", retrieved)
+```
+
+具体推演：参数 `passages` 接收 `retrieved` 中两段已有文字；`context` 成为两行资料；`question` 接收问题文字。最后 `model_input` 是下面的完整字符串，并没有自动发送：
+
+```text
+只根据资料回答；资料不足就说明。
+资料：
+借阅期限为 14 天。
+每次可续借 1 次。
+问题：最多可续借几次？
+```
+
+“提示”即模型本次接收的要求与内容，这里组装结果可作为其输入的一部分。真实应用可能另有消息结构、系统指令、长度限制与供应商请求接口；本片段没有这些代码，调用入口、实际发送和错误消费仍待追踪。不能声称模型已收到或运行成功。
+
+若后来模型生成“每次最多可续借 1 次”，这是根据输入形成的新输出，不是上述函数返回的答案，也不是检索器找到的第三段文字。写“只根据资料”是输入要求，不保证模型绝不会出错；若选到的资料缺少续借规则，组装函数仍只会把现有文字连接起来，不能凭空补正确规定。本课已解释选到文本到提示字符串的过程；检索如何选段、供应商如何接收和生成，都保存具体后续点，不假记已解释内部机制或学习者已掌握。
+
+### J4：中断恢复与笔记对应
+
+假设 E000021 已写完整滚动小课和主题笔记，文件状态为 committed，但 journal 范围为 prepared；中断时没有可见课堂依据。恢复不能将其改为 explained 或 L1，不能因“笔记完整”先考计时器。保留原阶段/ID/独立证据与详细度偏好，当前小目标自然补必要内容；若实际可见回复确已包含注册、取消与 CSS 推演，则以该消息和 E000021 确认实际深度，仍不提升独立能力。
+
+对照笔记时检查 J1 的三个状态载体、注册/执行区别、每个重要语句注释、t=0/100/300/400ms 推演与延迟限制是否保留。只有“浏览器处理滚动，CSS 负责样式”则不通过。J2 不能将构造器等同注册，J3 不能将 prompt 等同模型生成回答。仅 prepared 或文章增加的新准备标未授课；教师遗漏不记学习者失败。本页是人工示范与桌面审阅材料，不是独立模型测试结果。

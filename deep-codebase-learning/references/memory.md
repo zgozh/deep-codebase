@@ -15,7 +15,7 @@
   mastery/index.md           概念领域、文件、复习/缺口路由
   mastery/<domain>.json      每个概念一个规范记录
   journal/<stage-id>-001.md  事件分片，append 优先
-  knowledge/index.md         gap/误解/问题/术语的可搜索索引
+  knowledge/index.md         当前概念/桥梁/误解/问题的轻量路由
   knowledge/<topic-id>.md    知识桥梁与个人理解
   notes/index.md             已生成文章、事件边界、核对状态与阅读入口
   notes/topics/<stage-topic>.md  重要主题的详细文章，可先于能力验证生成
@@ -69,20 +69,37 @@ Session checkpoint 保留上述位置，不增加用户操作。阶段结束自�
 
 完整 transcript 禁止。保留关键问题、关键个人表述和实验结果；AI长讲解提炼成可重建的机制/链路/出处，不能只写“讲了 SSE”。涉及敏感值用占位符。Aha 是用户实际表达的领悟，不能替用户杜撰。
 
-Journal/阶段检查点分开记“源码已调查”“笔记已生成”和“对话讲授范围”（白话定义、机制、示例或源码片段、相关事件）。只有准备写进当前回复的内容可记讲解已准备；仅写到文件、不向用户解释的内容不能记“已讲清”。交付因中断不确定则保守补必要解释，不假设用户已读。历史仅有 source_discovery/Notes 或泛泛“讲过”时，不能用来批准复杂复述题。范围记录是语义摘要而非完整聊天副本，不增加 state schema。
+Journal/阶段检查点按下节记录实际概念解释深度与可见依据；语义摘要不等于完整聊天副本。只提名称、贴代码或概述职责不算工作机制已教，不能批准依赖该机制的复杂题目。
 
-判断前置是否教过，须有明确解释范围：仅提名称、贴代码或概述功能不算概念/语法/API/机制已教。新源码轮记实际补过的最少背景、重要语句注释、平台 API 衔接、相近概念和例子；旧事件缺这些证据时先补最小解释，不全量重读历史、不回退已有真实能力证据，也不捏造未教内容的掌握度。
-
-事件额外有 `status: pending|committed`、`writes` 与必要 `deltas`：记录受影响文件/条目、旧值→新值及足够恢复的内容。writes 是路径清单，不复制整份 Notes。L0→L1 可以是讲过；L3 及以上须包含用户独立表现。一个 answer 不意味着其他概念都提升。
+事件额外有 `status: pending|committed`、`writes` 与必要 `deltas`：记录受影响文件/条目、旧值→新值及足够恢复的内容。writes 是路径清单，不复制整份 Notes。L0→L1 可由已确认可见课堂支持，prepared 不够；L3 及以上须包含用户独立表现。一个 answer 不意味着其他概念都提升。
 
 每片约 100 个事件或 32 KiB 时开新片；这是导航阈值，不删除旧事件。阶段评审记录其使用的事件范围/文件以便 Notes 重建。只读近期尾部与相关 ID；历史可 `rg` 搜索。重要 Topic 讲解收束按 [笔记协议](notes.md) 写详细主题文章，不能仅留一行日志；notes/index.md 记录稳定 ID、文章路径、覆盖事件/最后整理事件、quality/verification、未解项。显式会话总结需要事件边界：首次进入该会话的 journal checkpoint 记录 session ID/首事件；已有会话边界缺失时只写可恢复的范围，不猜完整历史。会话元信息存在 journal/notes index，不扩充或迁移 state schema。
+
+## 讲授范围与概念语义记录
+
+保持 schema v1 与现有目录，在 journal 与当前 stage 用可读条目分别记录：
+
+| 范围 | 可支持的结论 |
+|---|---|
+| investigated | 导师查过哪些源码、版本与资料；不代表已教 |
+| prepared | 完整拟交付课堂的因果目标、概念解释深度、注释片段、例子和边界；仍不代表送达 |
+| explained | 已有学习者可见课堂记录，定位实际消息/事件与具体解释深度；不是掌握 |
+| learner-evidence | 实际回答/预测/实现/实验及 independent/hinted/tutor-provided；能力单独评估 |
+
+这些是语义范围，不是新 mastery 等级或 journal 文件事务状态。`pending/committed` 只表示记忆写入过程；文件提交完成、模型读过、笔记已生成不能把 prepared 变成 explained。发送前只能写当前课堂 prepared，不存在可假定的发送成功回调。后续回合若实际可见上一课堂，以原事件 ID 和具体可见内容确认 explained（可追加确认事件），不重复生成原课堂或凭“用户继续”推定全部送达。只确认真实可见范围，不将表层命名扩大为完整机制。
+
+恢复时交付中断/压缩导致范围不明，保留 prepared 与待核对说明；读取少量相关可见记录能确认则确认，否则在当前目标内自然补必要内容，不声称此前已发、不重置阶段和 ID。旧泛称“讲过”的记录按触及概念懒补解释深度，真实独立证据仍保留，不批改全部历史。
+
+knowledge/index 只路由当前有用概念到现有 `knowledge/<topic-id>.md`；每个文件可容纳多个相关概念条目，不要求每个标点独立建档。条目简记 Concept ID、白话含义、当前源码用途、explained 深度/仍缺深度、例子或混淆、来源事件/官方章节/源码、返回点；详细讲解指向主题笔记，不复制整篇。没有可见依据的深度写 prepared/待核对，不造全项目占位词典。学习者独立证据与这些讲授记录分开。
+
+最新详细度/逐句/官方文档偏好写 journal 并在当前 stage 保留可恢复摘要，持续应用后续课。切换 Stage 前，将仍生效的偏好与来源事件复制到新 stage 教学合同，并更新 roadmap 当前行的合同路径，让恢复入口始终指向含偏好的当前合同；不能依赖近期 3–5 条 journal 恰好包含旧偏好。教师遗漏列有限修复项，不标为学习者失败。无需新增必填 state 字段或运行脚本。
 
 ## PRE-TURN LOAD
 
 每次新会话/“继续学习”执行完整协议；同会话继续时复用已加载协议和未变状态，只读必要变更。
 
 1. 查 `.codelearn/state.json`。不存在时检查残留目录和其他学习记忆，避免覆盖；真正全新才初始化。目录存在却 state 丢失则从 roadmap、阶段合同与最近 committed 事件重建保守检查点，不能当新学习者抹掉成果。
-2. 核对 schema/项目身份，恢复 pending（下节）。读 roadmap 当前行及依赖、当前 stage、state 指向的当前 mastery/coverage/knowledge/review；近期 journal 默认最后 3–5 个有价值事件。不要打开全部历史。
+2. 核对 schema/项目身份，恢复 pending（下节）。读 roadmap 当前行及依赖、当前 stage 的教学偏好/范围、state 指向的相关 mastery/coverage/knowledge/review 和当前概念深度；近期 journal 默认最后 3–5 个有价值事件，必要时确认可见课堂。不打开全部历史，不把 prepared 当 explained。
 3. 检查源码变化（后文）。相关失效先重新定位，不能沿过期方法继续教学。
 4. **当前用户意图/教学反馈优先于旧 awaiting/next_action**。核对实际对话讲授范围、项目全景及题目前置是否齐备，再找返回点、误解和未解项。用户说不会回答/先整体讲时暂停旧题，写节奏调整事件，保留历史并设置 TEACH；旧状态写 QUIZ 或有 Note 不足以继续考试。只有通过教学就绪检查的旧题才复现。隔日/隔周、遗忘迹象或 prerequisite 薄弱且该内容确实教过时才安排 recall，不能每次机械重考。
 5. 简短自然定向后在当前对话开始实际讲解或一个合适动作，不用“已恢复/已保存”代替课堂内容。若待答题仍有效，给必要上下文；只有记录确实缺失才请用户补充。用户要继续解释时可以暂存题目并讲下一个小目标，能力验收继续 waiting。
@@ -91,15 +108,15 @@ Journal/阶段检查点分开记“源码已调查”“笔记已生成”和“
 
 ## POST-TURN LEARNING COMMIT
 
-每轮处理完用户消息、准备回复后，先通过 [单轮交付自检](teaching.md#发送前单轮交付自检)，再在结束响应及转新 Topic 前执行。只按最终拟交付的具体讲授范围更新记录：文件职责概述、路径/类名链或备课不能记为实现已讲解，也不能据此提升相应源码条目的 explained 覆盖。未通过时保留 source_discovery 与待教接续点；已有真实证据不回退。用户没有回答时也保存本轮讲解/发现与将发出的问题；问候等无学习变化只保留必要状态，不造事件。
+每轮准备回复后，先通过 [单轮交付自检](teaching.md#发送前单轮交付自检)，再在结束响应及转 Topic 前执行。最终拟交付课堂记录为 prepared，已可见课堂才确认 explained；职责概述、类名链、备课与自检通过不能提升实现 explained 覆盖或 L1。未通过保留 investigated 与待教点，已有真实证据不回退。用户未回答也保存本轮准备/发现，问候等无变化不造事件。
 
 1. **CLASSIFY**：判定有哪些学习事件，回答是否 independent/hinted/tutor-provided。
 2. **EXTRACT**：提取新事实、出处、用户理解、错误/纠正、问题、预测、实际结果；不要捏造未运行观察。
-3. **EVALUATE**：按证据判断 mastery/coverage 变化、gap/misconception、源码有效性。无独立回答时不提升 L2+。
+3. **EVALUATE**：按真实证据判断 mastery/coverage、gap/misconception、源码有效性。当前 prepared 不提升 L1/explained；已确认可见课堂只支持实际解释范围，无独立回答不提升 L2+。
 4. **PERSIST**：先追加 pending 事件（writes/deltas），再写 state.pending_commit 指向它；按条目更新 projections：coverage、mastery、knowledge、相关 review/stage/roadmap/note；检查 JSON 可解析、引用可定位、差异正确，尤其核对 coverage/Concept ID 对应的实际路径与符号（文件存在不能证明 ID 指向正确）；把事件改 committed；**最后**更新 state（last_event/next_sequence/current/awaiting/next_action，清 pending）。只将通过就绪检查且实际要在回复中提出的题写 awaiting；不出题为 null。回复已准备不证明学习者看过或理解，记录待交付讲授范围，不把内部调查/文件写作当已向用户授课。
 5. **CHECKPOINT**：每轮判断重要 Topic 的讲解收束与学习闭环，二者分开；讲解收束或显式总结时按 [笔记协议](notes.md) 写详细文章，即使独立复述/实验仍 waiting。保留个人 restatement 或“尚待验证”、机制、关键证据及当前有效性；明显结束/切阶段/内容积累时保存 session checkpoint、笔记阅读入口和 next_action。同一会话正常持续也执行，不能等新会话或所有 Stage 门禁通过才写主题笔记。
 6. **STAGE CHECK**：核对该 Stage exit criteria。尚未讲授/尚未评估是正常 in_progress，next_action 可为 TEACH/TRACE；只有实际教学缺口或已评估误解才安排 remedial，不能把每个 waiting 都改成出题补救。通过才进入 Stage 综合笔记/门禁，提前主题笔记仍按其触发规则。
-7. **PLAN**：生成下一最合理动作并持久化；如 checkpoint/stage/note 又产生增量，在本次提交结束前纳入对应事件和状态，不能把它们留到下次才保存。
+7. **PLAN**：生成下一最合理教学动作并持久化，next_action 明确下一代码符号/环节、因果目标与完成条件，课堂结尾同样说明接续点。当前 prepared 的交付确认是下次恢复的内部步骤，不能单独替代 next_action 的教学目标，也不阻塞在当前 Stage 内继续讲下一目标；没有能力证据仍不标 Stage complete。如 checkpoint/stage/note 又产生增量，在本次提交结束前纳入对应事件和状态，不能把它们留到下次才保存。
 
 这里的 Learning Commit 是文件协议，不是 `git commit`。无需频繁向用户通报。写入失败是例外：明确哪些成果未保存，给一个精简恢复块，保留当前 Topic 并停止依赖成功保存的跨 Topic/Stage 推进；可以继续回答独立问题。
 

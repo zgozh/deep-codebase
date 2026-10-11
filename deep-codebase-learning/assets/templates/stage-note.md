@@ -2,6 +2,8 @@
 
 填标题、kind（topic/stage/session/project）、Stage/Topic/Session ID、讲解边界、源版本/hash、source_valid、status draft/validated/needs_revalidation、verification unverified/source_checked/runtime_checked/needs_revalidation、review_method、review_ref、checked_scope、unchecked_claims、相关事件范围、最后整理事件及更新时间；删除说明。首写 draft + unverified，自检通过不等于事实或能力认证。按实际范围调整章节，不能伪造未存在内容或学习者证据。
 
+文章与课堂共用教学合同，逐项对应相关 journal 的实际 explained 范围；当前 prepared 和新增备课明确标未确认交付/未授课。保留重要定义、语法/API、注释源码、因果过程、例子、官方规则映射/限制及纠正，不以职责列表替代，也不声称所有文件内容都已教。增量更新，不要求每轮重写。
+
 ## 1. 本阶段解决的问题与系统位置
 
 ## 2. 架构与完整执行链
@@ -10,7 +12,7 @@
 
 ## 3. 核心源码入口、Class、Method 与 Interface
 
-路径/符号、输入输出、关键分支、副作用、生命周期及必要并发/性能机制。
+实际读取路径/真实源行锚点/符号；分段保留原代码语义，标导师添加的逐句教学注释。重要导入/定义、参数/变量来源、分支/调用/返回/副作用都可跟读；声明、注册、回调执行与类型/运行区分，不能只有名称总结。
 
 ## 4. 数据结构与对象边界
 
@@ -22,7 +24,7 @@
 
 ## 6. 必要底层原理
 
-概念→机制→项目证据→失效模式；返回知识桥梁。
+白话含义与具体例子→工作机制→项目源码映射→限制/失效模式；必要前置先于依赖代码，不固定等本节才解释。官方资料附实际版本/章节，未核实版本明确未知；返回知识桥梁，学习者能力证据另记。
 
 ## 7. 为什么这样设计、替代方案与 Trade-offs
 
