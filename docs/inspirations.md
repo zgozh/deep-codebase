@@ -15,3 +15,18 @@
 上述上游公开采用MIT许可证；本项目也采用 [MIT](../LICENSE)。引用表达设计来源，不表示上游作者背书、共同维护或授权测试结论。
 
 Skill格式按 [Agent Skills规范](https://agentskills.io/specification)，安装命令按 [Skills CLI文档](https://github.com/vercel-labs/skills)。本机官方skill-creator用于创建指导及结构校验；公开维护者无需拥有本机的路径或工具。
+
+## 公开教学方法的适配
+
+以下是原方法作者、官方教育材料或维护者资料支持的设计取舍，不是本 Skill 教学效果的试验报告。来源内容由导师消化进当前教学，不要求学习者先读这些教材。
+
+| 原始来源 | 它实际说明什么 | 本 Skill 的具体适配 | 限制 |
+|---|---|---|---|
+| [NSW：Cognitive load theory in practice](https://education.nsw.gov.au/about-us/education-data-and-research/cese/publications/practical-guides-for-educators/cognitive-load-theory-in-practice) 的 Summary / Teaching strategies | 完整示范、随熟练程度增加独立解决、去除无关信息并将必要信息放在一起 | 一个因果目标、源码紧邻解释、完整示范到带提示小步再到独立变式；收广度不删必要深度 | 学校教学实践与研究综合，不是成人大型代码库或本 Skill 的直接实验 |
+| [PRIMM 原作者说明](https://primmportal.com/) | 阅读/追踪先于写作，Investigate 可用注释与追踪，Modify 从小变化扩展，Make 转向新程序；无需每课完整五步 | 已教材料上的小修改，再到独立实现；只吸收梯度，不用 Predict 让零基础猜陌生源码 | 教师提供的小程序与未知真实仓库不同；本 Skill 先教后问规则优先 |
+| [MDN LocalLibrary](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Express_Nodejs/Tutorial_local_library_website) 的 Overview / The LocalLibrary website | 先交代目的、能力与范围，从只读目录扩展到数据/表单，贯通数据、路由、显示与部署 | 问题→能力→架构→代表完整链→其他能力与横向审计 | 人工编排且有前置的 Web 教程，不是任意项目固定顺序 |
+| [MDN Dealing with files](https://developer.mozilla.org/en-US/docs/Learn_web_development/Getting_started/Environment_setup/Dealing_with_files) 的 Prerequisites / Learning outcomes / Manipulating files | 文件夹、路径、扩展名与文件操作也是明确学习目标，并有操作系统前提 | 第一次读实际文件/运行命令时解释读法、工作目录与工具，不只讲编程语法 | 不照搬 Web 目录，也不要求先读完教材或先上长基础课 |
+| [AOSA 目的](https://aosabook.org/en/) 与维护者写的 [Bash 3.1–3.3](https://aosabook.org/en/v1/bash.html) | 作者解释组件、交互和取舍；Bash 从终端/文件输入经解析到执行及返回状态，再展开子系统 | 架构/业务双地图与真实调用/状态/返回链，适用于 CLI 和库 | 历史作者说明不证明当前仓库同版本实现；不作为零基础必读门槛 |
+| [CS50 Final Project](https://cs50.harvard.edu/x/project/) 的 Getting Started / How to Submit | 学习者设计实现产物、安排合理范围/里程碑、展示作品并解释选择 | 独立 Mini Version、真实产物/能力证据与设计对比，区分定向和完整完成 | 完整课程后的结业要求，不是第一课门槛；不能以其证书标准为本 Skill 背书 |
+
+这些映射是方法适配推论。没有方法流行度排名、效果倍数或真实学生成功保证；无需将外部课程安装为运行依赖。
