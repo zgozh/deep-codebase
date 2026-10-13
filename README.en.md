@@ -1,126 +1,111 @@
 # Deep Codebase Learning
 
-**Learn to explain, change, debug, and reconstruct the core of a real codebase with sustained AI guidance.**
+**Study a real codebase through detailed, beginner-friendly notes, then prove understanding through independent work.**
 
-[中文](README.md) · [Usage](docs/usage.md) · [Design and memory](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
+[中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-`deep-codebase-learning` is an Agent Skill that teaches through real feature flows, checks understanding with learner evidence, and stores durable progress in the target project's `.codelearn/` directory. Keep studying in one conversation or resume in a new one. Teaching follows the learner's language; detailed maintainer documentation is currently in Chinese.
+Version 1.6.0. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
-## Quick start
+## Start learning
 
-Use an Agent Skills compatible coding agent that can read a real local checkout, write learning memory, and access relevant official documentation. Open the conversation in the project you want to study. The skill itself has no runtime dependencies: static source study is possible without installing the target application's dependencies, with unrun behavior kept unverified. The optional [Skills CLI](https://github.com/vercel-labs/skills) requires Node.js/npm:
+Use an Agent Skills compatible host that can read your local checkout, write learning memory, and access relevant official documentation. Open a conversation in the project to study. Static study does not require installing the target application's dependencies; unrun behavior stays unverified. The skill has no runtime scripts, services, databases, or model requirements. The optional [Skills CLI](https://github.com/vercel-labs/skills) needs Node.js/npm:
 
 ```bash
 npx skills add zgozh/deep-codebase --skill deep-codebase-learning -g -a codex
 ```
 
-Here `-a codex` targets Codex; select your host for other agents. `-g` installs globally for your user; omit it for a project-local installation. Preview without installing:
+`-g` installs for your user; omit it for project-local installation. `-a codex` selects Codex; select your host when using another agent. Preview available skills with `npx skills add zgozh/deep-codebase --list`. Manual installation copies the entire `deep-codebase-learning/` folder to a directory your host discovers, including references and templates. See the Chinese [usage guide](docs/usage.md) for Windows/manual steps and discovery details.
 
-```bash
-npx skills add zgozh/deep-codebase --list
-```
-
-Open a fresh conversation in the repository you want to study:
+In your source repository say:
 
 ```text
 Help me deeply learn this codebase.
 ```
 
-In the current conversation or a later one in that same repository:
+Later:
 
 ```text
 Continue learning.
 ```
 
-If automatic selection does not activate the skill, explicitly ask Codex to `Use $deep-codebase-learning to teach me this repository`. Other agents use their own invocation syntax. See [manual installation](docs/usage.md).
+For explicit selection in Codex: `Use $deep-codebase-learning to teach me this project from zero.` You do not need a background questionnaire, a list of unknown terms, or a correct answer to an unfamiliar quiz. The tutor owns the route: problem → capabilities → architecture → a real feature or system event → progressively annotated source → other features and horizontal audit → independent reconstruction.
 
-If HTTPS access is unavailable and GitHub SSH is already configured, use `git@github.com:zgozh/deep-codebase.git` as the source instead. Downloaded local repositories are also supported.
+## Notes first, questions welcome
 
-### Starting with no programming experience
+Every lesson produces a self-contained technical article, not a file-responsibility overview or chat summary. It explains currently needed concepts in plain language at their first relevant use, expands acronyms accurately, gives concrete examples, and traces who calls whom, when execution happens, where values come from, how state changes, and who consumes results. A frontend flow returns to the visible UI; non-UI projects trace the relevant caller or output.
 
-```text
-Use $deep-codebase-learning to teach me this project from zero. I have no programming experience. Start with the problem it solves, then explain the reading basics where they are needed.
-```
+Real source excerpts include project-relative paths, symbols, and reliable original line locations. Important imports, types, parameters, variables, conditions, calls, returns, and side effects receive adjacent line-by-line or semantic-block teaching comments. Added comments are identified and do not modify the project source. You may follow locations to inspect the repository, but the lesson cannot rely on that action to fill missing explanations.
 
-Detailed teaching is already the default. At first use, the tutor explains the project root, relative paths, source line anchors, definitions versus calls, and where to enter commands in your actual tools. You can listen to a complete example, optionally try a small step with hints, and move toward independent variations when ready. Copyable requests:
+Framework and browser APIs are explained where they intervene: what they provide, how the project connects to them, when they act, and what they manage or call afterward. Helpful official documentation must actually be read for the applicable version. The tutor explains its concrete rules and mechanisms, maps them to project code, states what they can and cannot establish, and then provides a direct section link. Readers do not have to research documentation to complete the lesson.
 
-```text
-Continue learning from the current code and causal question.
-This is still too shallow. Explain every currently needed new concept, important statement, and official documentation in detail, and retain this preference.
-Summarize the current topic.
-Summarize the current stage.
-Summarize this learning session.
-Keep explaining without asking me to answer yet; leave unverified ability pending.
-Switch to development: fix this issue and save the learning return point.
-Reload the latest $deep-codebase-learning SKILL.md and relevant protocols, retain my progress, and continue learning.
-```
+One concrete input runs through the current lesson's data/state/URL changes to its result. Actual important error, cancellation, rejection, retry, timeout, or fallback branches are explained when present. Source facts, documentation rules, static inference, observed execution, hypothetical example values, and unknowns remain distinct. Private source and personal records must not be uploaded or used in external searches.
 
-| Goal | Result and completion boundary |
+Small lessons limit causal scope, not explanation depth. Large flows become consecutive lessons with explicit boundaries, omitted internals, and a precise continuation. No arbitrary word target, long upfront glossary, repeated conclusions, or link-list homework. A ten-point [note quality gate](deep-codebase-learning/references/notes.md#note-quality-gate) requires missing explanations to be repaired before delivery, alongside readback, local Markdown links and relevant JSON checks. Writing notes does not automatically run application tests or builds.
+
+Ask any question in chat and receive an answer deep enough to resolve it; a local question does not automatically become a whole class. A real omission, error, or ambiguity triggers a corresponding note/index/progress repair. A clarification alone need not rewrite a complete article. Full lessons appear in chat only when explicitly requested. Reading notes is not gated by quizzes, acknowledgment, or a reply of “continue.”
+
+## Choose an authoring workflow
+
+The first use in a learning project offers one choice:
+
+| Mode | Behavior |
 |---|---|
-| Quick orientation | Problem, capabilities, module roles, and a locatable flow; implementation understanding remains pending |
-| Deep implementation study | Annotated real source, necessary foundations, calls/state/errors, and design choices, taught in consecutive small units |
-| Fully verified completion | Complete inventory and horizontal audit, real independent evidence, and a runnable Mini Version; an overview cannot set PROJECT_COMPLETE |
+| Single conversation, default | The current model plans, writes, reviews, and saves the lesson |
+| Principal planning/review with subagent authoring | The principal defines one bounded lesson; a subagent writes its exclusive draft; the principal independently reviews the content, requests repairs, and publishes it |
 
-Author-level ability takes sustained work. The protocol is model neutral and requires neither runtime subagents nor model switching. Current evidence includes only the bounded checks described in [validation](docs/validation.md), including one Luna max browser lesson revised with specific feedback; it is not a model ranking or outcome guarantee.
+No answer means single conversation, not permission to delegate. A previous explicit choice is restored rather than asked again. If subagents are unavailable, single-conversation teaching continues. No fixed model, reasoning setting, extra service, or installation is required. Delegation can cost more time/resources and does not guarantee correctness. Only the principal writes shared learning state and indexes; authors cannot modify project source or other agents' drafts. See [workflow rules](deep-codebase-learning/references/authoring.md).
 
-For a CLI installation, update only this skill with `npx skills update deep-codebase-learning -g`; use `-p` instead of `-g` for a project-local installation. Installer-selected discovery directories may differ from older manual examples: the current Skills CLI maps Codex global installation to `~/.agents/skills`. Confirm your host discovers the installed skill; do not automatically delete or move duplicates. For manual installation, copy the complete `deep-codebase-learning/` folder into a supported host skill directory, retaining its name and contents. Updates replace installed skill files, never the target project's `.codelearn/`. Re-read the latest instructions using the request above if a conversation has already loaded an older version. See [Skills CLI documentation](https://github.com/vercel-labs/skills) and the Chinese [usage guide](docs/usage.md) for additional steps.
-
-## How learning works
-
-**The teaching default is always beginner.** Unverified project concepts, features, architecture, language features, frameworks, and underlying principles are explained before they are relied on. The tutor owns a complete, repository-specific learning route and its prerequisites; you do not need to diagnose your gaps or choose the next lesson. Existing independent evidence can reduce repetition for that concept, without assuming expertise in other areas.
-
-**Lessons happen in the conversation; notes are optional review material.** The default starts with the project's problem, capabilities, and overall architecture, then follows a feature or system event through real source, connecting frontend and backend when present. The first ordinary learning turn delivers an explanation rather than opening or closing with a quiz, field lookup, or background questionnaire. Later questions need taught prerequisites, supplied material, and a useful learning purpose; answering is not a mandatory turn-by-turn gate.
-
-The agent builds architecture and feature maps, creates a repository-specific roadmap, and starts with a small learning unit. It traces real user actions or events through the system, including the UI return path when a frontend exists. It expands code progressively, explains design trade-offs, and detects prerequisite gaps. Knowledge detours return to the saved source location.
-
-**Source lessons explain implementation, not just file responsibilities.** Each covers one concrete problem using excerpts actually read from the repository, with beginner explanations of syntax, inputs/outputs, execution order, data/state changes, relevant framework behavior, failure or side-effect boundaries, and the return path. Long flows become consecutive lessons with a saved continuation. A pre-send check requires missing explanations to be repaired; paths, class-name arrows, README paraphrases, and note links do not satisfy the source lesson gate. Overview lessons remain focused on the business and architecture. See the [teaching protocol](deep-codebase-learning/references/teaching.md).
-
-**Both conversation lessons and notes are detailed by default.** Every unfamiliar concept, symbol, imported API, and mechanism needed to read the selected code receives a plain explanation, a reason it matters, and a concrete example. Important statements in real excerpts receive teaching comments tracing origins, registration and invocation timing, state changes, and return consumers. A small lesson limits its causal goal, not explanation depth or length. Necessary prerequisites are taught before their use. Detailed teaching preferences persist across lessons; you need not list unfamiliar words. Official documentation is checked against the relevant dependency version and explained through project mappings, examples, and limits before linking the section. Annotations do not alter project source.
-
-Investigated source, prepared lessons, visibly explained content, and learner evidence are separate. Pre-send writing records prepared content; only an actual visible lesson supports explained scope. Notes preserve the same important definitions, annotated code, causal reasoning, examples, and corrections rather than compensating for a compressed classroom. See the [hypothetical teaching examples](docs/examples.md#jv150-详细教学验收示范).
-
-You predict behavior, inspect code, attempt experiments, answer questions, and restate flows. Acknowledgment is not mastery. Coverage, knowledge mastery, and reconstruction ability are tracked separately. Important components outside the main flows are covered by a horizontal audit. Completion requires an independently designed and runnable Mini Version.
-
-Mermaid diagrams must follow the official syntax for their diagram type and be checked before delivery. Available tools should parse or render the final code; untested target rendering stays explicit. Basic syntax is the default when renderer compatibility is unknown. Known syntax errors must be repaired. See the [diagram protocol](deep-codebase-learning/references/diagrams.md).
-
-## Durable learning memory
-
-`.codelearn/` contains state, roadmap, project map, stage contracts, coverage, mastery, journals, knowledge bridges, notes, and reviews. Meaningful exchanges are saved automatically. Resume loads relevant records rather than the entire history.
-
-Journals preserve structured learning events. Notes are technical articles rebuilt from source evidence, questions, misconceptions, experiments, and the learner's own understanding.
-
-### Automatic detailed notes and explicit requests
-
-Each meaningful turn checks for a writing boundary. When an important topic's purpose, mechanism or flow, source evidence, and key limits have been explained and teaching shifts into questions, verification, or the next topic, a detailed topic article is saved in `.codelearn/notes/topics/`. The tutor identifies this boundary without requiring a learner request. Important tracing, detour, or experiment boundaries also trigger it. This works in one continuous conversation and does not wait for a stage to pass. Pending learner verification stays explicit. Related topics accumulating at a natural boundary trigger a reading index and checkpoint update; stage acceptance triggers a comprehensive stage article.
-
-You can also say:
+Useful requests:
 
 ```text
-Summarize the current topic in detailed notes.
-Write detailed notes on what we just discussed.
-Summarize the current stage.
-Summarize this learning session.
-Recheck this note against its sources.
+Continue by writing the next detailed lesson.
+Use a single conversation to write the materials.
+Use principal planning and review, with a subagent writing each lesson.
+Explain this line here in chat.
+Teach this whole lesson in chat.
+Summarize the current topic, stage, or session.
+This is too shallow; repair the missing concepts and annotated execution steps.
+Reload the latest $deep-codebase-learning instructions, retain my progress, and continue.
+Switch to development and save the learning return point.
 ```
 
-By default, detailed content is written to `.codelearn/notes/`, with a short reply and file link. An unfinished stage can have a draft; pending questions and the next learning action are preserved. Notes explain mechanisms, important code and data changes, design reasons, failure or change impacts, and actual learner questions and corrections, rather than compressing the chat.
+## Memory and organization
 
-**Generated notes are candidates to check, whether automatic or explicitly requested.** Article quality (`draft/validated`) and scoped factual verification (`unverified/source_checked/runtime_checked`) are separate. Tutor self-review is not independent verification, learner mastery, or proof that unrun experiments succeeded. Learning and note quality gates must both pass before a stage completes. See the [note protocol](deep-codebase-learning/references/notes.md).
+State, roadmap, project map, stage contracts, coverage, mastery, journal, knowledge bridges, notes, and reviews live in `.codelearn/`. Meaningful changes are saved automatically. Resume loads current relevant records rather than all history.
 
-## Boundaries and validation
+Notes use Chinese content names by default even though teaching follows the learner's language; explicit naming preferences take precedence. Stable stage/topic IDs and source identifiers are retained:
 
-- File-protocol simulations have been performed in Codex. Other compatible agents are candidates for use, not equally verified environments.
-- Reading source and maintaining learning memory does not authorize arbitrary source edits, dependency installation, external uploads, or production experiments.
-- The skill runs only when invoked. It has no background scheduler, atomic multi-file transaction, or concurrent-writer support.
-- Simulated learner answers and experiment data do not prove actual learning or runtime behavior. Large-repository scale, long-term outcomes, and all recovery failure paths remain unverified.
-- You decide whether to commit or ignore your target project's learning memory. Keep private source and personal records out of public issues.
+```text
+.codelearn/notes/
+  索引.md
+  S00-项目全景/
+    S00-T01-项目问题与业务能力.md
+    S00-阶段总览.md
+  S01-登录与权限/
+    S01-T01-01-从输入到登录请求.md
+    S01-T01-02-身份校验与页面返回.md
+  会话/
+  项目总览.md
+  重建复盘.md
+```
 
-The installable package is [deep-codebase-learning/](deep-codebase-learning/SKILL.md); repository docs, CI, and maintainer checks are separate. See [examples](docs/examples.md), [validation scope](docs/validation.md), and [changelog](CHANGELOG.md).
+Categories follow the actual project, not a fixed syllabus or a single generic topics folder. Existing notes migrate within the affected scope with index, stage, state, journal, review and inter-note references updated; history and evidence are retained. Conflicting or locked destinations are not overwritten or forcibly deleted.
 
-## Inspirations and license
+Investigated source, prepared drafts, delivered materials, actual explanation depth, and learner evidence are separate. A note is delivered only after saving, review/readback, appropriate document checks, and indexing. This does not establish that you read or understood it. Writing or reading a note never automatically raises mastery, including Level 1. Coverage, knowledge mastery, and reconstruction ability are tracked separately.
 
-The design draws on [learn-codebase](https://github.com/ktaletsk/learn-codebase), [learning-codebases](https://github.com/Eijnewgnaw/learning-codebases), [tutor](https://github.com/kevinnio/tutor), [code-learn-skill](https://github.com/yumeiriowl/code-learn-skill), and [repo-learner-suite](https://github.com/PranitMohnot/repo-learner-suite). See [design provenance](docs/inspirations.md). No upstream code or templates are copied, and none of these projects is a runtime dependency.
+Lessons may continue while stage ability remains unverified. Final completion still requires important horizontal components, independent answers and experiments, stage reviews, and an independently designed, runnable Mini Version. A finished roadmap or complete set of articles cannot set PROJECT_COMPLETE.
 
-[MIT License](LICENSE). Report issues at [zgozh/deep-codebase](https://github.com/zgozh/deep-codebase/issues).
+## Update and boundaries
+
+For a CLI installation, update only this skill with `npx skills update deep-codebase-learning -g`, or `-p` for project-local installation. Follow installer/host discovery rules. Manual updates replace only installed skill files, never the target project's `.codelearn/`; re-read the latest skill in a conversation that already loaded old instructions.
+
+- Generated notes are candidates to check. Article quality and scoped source/runtime verification are separate; self-review or subagent review is not proof of actual learning or deployment behavior.
+- Teaching does not authorize arbitrary edits, dependency installation, paid external calls, uploads, or production experiments.
+- The skill works when invoked, without a background scheduler, atomic multi-file transaction, or concurrent shared-state writers. You decide whether to commit or ignore learning memory.
+- Current behavior evidence is bounded and described in [validation](docs/validation.md). The latest prompt/document checks do not prove model compliance, success for all projects, or long-term learner outcomes.
+
+The installable package is [deep-codebase-learning/](deep-codebase-learning/SKILL.md). Repository docs and maintainer checks are separate. See [current acceptance examples](docs/examples.md#l-v160-笔记优先与可选委派验收), [changelog](CHANGELOG.md), and [design provenance](docs/inspirations.md).
+
+Design references include [learn-codebase](https://github.com/ktaletsk/learn-codebase), [learning-codebases](https://github.com/Eijnewgnaw/learning-codebases), [tutor](https://github.com/kevinnio/tutor), [code-learn-skill](https://github.com/yumeiriowl/code-learn-skill), and [repo-learner-suite](https://github.com/PranitMohnot/repo-learner-suite). No upstream code/templates are copied and none is a runtime dependency. [MIT License](LICENSE). [Issues](https://github.com/zgozh/deep-codebase/issues).
