@@ -4,7 +4,7 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.7.0。
+`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.7.1。
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -160,6 +160,8 @@ CLI 安装后可用 `npx skills update deep-codebase-learning -g` 只更新本 S
 稳定 Stage/Topic ID 保留，中文名称反映教材内容；不把全部小课堆进 `主题/`。旧英文/主题目录在受影响范围迁移，更新索引、Stage、state、journal、review 和互链，不删历史或覆盖重名目标。每次交付前检查必要新词、真实注释源码、调用/状态、机制、例子/失败、已读官方资料、事实边界、独立可读性、叙事和路径一致性；不合格先补。详见 [独立冷读门禁](deep-codebase-learning/references/notes.md#note-quality-gate)。
 
 **自动和显式笔记默认都作为待核对的候选内容。** `draft/validated` 表达文章质量状态；`unverified/source_checked/runtime_checked` 表达实际核对及其范围。导师自检只算辅助，不能授予 validated；独审通过也不代表实测或你已经掌握，未运行实验和未知作者意图不会被写成事实。完整规则见 [使用指南](docs/usage.md) 和 [笔记协议](deep-codebase-learning/references/notes.md)。
+
+返修先保留可恢复的修前版本，局部补缺并保留原正确必要解释；不能把详细教材改成摘要。G1 核语法/机制深度，G2 核正常与失败值链，二者分别通过。首版完整冷读，后续仅在旧深度证据可靠时复核改动与影响链；普通状态收尾不重读全文，未变证据不反复全验。这样控制返工，不减少讲解，也不保证实际耗时或模型执行。
 
 ## 一小段示例
 

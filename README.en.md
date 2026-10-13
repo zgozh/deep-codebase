@@ -4,7 +4,7 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.7.0. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.7.1. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -96,6 +96,8 @@ Categories follow the actual project, not a fixed syllabus or a single generic t
 Investigated source, prepared drafts, delivered materials, actual explanation depth, and learner evidence are separate. Formal delivered/validated status requires independent full-text review of the same frozen lesson body, G0 source/structure checks, G1 paragraph readability, G2 concrete normal/failure replay answers with article locations, document checks, readback, and indexing. Self-checks cannot grant validated. Complete readable drafts remain draft/prepared, clearly awaiting review, and teaching can continue. This does not establish that you read or understood it. Writing or reading a note never automatically raises mastery, including Level 1. Coverage, knowledge mastery, and reconstruction ability are tracked separately.
 
 Lessons may continue while stage ability remains unverified. Final completion still requires important horizontal components, independent answers and experiments, stage reviews, and an independently designed, runnable Mini Version. A finished roadmap or complete set of articles cannot set PROJECT_COMPLETE.
+
+Repairs retain a recoverable previous version and preserve correct, necessary teaching content. A detailed lesson cannot be replaced with a summary. G1 syntax/mechanism depth and G2 normal/failure value replay pass separately. The first draft receives a full independent cold read; later reviews reuse only reliable depth evidence and inspect changes and affected dependencies. Routine status updates do not trigger another full read or repeat unchanged checks. These rules reduce unnecessary rework without reducing explanation depth; actual speed and model compliance are not guaranteed.
 
 ## Update and boundaries
 

@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.7.0"
+  version: "1.7.1"
 ---
 
 # Deep Codebase Learning
@@ -23,7 +23,7 @@ Conversation is not the learning record. Journal is the structured record of the
 3. 首次提供一次 [编写模式选择](references/authoring.md)：默认单会话；环境支持且用户选择时，主会话规划与独立审查、子 agent 编写。尚未选择保持单会话，不让选择或环境缺少子 agent 阻塞首节。模式不是知识测验，不锁定模型。
 4. 全景尚未充分交付就先写第一节：业务问题 → 能力 → 模块边界 → 白话端到端流程，再逐层进入真实源码。有前后端则贯通。完整路线含其他能力、横向审计和重建；不以问卷、文件表或陌生问题开场。
 5. 选择一个可理解的因果目标，实际读相关源码与适用版本的官方章节，按 [教学协议](references/teaching.md) 及 [笔记协议](references/notes.md) 写详细、连贯的小课。概念在首次影响理解的位置解释，重要源码逐行/逐语义注释，配贯穿流程的具体示例与实际失败分支。大目标拆连续小课，保留必要深度与接续点。
-6. 作者完成完整初稿后定点查证、集中自查并做 V0：回读修改、核对本地 Markdown 链接/路径、解析相关 JSON。冻结实际正文身份后按 [G0/G1/G2 独审](references/notes.md#note-quality-gate) 取得可重放答案；子稿由主会话独立全文读取，未合格返修。single 完整稿可供阅读但标 draft/待独审，自查不能 validated；没有应用改动不自动运行应用测试/构建。
+6. 按 [作者流程](references/authoring.md) 尽早完成可读初稿再定点查证；返修先确认可恢复修前版本、保留正确必要教学单元，不重写成摘要。冻结正文与顶部元数据实际身份，首版独立完整冷读 [G0/G1/G2](references/notes.md#note-quality-gate)，G1 语法/机制与 G2 值链分别通过；旧深度证据可靠才沿用未变范围。收尾集中 V0 一次，修后核影响链，不因普通状态收尾重读全文。single 完整稿仍 draft/待独审，自查不能 validated；不自动跑应用测试/构建/浏览器，用户明确跳过时遵守。
 7. 每个 meaningful interaction 在结束响应及换 Topic 前执行 POST-TURN LEARNING COMMIT。已保存、回读、独审/V0通过且入索引的教材记 delivered；完整待独审可读稿与备课均留 prepared，但索引区分两者。交付不表示用户已阅读或掌握，写出/读过笔记均不提升 mastery。聊天只报告主题、实际范围和入口，不重复整课；必要交付失败必须说明。
 
 ## 持续教学边界
@@ -49,4 +49,4 @@ Conversation is not the learning record. Journal is the structured record of the
 | 每节笔记、显式总结、文章质量与路径 | [notes.md](references/notes.md) |
 | 任意 Mermaid 编写/修改 | [diagrams.md](references/diagrams.md) |
 
-仅加载当前必要资源。每节及时落盘；Stage 能力通过再更新综合文章及完成状态。课程交付可继续，能力验收仍待真实学习者证据。全系统审计和独立 Mini Version 通过才写 PROJECT_COMPLETE。
+仅加载当前必要资源，同版本/内容未变的已读规范与证据复用；新会话、上下文丢失或变更才重读必要部分。每节及时落盘，有价值问答/中断保持最小 checkpoint；语义审查后集中更新本课 projections。Stage 能力通过再更新综合文章及完成状态。课程可继续，能力仍待真实证据；全系统审计和独立 Mini Version 通过才 PROJECT_COMPLETE。

@@ -98,7 +98,7 @@ knowledge/index 只路由当前有用概念到 `knowledge/<topic-id>.md`，多�
 
 ## PRE-TURN LOAD
 
-每次新会话/“继续学习”执行完整协议；同会话继续时复用已加载协议和未变状态，只读必要变更。
+新会话或上下文丢失时恢复本协议必要记录；同会话“继续学习”复用同版本/内容未变的已读规范、模板和证据，只读实际必要变更。恢复仍核最新状态/意图与 pending，不以复用跳过身份或失效检查。
 
 1. 查 `.codelearn/state.json`。不存在时检查残留目录和其他学习记忆，避免覆盖；真正全新才初始化。目录存在却 state 丢失则从 roadmap、阶段合同与最近 committed 事件重建保守检查点，不能当新学习者抹掉成果。
 2. 核对 schema/项目身份、恢复 pending。读当前 roadmap/stage 的最新交付偏好、编写模式及已交付范围、相关 mastery/coverage/knowledge/review、中文笔记索引与本节必需前课段落；近期 journal 默认 3–5 个有价值事件，必要时向当前合同查较早持久偏好。不读全历史，不把 prepared 当 delivered 或把 delivered 当掌握。
@@ -110,12 +110,12 @@ knowledge/index 只路由当前有用概念到 `knowledge/<topic-id>.md`，多�
 
 ## POST-TURN LEARNING COMMIT
 
-每轮交付前先过 [单轮自检](teaching.md#发送前单轮交付自检)，笔记正式交付还须独审/V0，待独审可读稿单独登记，再在响应结束及换 Topic 前提交。prepared 草稿与正式 delivered 分开，只有充分解释及来源可支持 explained 覆盖，职责表/类名箭头不够；任何交付/阅读不提升 mastery。未合格保留调查/待写点，已有真实证据不回退；有价值变化自动保存，单纯问候不造事件。
+每个 meaningful interaction 仍在响应结束或换 Topic 前保存有价值变化，中断留最小 checkpoint，不把所有记忆拖到整课成功。整课语义独审完成后集中更新相关 projections、按 [作者流程](authoring.md#冻结独立主审与返修) 收尾一次批量 V0；未变证据不重复，最后仅 state 指针变化只补相关 JSON/指针。prepared 与正式 delivered 分开，充分解释及来源才支持 explained，职责表/类名箭头不够；教材或阅读不升 mastery。未合格保留调查/待写点，单纯问候不造事件。
 
 1. **CLASSIFY**：判定有哪些学习事件，回答是否 independent/hinted/tutor-provided。
 2. **EXTRACT**：提取新事实、出处、用户理解、错误/纠正、问题、预测、实际结果；不要捏造未运行观察。
 3. **EVALUATE**：按真实证据评估 mastery/coverage、gap/misconception、源码有效性。正式笔记只支持实际充分解释/追踪范围；没有学习者表现，不增加 mastery，包括 L1。用户说读过或懂不等于独立理解。
-4. **PERSIST**：先追加 pending 事件/writes/deltas，再写 state.pending_commit；由唯一主会话更新必要 coverage/mastery/knowledge/review/stage/roadmap、教材与中文索引。回读、检查 JSON/本地路径/锚点及 ID 对应实际符号，核对独审版本与源码版本，通过的教材记 delivered/解释深度。待独审完整稿与未完成稿仍 prepared，区分实际可读范围，不将其提升为正式 explained coverage。事件改 committed；最后更新 state 指针/current/awaiting/next_action 并清 pending。无题 awaiting=null，写出/可读不代表用户已读或掌握。
+4. **PERSIST**：先追加 pending 事件/writes/deltas，再写 state.pending_commit；唯一主会话更新本次必要 coverage/mastery/knowledge/review/stage/roadmap、教材及索引。按本次影响范围回读校验 JSON/current Stage/Topic、事件/pending、路径/源锚点和独审身份；完整课集中检查，不反复全验未变 Markdown。通过才记 delivered/解释深度；待独审完整稿与未完成稿仍 prepared，不升正式 explained coverage。projections 校验后事件 committed；最后更新 state 指针/current/awaiting/next_action 并清 pending，若此步改变仅补相关 JSON/指针校验。无题 awaiting=null，写出/可读不证明阅读或掌握。
 5. **CHECKPOINT**：每节教材及时落盘，Topic 内容收束和用户学习闭环分开；边界或显式总结再综合，独立复述/实验 waiting 不阻止写作。保留真实个人理解/待验证、机制与证据；结束/切阶段/积累时 checkpoint、阅读入口和下一步。同一固定会话也执行。答疑发现实质文章缺漏同步修订与索引/进度，不凭澄清重写整课。
 6. **STAGE CHECK**：核对 exit criteria，尚未交付/尚未评估为正常 in_progress；教材可继续到合理后续内容，未验收阶段仍开放。能力通过才标完成，不能将每个 waiting 变强制测验或补救。阶段综合教材可先合格，能力门禁和文章门禁分别记。
 7. **PLAN**：next_action 明确下一源码符号/环节、因果目标、完成条件与必要加载路径，笔记结尾给接续点。交付确认是内部步骤，不是下一课全部目标；能力未验证不标 complete，但不阻止教材继续。如 checkpoint/stage/note 又有增量纳入本次事件与状态，不拖到下次才保存。
@@ -132,7 +132,7 @@ v1 没有跨文件原子事务。发现 state.pending_commit 或 active journal 
 
 ## 源码变化
 
-Resume、Stage 开始/完成、Horizontal Audit、Reconstruction 对照前检查：git branch、HEAD、工作树相关路径差异；commit 不足以发现 dirty/untracked，更不能忽略非 Git 项目。首次用身份清单与相关文件 hash 建立基线；恢复时重新计算当前 Topic/Stage 及即将使用证据的 hash。阶段/最终审计逐分片检查所有 Critical/Important source_refs。
+Resume、Stage 开始/完成、Horizontal Audit、Reconstruction 对照前检查 git branch/HEAD 及相关工作树差异；commit 不足以发现 dirty/untracked，非 Git 也须核身份。首次建相关 hash 基线；新会话、内容变更、基线不可靠或无法确认未变时重算即将使用证据的相关 hash，已确认内容未变的证据保留，不逐轮全量重算。阶段/最终审计仍逐分片检查所有 Critical/Important source_refs。
 
 Git 可用时从旧 commit diff 到当前，并包含 working tree 与 untracked；旧 commit 不可用、非 Git 或分支大改时按模块布局与路径 hash 分批比对。不每轮 hash 全仓。基线 hash 未记录就标无法验证并读取相关源码补基线，不能假定没变。
 

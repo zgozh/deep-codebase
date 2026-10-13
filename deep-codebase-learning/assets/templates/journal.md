@@ -29,4 +29,4 @@
 - awaiting：待回答题目与场景，或 null
 - next_action：type、target、reason、completion_condition、load
 
-写入过程中保持 pending；projections 校验后改 committed，最后更新 state 指针。
+本课语义审查后集中更新相关 projections，但有价值问答/中断及时最小 checkpoint，不等整课通过。写入过程中保持 pending；projections 校验后改 committed，最后更新 state 指针。最终批量 V0 一次，未变证据沿用；最后仅 state 指针改动只补相关 JSON/指针。返修事件记可恢复修前版本、保留/删改单元依据和实际复核/沿用旧深度证据范围，不以 hash 或几项修正证明全文质量。

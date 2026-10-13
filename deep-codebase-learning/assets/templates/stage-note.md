@@ -2,7 +2,9 @@
 
 按 [教学合同](../../references/teaching.md#唯一教学交付合同) 写正文，删除模板指令；按当前因果目标自然组织，不按固定章节或标题数量验收。成品展开方式参照 [逐句示例](../../references/quality-example.md)。
 
-顶部元数据独立于教学正文：kind、Stage/Topic/课 ID、源码版本与有效性、status=draft/validated/needs_revalidation、verification=unverified/source_checked/runtime_checked/needs_revalidation、实际 author/reviewer、review_ref、来源事件、修订说明。draft 完整可读稿标“待独审”；validated 只由独审授予。review 记录正文冻结起止/hash或实际版本，不在正文放备课清单、自评或审核答案。
+顶部元数据独立于正文：kind、Stage/Topic/课 ID、源码版本/有效性、status、verification、实际 author/reviewer、review_ref、来源事件与修订说明。冻结前固定这些字段、顺序与行数，未发生值留空，稿仍 draft/待独审，不预填 validated/pass。review 同时存正文起止/hash/实际版本与 frontmatter 快照/身份；通过后原位收尾现有审核字段，不增删 header 行。备课、自评和审核答案不进正文。
+
+返修先有可恢复的修前版本，局部补缺；原正确必要教学单元保留，删改/迁移有依据。hash 只锁身份，不能证明深度保留；不把教材重写成用途摘要。
 
 ## 一个动作为什么产生这个结果
 
@@ -12,7 +14,7 @@
 
 每个源段先列：相对路径、真实起止行、符号与版本、实际调用者/时机、输入、状态、返回及消费者。给完整职责段，省略列范围/职责/理由，教学补注明示。
 
-代码后用“原行 / 语法与具体值 / 执行变化及原因、下一消费者”的表或小段逐句展开全部有意义语句；不把大段行范围对应一个用途摘要。定义、注册、回调触发分开；官方规则就地讲机制、源码映射、条件/版本/证据边界后附直链。
+代码后用自然细致段落或小表逐句展开全部有意义语句：语法如何读、具体值如何进入表达式、执行变化/框架机制为何成立、后果和消费者。不要把大段行范围压成几条用途 bullet。定义/注册/回调触发、回调 return/外层 return、异步/同步工作等当前必要边界就地辨明，官方规则讲机制/源码映射/版本边界后附直链。
 
 ## 顺调用与数据交接继续
 
