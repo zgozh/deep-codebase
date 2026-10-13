@@ -1,26 +1,50 @@
 # Review
 
-填 ID、kind（quiz/experiment/stage/note-quality/horizontal-audit/reconstruction/project/recovery）、相关 Stage/Concept、来源事件、源版本/有效性、结果 waiting/pass/fail/blocked；删除说明并只保留本次适用章节。
+填实际 ID、kind（quiz/experiment/stage/note-quality/horizontal-audit/reconstruction/project/recovery）、Stage/Concept、来源事件、源版本/有效性；只保留适用章节。能力 waiting/pass/fail/blocked 与文章 waiting/changes_requested/pass 分开。
 
-## 验收问题与范围
+## 验收问题与实际证据
 
-## 证据
-
-| Criterion ID | 题目/机制/预期 | 用户表现/实际观察 | 提示/帮助程度 | 证据位置/事件 | 评价/未解项 |
+| Criterion ID | 题目/预期 | 用户真实表现或运行观察 | 提示/帮助 | 证据位置/事件 | 评价/缺口 |
 |---|---|---|---|---|---|
 
-## 实验（适用时）
+## 实验或重建（适用时）
 
-预测 → 授权与基线 → 修改 → 命令/退出码 → 可复查观察 → 用户解释 → 清理/恢复。未运行必须标明；结果来自用户陈述但未检查则 unverified。
+实验：实际预测、授权/基线、修改、命令/退出码、可复查观察、用户解释、清理。未运行写未运行。重建：用户设计冻结、查阅/提示程度、实际实现和验证、My Design vs Original Design、取舍与尚未实现机制。
 
-## 重建（适用时）
+## 文章冻结身份（note-quality）
 
-用户设计冻结、查阅/提示程度、实际实现定位、验证结果、My Design vs Original Design、场景与 trade-off、尚未实现机制。
+- 实际 author / reviewer、single/delegated、review_method；作者自查只算辅助，不能 pass。
+- 文件路径；正文准确起止标记/范围、编码；工具实算 hash 或可取回原文的真实版本；事实元数据检查范围。状态/审核元数据不计入正文hash，正文变动必须重新冻结。
+- 源码版本、checked_scope、unchecked_claims、实际全文读取范围；先冷读全文，再回源核实，不先看作者自评。
 
-## 门禁与下一动作
+## G0 结构与来源
 
-每个 required 条件有证据；未通过不能用 optional/N/A 替换。记录 mastery/coverage delta、note 质量结果、next_action。
+| 检查对象 | 实际核对结果（版本/原行与内容/省略/入口） | 文件或文章位置 | 缺陷/结论 |
+|---|---|---|---|
 
-笔记评审记录实际 author/reviewer、single/delegated、review_method（自检/实际主审/第二审查者/用户核对）、checked_scope、逐项出处及 unchecked_claims；按 notes.md 十项门禁逐项列 pass/fail/N/A、文章位置与理由，包括 V0 回读、Markdown 路径/锚点、相关 JSON 与中文目录/索引一致性。关键漏讲先修，不只自报通过。质量 pass 与 source/runtime verification 和学习者能力分开，waiting 不冒充 Stage 通过，完整教材可 validated 而能力 waiting。
+写实际 V0 回读、Markdown/JSON/索引检查结果。图记最终图位置、工具/版本、自检/解析/渲染与未测；没有图说明 N/A。路径存在与围栏配对不证明语义质量。
 
-存在 Mermaid 时记录 diagram_check（自检/解析/渲染）、工具/版本、最终图定位/检查结果与未测项；语法通过不证明业务正确，已知 syntax error 未修复则文章门禁 fail。
+## G1 全文逐段可读
+
+逐段审教学合同，覆盖首段至末段。按真实段落增行，不能只抽关键片段。
+
+| 实际段落范围 | 术语/语法/API 的具体含义及当前用途 | 源语句展开/机制是否可读及文章位置 | 必要缺漏/错误 |
+|---|---|---|---|
+
+同义翻译或未解释语法均失败；解释不能由审核者读源码补上。重要事实/规则回源复核的实际出处另列。
+
+## G2 只靠教材重放
+
+正常与重要失败分别填写，必要步骤全列。第一遍只凭教学正文找答案，不用源码、作者报告或审核者自身语言/框架常识补缺；随后才回源核真假。每格必须是具体答案及文章位置，不填“已解释”或只贴链接；缺答案即 changes_requested。
+
+| 路径/步 | 输入值从谁/哪字段来 | 谁何时调用及交接后的值/载体 | 分支判断、状态前→后 | 返回/异常、谁消费 | 可见结果及成立条件 | 每项文章位置 |
+|---|---|---|---|---|---|---|
+
+逐项检查正文结果断言：是否把静态调用变成到达/UI事实？入口、状态对象、URL/服务端参数等交接是否保持同一值？段末 unknown 是否与正文必然断言矛盾？回源后写教材答案与源码/官方事实是否一致。
+
+## 返修与最终结论
+
+| 缺陷/原段 | 返修目标与依据 | 新冻结正文身份 | 实际复核范围/答案 | 沿用旧证据及版本 | 结果 |
+|---|---|---|---|---|---|
+
+最终逐门写 G0/G1/G2 结论、未答项与理由。同一最终冻结版全过才文章 pass/validated/delivered；没有独审为 waiting，作者自查不可通关。稿变旧通过失效，复核受影响上下游；事实元数据变更也复核。记录下一动作，能力仍依真实用户证据，不因文章 pass 提升。

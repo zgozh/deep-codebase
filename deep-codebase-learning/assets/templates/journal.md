@@ -1,6 +1,6 @@
 # Stage Learning Journal
 
-按记忆协议分开 investigated、prepared、delivered、explained 与 learner-evidence。正式笔记保存/回读/内容门禁/V0/索引成功才 delivered；草稿和拟发聊天 prepared，实际聊天解释才用可见依据确认。pending/committed 是文件写入状态，交付不等于阅读/能力。按真实事件填，未发生项省略。
+按记忆协议分开 investigated、prepared、delivered、explained 与 learner-evidence。正式笔记冻结版经独审/保存/回读/V0/索引成功才 delivered；完整待独审可读稿与未完成稿分别登记为 prepared，拟发聊天也 prepared，实际聊天解释才用可见依据确认。pending/committed 是文件写入状态，交付不等于阅读/能力。按真实事件填，未发生项省略。
 
 填 Stage ID、分片序号、事件范围，删除模板说明。以下事件骨架用于每个有学习价值的交互；填写实际内容，未发生项可省略。
 

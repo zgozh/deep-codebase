@@ -84,13 +84,13 @@ Journal/阶段检查点按下节记录实际概念解释深度与可见依据；
 |---|---|
 | investigated | 导师查过哪些源码、版本与资料；不代表已教 |
 | prepared | 调查后的拟交付解释/草稿及范围，未通过交付门禁；不是正式教材 |
-| delivered | 笔记已保存、回读、内容门禁/V0通过、登记索引，可供阅读；记录路径、版本、事件与 review，不证明用户已读 |
+| delivered | 同一冻结版经独立 G0/G1/G2 与 V0通过，已保存、回读、登记索引的正式教材；记录路径、正文身份、事件与 review，不证明用户已读 |
 | explained | 具体充分解释的范围/深度：已交付笔记段落，或实际可见聊天消息；记出处，不是能力 |
 | learner-evidence | 实际回答/预测/实现/实验及 independent/hinted/tutor-provided；能力单独评估 |
 
-这些是语义范围，不是 mastery 等级或文件事务状态。pending/committed 只是写入过程，文件存在不保证合格。已通过内容/V0并保存、回读、索引的笔记能确认 delivered 与具体解释范围；不能推断阅读/掌握，未展开内部不能算已解释。聊天拟发内容仍 prepared，只有实际可见消息才确认 explained，不假定发送回调。旧版“explained 只能由聊天证明”不再适用笔记正式交付；旧 prepared 文档须回读核对再交付，不能批量升级。
+这些是语义范围，不是 mastery 等级或文件事务状态。pending/committed 只是写入过程，文件存在不保证合格。完整待独审可读稿仍 prepared，在索引/journal 写明实际完成范围、待独审入口和下一课，可阅读且不阻止继续写作；作者自查不授予 validated 或正式 delivered。已通过独审/V0并保存、回读、索引的笔记能确认 delivered 与具体解释范围；不能推断阅读/掌握，未展开内部不能算已解释。聊天拟发内容仍 prepared，只有实际可见消息才确认 explained，不假定发送回调。旧版“explained 只能由聊天证明”不再适用笔记正式交付；旧 prepared 文档须回读核对再交付，不能批量升级。
 
-恢复交付中断时核对实际笔记/索引/review/事件，满足条件才确认 delivered；缺失就 prepared 并补稿，不声称已发聊天链接。旧泛称“讲过”按当前触及概念补深度，保留稳定 ID 和真实能力历史，不全量批改。中文阶段分类迁移按笔记协议映射并检查所有相关引用。
+恢复交付中断时核对实际笔记/索引/review/事件及所审冻结版本，满足条件才确认 delivered；缺失就 prepared，完整稿标待独审并继续下一节，内容未完成才补稿，不声称已发聊天链接。旧泛称“讲过”按当前触及概念补深度，保留稳定 ID 和真实能力历史，不全量批改。中文阶段分类迁移按笔记协议映射并检查所有相关引用。
 
 knowledge/index 只路由当前有用概念到 `knowledge/<topic-id>.md`，多个相关条目可共用文件，不为每个标点建档。简记 Concept ID、白话/当前用途、实际解释深度/仍缺部分、例子或混淆、正式教材段落/可见聊天/官方章节/源码/事件与返回点。详细正文指向中文阶段教材，不复制整篇；无正式交付/实际可见依据的解释留 prepared，不造全项目占位词典。学习者能力另记。
 
@@ -110,12 +110,12 @@ knowledge/index 只路由当前有用概念到 `knowledge/<topic-id>.md`，多�
 
 ## POST-TURN LEARNING COMMIT
 
-每轮交付前先过 [单轮自检](teaching.md#发送前单轮交付自检)，笔记还过质量/V0，再在响应结束及换 Topic 前提交。prepared 草稿与正式 delivered 分开，只有充分解释及来源可支持 explained 覆盖，职责表/类名箭头不够；任何交付/阅读不提升 mastery。未合格保留调查/待写点，已有真实证据不回退；有价值变化自动保存，单纯问候不造事件。
+每轮交付前先过 [单轮自检](teaching.md#发送前单轮交付自检)，笔记正式交付还须独审/V0，待独审可读稿单独登记，再在响应结束及换 Topic 前提交。prepared 草稿与正式 delivered 分开，只有充分解释及来源可支持 explained 覆盖，职责表/类名箭头不够；任何交付/阅读不提升 mastery。未合格保留调查/待写点，已有真实证据不回退；有价值变化自动保存，单纯问候不造事件。
 
 1. **CLASSIFY**：判定有哪些学习事件，回答是否 independent/hinted/tutor-provided。
 2. **EXTRACT**：提取新事实、出处、用户理解、错误/纠正、问题、预测、实际结果；不要捏造未运行观察。
 3. **EVALUATE**：按真实证据评估 mastery/coverage、gap/misconception、源码有效性。正式笔记只支持实际充分解释/追踪范围；没有学习者表现，不增加 mastery，包括 L1。用户说读过或懂不等于独立理解。
-4. **PERSIST**：先追加 pending 事件/writes/deltas，再写 state.pending_commit；由唯一主会话更新必要 coverage/mastery/knowledge/review/stage/roadmap、教材与中文索引。回读、检查 JSON/本地路径/锚点及 ID 对应实际符号，核对质量与源码版本，合格教材记 delivered/解释深度。不合格稿仍 prepared。事件改 committed；最后更新 state 指针/current/awaiting/next_action 并清 pending。无题 awaiting=null，写出/可读不代表用户已读或掌握。
+4. **PERSIST**：先追加 pending 事件/writes/deltas，再写 state.pending_commit；由唯一主会话更新必要 coverage/mastery/knowledge/review/stage/roadmap、教材与中文索引。回读、检查 JSON/本地路径/锚点及 ID 对应实际符号，核对独审版本与源码版本，通过的教材记 delivered/解释深度。待独审完整稿与未完成稿仍 prepared，区分实际可读范围，不将其提升为正式 explained coverage。事件改 committed；最后更新 state 指针/current/awaiting/next_action 并清 pending。无题 awaiting=null，写出/可读不代表用户已读或掌握。
 5. **CHECKPOINT**：每节教材及时落盘，Topic 内容收束和用户学习闭环分开；边界或显式总结再综合，独立复述/实验 waiting 不阻止写作。保留真实个人理解/待验证、机制与证据；结束/切阶段/积累时 checkpoint、阅读入口和下一步。同一固定会话也执行。答疑发现实质文章缺漏同步修订与索引/进度，不凭澄清重写整课。
 6. **STAGE CHECK**：核对 exit criteria，尚未交付/尚未评估为正常 in_progress；教材可继续到合理后续内容，未验收阶段仍开放。能力通过才标完成，不能将每个 waiting 变强制测验或补救。阶段综合教材可先合格，能力门禁和文章门禁分别记。
 7. **PLAN**：next_action 明确下一源码符号/环节、因果目标、完成条件与必要加载路径，笔记结尾给接续点。交付确认是内部步骤，不是下一课全部目标；能力未验证不标 complete，但不阻止教材继续。如 checkpoint/stage/note 又有增量纳入本次事件与状态，不拖到下次才保存。
