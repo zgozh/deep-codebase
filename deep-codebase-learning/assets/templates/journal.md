@@ -1,6 +1,6 @@
 # Stage Learning Journal
 
-按记忆协议分开 investigated、prepared、delivered、explained 与 learner-evidence。正式笔记冻结版经独审/保存/回读/V0/索引成功才 delivered；完整待独审可读稿与未完成稿分别登记为 prepared，拟发聊天也 prepared，实际聊天解释才用可见依据确认。pending/committed 是文件写入状态，交付不等于阅读/能力。按真实事件填，未发生项省略。
+按记忆协议分开 investigated、prepared、delivered、explained 与 learner-evidence。完整教材实际通读、必要修稿/V0、保存/索引成功可 delivered；single 记 ready/self_review，真实独立审读范围可 validated。未完整稿或拟发聊天 prepared，实际聊天解释用可见依据确认。pending/committed 是写入状态，交付不是阅读或能力。按真实事件填，未发生项省略。
 
 填 Stage ID、分片序号、事件范围，删除模板说明。以下事件骨架用于每个有学习价值的交互；填写实际内容，未发生项可省略。
 
@@ -29,4 +29,4 @@
 - awaiting：待回答题目与场景，或 null
 - next_action：type、target、reason、completion_condition、load
 
-本课语义审查后集中更新相关 projections，但有价值问答/中断及时最小 checkpoint，不等整课通过。写入过程中保持 pending；projections 校验后改 committed，最后更新 state 指针。最终批量 V0 一次，未变证据沿用；最后仅 state 指针改动只补相关 JSON/指针。返修事件记可恢复修前版本、保留/删改单元依据和实际复核/沿用旧深度证据范围，不以 hash 或几项修正证明全文质量。
+每个有价值互动/中断及时保存实际变化和最小 checkpoint，不等整课通过；仅记录实际调查、写出与审读范围，不重复全文。写入中 pending，projections 校验后 committed，最后更新 state 指针。返修简记可恢复旧版、实际缺口/保留边界及影响链复读，不另造逐段审查表；未变证据不反复全验。

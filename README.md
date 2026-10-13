@@ -4,7 +4,7 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.7.1。
+`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.8.0。
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -86,7 +86,7 @@ CLI 安装后可用 `npx skills update deep-codebase-learning -g` 只更新本 S
 
 **默认单会话，首次可选委派。** 选择委派且宿主支持时，主会话规划每节目标/前置/范围，子 agent 写独占教材草稿，主会话逐段审查源码/资料映射并要求返修，合格后统一保存状态/索引。未选择或不支持则单会话；没有新工具、后台或模型限制。方法与所有权见 [编写模式](deep-codebase-learning/references/authoring.md)。
 
-调查 investigated、草稿 prepared、正式教材 delivered、具体解释 explained、学习者证据 learner-evidence 分开。同一冻结正文经独立 G0/G1/G2、V0并入索引才 delivered；single 完整可读稿仍 draft/prepared，标待独审且可继续下一节，不代表你已读或掌握。写出/阅读教材不会增加 mastery；合格内容可以交付，而 Stage 能力仍待验证。
+调查 investigated、草稿 prepared、正式教材 delivered、具体解释 explained、学习者证据 learner-evidence 分开。完整教材实际通读、补齐必要解释、V0/保存/索引后 delivered；single 可记 ready/self_review，真实独立审读范围可 validated，独审不是交付门票，不代表你已读或掌握。写出/阅读教材不会增加 mastery；合格内容可以交付，而 Stage 能力仍待验证。
 
 | 环节 | 你获得的能力或记录 |
 |---|---|
@@ -126,7 +126,7 @@ CLI 安装后可用 `npx skills update deep-codebase-learning -g` 只更新本 S
 
 | 时机 | 自动产物 |
 |---|---|
-| 本节一个因果目标形成完整、核对过的教学单元 | 中文阶段内容目录的详细小课，独审/V0通过后正式交付；完整待独审稿可读，不等测验或独审才写下一节 |
+| 本节一个因果目标形成完整、核对过的教学单元 | 中文阶段内容目录的详细小课，实际通读、必要修稿/V0、保存/索引后正式交付，不等测验或独审 |
 | 多个相关主题积累到自然边界或上下文紧张 | 检查主题笔记已落盘，更新阅读索引、检查点与下一动作 |
 | Topic/Stage 内容自然收束 | 整合主链与跨课关系，可先交付阶段文章；能力验收仍等待 |
 | 阶段学习验收通过 | 更新综合文章与真实证据，能力/文章两门通过才标 Stage 完成 |
@@ -157,11 +157,11 @@ CLI 安装后可用 `npx skills update deep-codebase-learning -g` 只更新本 S
   重建复盘.md
 ```
 
-稳定 Stage/Topic ID 保留，中文名称反映教材内容；不把全部小课堆进 `主题/`。旧英文/主题目录在受影响范围迁移，更新索引、Stage、state、journal、review 和互链，不删历史或覆盖重名目标。每次交付前检查必要新词、真实注释源码、调用/状态、机制、例子/失败、已读官方资料、事实边界、独立可读性、叙事和路径一致性；不合格先补。详见 [独立冷读门禁](deep-codebase-learning/references/notes.md#note-quality-gate)。
+稳定 Stage/Topic ID 保留，中文名称反映教材内容；不把全部小课堆进 `主题/`。旧英文/主题目录在受影响范围迁移，更新索引、Stage、state、journal、review 和互链，不删历史或覆盖重名目标。每次交付前检查必要新词、真实注释源码、调用/状态、机制、例子/失败、已读官方资料、事实边界、独立可读性、叙事和路径一致性；不合格先补。详见 [教材通读要求](deep-codebase-learning/references/notes.md#note-quality-gate)。
 
-**自动和显式笔记默认都作为待核对的候选内容。** `draft/validated` 表达文章质量状态；`unverified/source_checked/runtime_checked` 表达实际核对及其范围。导师自检只算辅助，不能授予 validated；独审通过也不代表实测或你已经掌握，未运行实验和未知作者意图不会被写成事实。完整规则见 [使用指南](docs/usage.md) 和 [笔记协议](deep-codebase-learning/references/notes.md)。
+**自动和显式笔记默认都作为待核对的候选内容。** `draft/ready/validated` 表达文章质量状态；`unverified/source_checked/runtime_checked` 表达实际核对及其范围。single 实际通读补缺后可 ready/self_review 正常交付；validated 留真实独立审读范围，两者均不证明实测或掌握，未运行实验和未知作者意图不会被写成事实。完整规则见 [使用指南](docs/usage.md) 和 [笔记协议](deep-codebase-learning/references/notes.md)。
 
-返修先保留可恢复的修前版本，局部补缺并保留原正确必要解释；不能把详细教材改成摘要。G1 核语法/机制深度，G2 核正常与失败值链，二者分别通过。首版完整冷读，后续仅在旧深度证据可靠时复核改动与影响链；普通状态收尾不重读全文，未变证据不反复全验。这样控制返工，不减少讲解，也不保证实际耗时或模型执行。
+返修先有可恢复旧版，局部补缺、保留正确必要解释，不能改成用途摘要。一次通读同时看语法/机制和正常/失败值链；自己懂不能补正文。仅广泛重写、源码范围大变或影响不明才全文重读，不另造逐段报表。精简重复动作，保留详细教学；未证明规则长短单独导致质量变化，也不保证更快。
 
 ## 一小段示例
 

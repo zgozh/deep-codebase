@@ -4,7 +4,7 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.7.1. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.8.0. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -42,7 +42,7 @@ Framework and browser APIs are explained where they intervene: what they provide
 
 One concrete input runs through the current lesson's data/state/URL changes to its result. Actual important error, cancellation, rejection, retry, timeout, or fallback branches are explained when present. Source facts, documentation rules, static inference, observed execution, hypothetical example values, and unknowns remain distinct. Private source and personal records must not be uploaded or used in external searches.
 
-Small lessons limit causal scope, not explanation depth. Large flows become consecutive lessons with explicit boundaries, omitted internals, and a precise continuation. No arbitrary word target, long upfront glossary, repeated conclusions, or link-list homework. An independent G0/G1/G2 [note quality gate](deep-codebase-learning/references/notes.md#note-quality-gate) requires missing explanations to be repaired before delivery, alongside readback, local Markdown links and relevant JSON checks. Writing notes does not automatically run application tests or builds.
+Small lessons limit causal scope, not explanation depth. Large flows become consecutive lessons with explicit boundaries, omitted internals, and a precise continuation. No arbitrary word target, long upfront glossary, repeated conclusions, or link-list homework. The [lesson reading requirements](deep-codebase-learning/references/notes.md#note-quality-gate) require missing explanations to be repaired before delivery, alongside readback, local Markdown links and relevant JSON checks. Writing notes does not automatically run application tests or builds.
 
 Ask any question in chat and receive an answer deep enough to resolve it; a local question does not automatically become a whole class. A real omission, error, or ambiguity triggers a corresponding note/index/progress repair. A clarification alone need not rewrite a complete article. Full lessons appear in chat only when explicitly requested. Reading notes is not gated by quizzes, acknowledgment, or a reply of “continue.”
 
@@ -52,7 +52,7 @@ The first use in a learning project offers one choice:
 
 | Mode | Behavior |
 |---|---|
-| Single conversation, default | The current model plans, writes, self-checks, and saves a complete readable draft awaiting independent review |
+| Single conversation, default | The current model plans, writes a complete lesson, reads it through, repairs gaps, and saves it for delivery |
 | Principal planning/review with subagent authoring | The principal defines one bounded lesson; a subagent writes its exclusive draft; the principal independently reviews the content, requests repairs, and publishes it |
 
 No answer means single conversation, not permission to delegate. A previous explicit choice is restored rather than asked again. If subagents are unavailable, single-conversation teaching continues. No fixed model, reasoning setting, extra service, or installation is required. Delegation can cost more time/resources and does not guarantee correctness. Only the principal writes shared learning state and indexes; authors cannot modify project source or other agents' drafts. See [workflow rules](deep-codebase-learning/references/authoring.md).
@@ -93,11 +93,11 @@ Notes use Chinese content names by default even though teaching follows the lear
 
 Categories follow the actual project, not a fixed syllabus or a single generic topics folder. Existing notes migrate within the affected scope with index, stage, state, journal, review and inter-note references updated; history and evidence are retained. Conflicting or locked destinations are not overwritten or forcibly deleted.
 
-Investigated source, prepared drafts, delivered materials, actual explanation depth, and learner evidence are separate. Formal delivered/validated status requires independent full-text review of the same frozen lesson body, G0 source/structure checks, G1 paragraph readability, G2 concrete normal/failure replay answers with article locations, document checks, readback, and indexing. Self-checks cannot grant validated. Complete readable drafts remain draft/prepared, clearly awaiting review, and teaching can continue. This does not establish that you read or understood it. Writing or reading a note never automatically raises mastery, including Level 1. Coverage, knowledge mastery, and reconstruction ability are tracked separately.
+Investigated source, prepared drafts, delivered lessons, explanation depth, and learner evidence remain separate. A complete lesson can be delivered after an actual read-through, gap repair, necessary document checks, saving, and indexing. Single-conversation lessons may be ready/self_review; validated is reserved for a real independent review of a stated scope, which is optional. Drafts are not sufficient prior teaching. Ready lessons support coverage only where the actual explanation is sufficient. Neither writing nor reading raises mastery or proves runtime behavior.
 
 Lessons may continue while stage ability remains unverified. Final completion still requires important horizontal components, independent answers and experiments, stage reviews, and an independently designed, runnable Mini Version. A finished roadmap or complete set of articles cannot set PROJECT_COMPLETE.
 
-Repairs retain a recoverable previous version and preserve correct, necessary teaching content. A detailed lesson cannot be replaced with a summary. G1 syntax/mechanism depth and G2 normal/failure value replay pass separately. The first draft receives a full independent cold read; later reviews reuse only reliable depth evidence and inspect changes and affected dependencies. Routine status updates do not trigger another full read or repeat unchanged checks. These rules reduce unnecessary rework without reducing explanation depth; actual speed and model compliance are not guaranteed.
+Repairs retain a recoverable previous version and preserve correct, necessary explanations. Read the complete initial lesson once; then reread local repairs and affected dependencies. Broad rewrites, major source changes, or unclear impact warrant another full read. Keep a brief method/scope/gaps record rather than per-paragraph reports or lesson hashes. Detailed syntax, mechanisms, scenarios and reasons remain essential. Evidence does not establish that rule length alone caused quality problems, or that this workflow guarantees speed or compliance.
 
 ## Update and boundaries
 

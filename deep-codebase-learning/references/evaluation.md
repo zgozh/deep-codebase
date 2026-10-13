@@ -49,7 +49,7 @@ Restate 要学习者自己讲出起点、各层职责、关键数据/状态转�
 
 Criteria waiting 不等于用户失败，尚未教到时继续 TEACH；用户希望先听讲或从整体重排时暂停题目，保持必要能力验收 waiting，不降级、不捏造 confirmed gap、不完成阶段。后续合适边界再取得独立证据，不能为了“Evidence before mastery”把每轮变成考试。
 
-重要 Topic 讲解收束即按 [Notes 协议](notes.md) 写详细主题文章；显式总结也可提前写 Stage 草稿，缺失的能力/实验仍 waiting，phase/awaiting 保留，不能因有笔记就完成阶段。学习门禁通过后才进入 STAGE_SUMMARY，综合并审计 Stage 文章。质量门禁通过且关键事实实际核对、无关键 stale 证据，再写阶段 review、状态 complete 并自动安排下一个合适动作。文章的 validated 是冻结版经独立冷读通过的质量状态，不是运行验证或能力证据。正常教学到需要用户新回答时结束本轮；自主推进不意味着代答全部测验。
+重要 Topic 讲解收束即按 [Notes 协议](notes.md) 写详细主题文章；显式总结也可提前写 Stage 草稿，缺失的能力/实验仍 waiting，phase/awaiting 保留，不能因有笔记就完成阶段。学习门禁通过后才进入 STAGE_SUMMARY，综合并审计 Stage 文章。质量门禁通过且关键事实实际核对、无关键 stale 证据，再写阶段 review、状态 complete 并自动安排下一个合适动作。完整教材可 ready/self_review 并 delivered；validated 仅用于真实独立审读范围，独审不是阶段教材交付前提，也不是运行验证或能力证据。正常教学到需要用户新回答时结束本轮；自主推进不意味着代答全部测验。
 
 ## Reconstruction
 

@@ -6,7 +6,7 @@
 
 Project Coverage 跟踪实际区域与机制覆盖深度，Knowledge Mastery 跟踪真实学习者能力，Reconstruction Ability 跟踪脱离源码可重建的系统。文件数、教材篇数和用户说“懂了”不能替代任何能力证据。
 
-v1.7.1 默认正式交付是详细独立笔记，不再是聊天课堂后的重组。聊天简短给实际范围与链接、随时充分答疑；仅明确整课聊天请求才展全文。所有渠道共用 [详细内容合同](../deep-codebase-learning/references/teaching.md#唯一教学交付合同)，局部答疑按问题范围，不能要求源码/官方资料/聊天补齐当前必要解释。
+v1.8.0 默认正式交付是详细独立笔记，不再是聊天课堂后的重组。聊天简短给实际范围与链接、随时充分答疑；仅明确整课聊天请求才展全文。所有渠道共用 [详细内容合同](../deep-codebase-learning/references/teaching.md#唯一教学交付合同)，局部答疑按问题范围，不能要求源码/官方资料/聊天补齐当前必要解释。
 
 初学者默认：只提过名称、贴过源码或概述职责不算机制已解释。新概念在首次影响理解处给全称/白话/当前用途/例子，源码和解释紧邻，按具体业务场景及真实调用顺序展开。小课限制因果目标广度，不限制必要解释深度，不设字数目标；当前语言/框架前置先于依赖代码，范围大则拆连续中文小课。
 
@@ -20,11 +20,13 @@ v1.7.1 默认正式交付是详细独立笔记，不再是聊天课堂后的重�
 
 ## 单轮工作流与正式教材门禁
 
-恢复最新偏好与边界，复用未变已读内容 → 写一份完整初稿/保留修前版本后局部修 → 定点查证与自查 → 冻结正文及 frontmatter 身份 → 首版完整冷读、返修按可靠旧证据复核影响链 → 原位收尾审核字段、集中 projections/V0 与 POST-TURN → 真实范围/链接。问答和中断仍及时最小 checkpoint，不等整课成功。
+恢复偏好与实际教材边界 → 选问题/主链，读真实源码和必要官方资料 → 尽早写一份完整可读稿 → 一次实际通读、补正文缺口 → 必要 V0/保存与真实学习变化 → 简短主题/范围/链接。single 自查可交付，delegated 主会话独立读子稿。讨论/中断仍及时 checkpoint，未变已读资料和检查证据复用。
 
 官方资料要讲具体规则、机制、源码映射、能证明与不能证明什么，再直链和版本边界。源码事实、规则、静态推断、真实观察、假设例子与未知明确区分；私人源码/记录不上传外部服务。必要解释缺失先补，不把 unknown 当合格借口；实际未运行可明确静态范围。
 
-[文章门禁](../deep-codebase-learning/references/notes.md#note-quality-gate) 分 G0 来源/结构、G1 语法与机制深度、G2 正常/重要失败重放。G1 按关键源码段记具体表达式/值/机制/后果的正文锚点，不能靠审查者常识、几个修点或 G2 通过补漏。返修按必要教学单元核保留，hash 只锁身份。旧 G1 无深度依据就扩大复核，广泛重写/影响不明/旧证据不可靠才全文重审；普通状态收尾不重放全文。流程由 authoring 单一维护，不降低内容合同。single 完整稿可用但仍 draft/prepared；独审才 validated/delivered，不代表实测或能力。
+[教学合同](../deep-codebase-learning/references/teaching.md#唯一教学交付合同) 规定详细语法/机制/场景/Why、真实源段与正常/失败值链；[作者流程](../deep-codebase-learning/references/authoring.md) 唯一维护写读返修。移除强制独审门票、分门报表、教材双 hash 与固定元数据布局。single 完整稿通读补缺后可 ready/self_review 并 delivered，validated 用于实际独立审读范围。简记方法/范围、重要出处和缺口处理，自己懂或能重放值链不替代必要解释。
+
+返修先有一份可恢复旧版，局部修并对照正确必要教学单元保留，迁移目的已写好/入口有效/本节必需含义仍在。源码 revision 与 dirty 相关文件指纹用于可靠来源核对，不作为教材质量证明；仅广泛重写、源码范围大变或影响不明才全文重读。历史 validated 不批量洗白，教材完整不替代阶段/项目能力证据。
 
 ## Schema v1 的职责
 
@@ -48,11 +50,11 @@ state 字段与 schema_version=1 保持，编写模式/是否询问存合同和 
 
 ## 解释深度与学习者证据
 
-investigated 是调查，prepared 是草稿/拟发解释，delivered 是同一冻结版经独审通过的教材已保存回读且入索引；完整待独审稿可用但仍 prepared；explained 指实际充分解释的教材段落/可见聊天及深度；learner-evidence 是实际用户回答/预测/实验/实现。文件 pending/committed 只是写入，不是教学或能力状态；正式交付不证明用户读过。
+investigated 是调查，prepared 是草稿/拟发解释，delivered 是完整教材实际通读补缺、必要 V0/保存/索引成功；single 可 ready/self_review，未完整稿仍 prepared；explained 指实际充分解释的教材段落/可见聊天及深度；learner-evidence 是实际用户回答/预测/实验/实现。文件 pending/committed 只是写入，不是教学或能力状态；正式交付不证明用户读过。
 
 写出/阅读文章和导师讲解不会增加任何 mastery level，包括 L1。Coverage 的 explained 可以由源码支持的合格教材解释支撑，understood/verified 仍需用户表现与运行证据。提示程度与独立性分开，用户自述读懂不等于独立理解。教材可 validated，而阶段所需实验/restatement 仍 waiting；不存在伪造用户回答才能交付的要求。
 
-个人问题、原理解、纠正和 Aha 只写真实历史，不能把 AI 的设计/润色当独立用户方案。笔记质量 draft/validated 与事实核对 unverified/source_checked/runtime_checked/needs_revalidation 独立记录，既有笔记缺 verification 保守使用，当前修订补字段，不批量清零。
+个人问题、原理解、纠正和 Aha 只写真实历史，不能把 AI 的设计/润色当独立用户方案。笔记质量 draft/ready/validated 与事实核对 unverified/source_checked/runtime_checked/needs_revalidation 独立记录，既有笔记缺 verification 保守使用，当前修订补字段，不批量清零。
 
 ## 文件提交与中断恢复
 

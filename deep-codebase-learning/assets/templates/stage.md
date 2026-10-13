@@ -33,7 +33,7 @@
 
 ## 当前检查点
 
-分别记录 investigated / prepared / delivered / explained / learner-evidence；正式教材路径、起止、概念深度、注释锚点、例子/边界、review/V0与事件来源明确。prepared 不算正式交付，完整待独审稿可读且可继续下一节；delivered 须独审且不证明读过/掌握；实际聊天解释另有可见依据。中断回读笔记/索引/事件，懒补必要内容，不重置 ID/能力。课程交付进度和 Stage 能力验收分别记录。
+分别记录 investigated / prepared / delivered / explained / learner-evidence；正式教材路径、起止、概念深度、注释锚点、例子/边界、review/V0与事件来源明确。prepared 未完整稿不算正式交付；完整稿实际通读、必要 V0/保存/索引后 delivered，single 可 ready/self_review；独审可选，交付不证明读过/掌握；实际聊天解释另有可见依据。中断回读笔记/索引/事件，懒补必要内容，不重置 ID/能力。课程交付进度和 Stage 能力验收分别记录。
 
 持久偏好：默认笔记优先、简短聊天链接/即时答疑、逐句详细/专业名词全称/官方内容映射；记录最新选择与来源。编写 mode=single/delegated、是否已首次询问、环境限制与真实 author/reviewer 保存于此，不新增必填 JSON。切 Stage 继承生效偏好并更新 roadmap。教师修复项不是用户失败，待答不阻止教材阅读。正式中文内容目录/索引/下一课路径与旧→新映射清楚。
 
