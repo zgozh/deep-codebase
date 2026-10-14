@@ -4,7 +4,7 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.8.0。
+`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.8.1。
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -162,6 +162,8 @@ CLI 安装后可用 `npx skills update deep-codebase-learning -g` 只更新本 S
 **自动和显式笔记默认都作为待核对的候选内容。** `draft/ready/validated` 表达文章质量状态；`unverified/source_checked/runtime_checked` 表达实际核对及其范围。single 实际通读补缺后可 ready/self_review 正常交付；validated 留真实独立审读范围，两者均不证明实测或掌握，未运行实验和未知作者意图不会被写成事实。完整规则见 [使用指南](docs/usage.md) 和 [笔记协议](deep-codebase-learning/references/notes.md)。
 
 返修先有可恢复旧版，局部补缺、保留正确必要解释，不能改成用途摘要。一次通读同时看语法/机制和正常/失败值链；自己懂不能补正文。仅广泛重写、源码范围大变或影响不明才全文重读，不另造逐段报表。精简重复动作，保留详细教学；未证明规则长短单独导致质量变化，也不保证更快。
+
+v1.8.1 将每一跳写作落实到现有模板：必要背景、完整注释职责段、就近变量来源、逐句语法/值/Why、同值演算与真实下一消费者。调用方是否 await 必须看实际调用，JSX/分支不能丢定义或闭合。返修简记增改移删及保留去向，正文与当前修订记录同步，修旧课不覆盖当前学习位置；Skill 版本只按本轮实际加载记录。保留原有业务→架构→端到端→逐层源码顺序，不增固定章法或运行工具。
 
 ## 一小段示例
 

@@ -147,6 +147,10 @@ Topic/Stage 还可自然收束综合关系；文章质量可合格，而用户�
 
 按 [作者流程](../deep-codebase-learning/references/authoring.md) 实际从头通读一次：single 作者自查，delegated 主会话自身独立读子稿。语法/概念/机制、真实源段/状态、正常与重要失败一起核，自己懂或能走值链不能补正文。缺口先修教材，只简记方法/范围、重要缺陷及处理/未核实项，不要逐段报表或教材双 hash。局部修后读影响链，广泛重写/源范围大变/影响不明才全文重读。必要 V0/保存后给主题范围链接；有价值互动/中断仍及时 checkpoint，不跑应用测试/构建/浏览器。
 
+每一跳可直接按 [现有写作模板](../deep-codebase-learning/assets/templates/stage-note.md) 展开：当前问题/必要概念→完整注释职责段及变量来源→逐句语法、值变化与 Why→同值演算→调用现场和下一消费者，官方机制在使用处消化。不能漏掉局部变量定义、JSX闭合或条件分支；async 声明不代表调用方 await，未 await 也不代表被调用函数内部没有等待。开写前仅在已有任务/合同放四行范围 brief，先写完整稿再定点补查，不预读全项目或全部文档。[成品示例](../deep-codebase-learning/references/quality-example.md) 只校准展开深度，按实际技术栈/目标选用，不要求项目有示例业务或框架，不作为固定课程。
+
+返修在同一 review 短记增/改/移/删的实际段落及原因，不按字数压缩。收尾按 [PERSIST一致性约定](../deep-codebase-learning/references/memory.md#post-turn-learning-commit) 对齐正文、索引和本次事件，保持当前学习位置；本轮使用版本与源码版本分开记录，问答/中断仍及时保存。
+
 ## 显式总结用法
 
 不需要等待自动触发。下面这些自然语言请求已被定义，同义表达也适用：

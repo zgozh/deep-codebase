@@ -18,7 +18,18 @@ Skill格式按 [Agent Skills规范](https://agentskills.io/specification)，安�
 
 ## 公开教学方法的适配
 
-v1.8.0 继续详细参考 `replicate-learning` 的实际 Skill 6.1/6.4、批次全文模板、逐句黄金样例、质量契约与事故档案：采纳源段保真、代码后逐句因果展开、调用现场/上下游/接入和失败时间线；在本项目按因果小课组织，吸收其具体场景、逐句三问、调用现场与机制/手写示范/取舍的展开密度。原项目采用17节章法，本项目只吸收详细展开方式，不复用其章法或提供固定章节模式；备课和审核移出正文。未复制其工具或模板，也未采用整仓固定覆盖百分比、所有对象同等深度、固定反例/迭代数量、强制应用运行或 Vibecoding 开发义务。规则多也能组织完整详细教材；已知退化不能单独归因为规则长度。本项目精简不产出教学价值的重复动作，不缩讲解。该本地参照不是运行依赖、公开可复现测试结果或质量保证。
+### 本轮 GitHub 源码对照
+
+以下是2026-10-14读取当前 main 原源码后的设计适配，分支会继续变化；不是教学效果验证、热门度排名或上游背书，最初固定提交参照仍保留。
+
+| 直接源码 | 实际机制 | 本项目取舍 |
+|---|---|---|
+| [Anthropic grader](https://github.com/anthropics/skills/blob/main/skills/skill-creator/agents/grader.md) / [skill-creator](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md) | 看实际产物，核事实/过程/质量断言，反问判据是否也放过错误输出 | 同次通读检查当前相关错误能否被拦住；不搬日常每课的评测查看器、CLI或大型多轮盲测 |
+| [deepwiki-open prompts.py](https://github.com/AsyncFuncAI/deepwiki-open/blob/main/api/prompts.py) 的 CODEMAP_SKELETON/ENRICH | 引用仅取已有上下文的真实路径/原行/片段；扩写不改原引用和步骤，不足不编 | 保留已确认源段与调用事实，例子另标；不搬两阶段JSON、全仓wiki/RAG依赖或其短段篇幅限制 |
+| [awesome-copilot mentor](https://github.com/github/awesome-copilot/blob/main/agents/mentor.agent.md) | 搜调用用法，追问Why与取舍，以提示/苏格拉底式互动辅导 | 吸收用法搜证与取舍；不采用与默认详细独立教材冲突的短答、先问后放行 |
+| [learn-codebase 当前 SKILL](https://github.com/ktaletsk/learn-codebase/blob/main/SKILL.md) | 学习journal、先预测再解释及短回复节奏 | 保留学习记忆；不搬150词上限或频繁下一步询问，不用提问阻止阅读 |
+
+v1.8.1 继续详细参考 `replicate-learning` 的实际 Skill 6.1/6.4、批次全文模板、逐句黄金样例、质量契约与事故档案：采纳源段保真、代码后逐句因果展开、调用现场/上下游/接入和失败时间线；在本项目按因果小课组织，吸收其具体场景、逐句三问、调用现场与机制/手写示范/取舍的展开密度。本轮进一步把三问、调用现场、机制示范和 Why/反例落到现有 source-step 写作骨架与教学示意，简单对象也追来源/消费者，不写成字段字典。原项目采用17节章法，本项目只吸收详细展开方式，不复用其章法或提供固定章节模式；备课和审核移出正文。未复制其工具或模板，也未采用整仓固定覆盖百分比、所有对象同等深度、固定反例/迭代数量、强制应用运行或 Vibecoding 开发义务。规则多也能组织完整详细教材；已知退化不能单独归因为规则长度。本项目精简不产出教学价值的重复动作，不缩讲解。该本地参照不是运行依赖、公开可复现测试结果或质量保证。
 
 以下是原方法作者、官方教育材料或维护者资料支持的设计取舍，不是本 Skill 教学效果的试验报告。来源内容由导师消化进当前教学，不要求学习者先读这些教材。
 

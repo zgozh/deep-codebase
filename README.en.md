@@ -4,7 +4,7 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.8.0. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.8.1. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -98,6 +98,8 @@ Investigated source, prepared drafts, delivered lessons, explanation depth, and 
 Lessons may continue while stage ability remains unverified. Final completion still requires important horizontal components, independent answers and experiments, stage reviews, and an independently designed, runnable Mini Version. A finished roadmap or complete set of articles cannot set PROJECT_COMPLETE.
 
 Repairs retain a recoverable previous version and preserve correct, necessary explanations. Read the complete initial lesson once; then reread local repairs and affected dependencies. Broad rewrites, major source changes, or unclear impact warrant another full read. Keep a brief method/scope/gaps record rather than per-paragraph reports or lesson hashes. Detailed syntax, mechanisms, scenarios and reasons remain essential. Evidence does not establish that rule length alone caused quality problems, or that this workflow guarantees speed or compliance.
+
+The lesson template now guides each step from necessary context through a complete annotated source segment, variable origins, syntax/values/reasons, a concrete replay, and its actual consumer. Check whether the caller really awaits; retain JSX and branch boundaries. Repairs briefly record additions, changes, moves and removals while preserving necessary explanations. Keep current revision records aligned without overwriting the active learning position when repairing an older lesson. Record the skill version actually loaded, not merely installed. No fixed chapter layout or runtime tool is added.
 
 ## Update and boundaries
 

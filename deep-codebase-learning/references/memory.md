@@ -116,6 +116,13 @@ knowledge/index 只路由当前有用概念到 `knowledge/<topic-id>.md`，多�
 2. **EXTRACT**：提取新事实、出处、用户理解、错误/纠正、问题、预测、实际结果；不要捏造未运行观察。
 3. **EVALUATE**：按真实证据评估 mastery/coverage、gap/misconception、源码有效性。正式笔记只支持实际充分解释/追踪范围；没有学习者表现，不增加 mastery，包括 L1。用户说读过或懂不等于独立理解。
 4. **PERSIST**：追加 pending 事件/writes/deltas，写 state.pending_commit；唯一主会话更新必要 coverage/mastery/knowledge/review/stage/roadmap、教材/索引。按影响范围回读校验相关 JSON/current Stage/Topic、事件/pending、路径/源码定位和真实审读方法；完整教材通读修正、V0/保存/索引后记 delivered，single 无需独审。未完整稿仍 prepared，不升 explained coverage。projections 校验后事件 committed；最后更新 state 指针/current/awaiting/next_action 并清 pending，只改指针就只补相关检查。无题 awaiting=null，交付不证明用户阅读或掌握。
+
+   收尾只核本轮受影响记录的四项一致性，不重写历史：
+   - 本课 ID/路径、实际内容边界、quality/verification及审读方法一致；正文还有待修必要内容不能对应活动 delivered。single 自查可交付，delegated 须主会话实际审读后统一登记。
+   - 当前修订事件与中文 notes 索引、相关 stage 检查点、review、journal 指向同一最新修订；历史创建事件/旧 review 可保留。修旧课保留当前 current.stage/topic、awaiting 与 next_action，不能把当前学习位置倒写为被修旧课。
+   - state.skill_version 记录本轮确实加载使用的 Skill 版本，有价值修订提交时同步；仅安装新版不够，不批改历史创建元数据。源码 revision 与 Skill 版本独立。
+   - 最新 committed 事件与 state.journal.last_event/next_sequence、pending 清理一致，解析相关 JSON 并回读实际路径。顺序仍 pending→必要 projections→验证→committed→state 指针，不能无事件跳清 pending；中断依既有幂等恢复补齐，不重复事件或重写正文。
+
 5. **CHECKPOINT**：每节教材及时落盘，Topic 内容收束和用户学习闭环分开；边界或显式总结再综合，独立复述/实验 waiting 不阻止写作。保留真实个人理解/待验证、机制与证据；结束/切阶段/积累时 checkpoint、阅读入口和下一步。同一固定会话也执行。答疑发现实质文章缺漏同步修订与索引/进度，不凭澄清重写整课。
 6. **STAGE CHECK**：核对 exit criteria，尚未交付/尚未评估为正常 in_progress；教材可继续到合理后续内容，未验收阶段仍开放。能力通过才标完成，不能将每个 waiting 变强制测验或补救。阶段综合教材可先合格，能力门禁和文章门禁分别记。
 7. **PLAN**：next_action 明确下一源码符号/环节、因果目标、完成条件与必要加载路径，笔记结尾给接续点。交付确认是内部步骤，不是下一课全部目标；能力未验证不标 complete，但不阻止教材继续。如 checkpoint/stage/note 又有增量纳入本次事件与状态，不拖到下次才保存。
