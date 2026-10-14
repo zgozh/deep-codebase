@@ -29,9 +29,9 @@ Skill格式按 [Agent Skills规范](https://agentskills.io/specification)，安�
 | [awesome-copilot mentor](https://github.com/github/awesome-copilot/blob/main/agents/mentor.agent.md) | 搜调用用法，追问Why与取舍，以提示/苏格拉底式互动辅导 | 吸收用法搜证与取舍；不采用与默认详细独立教材冲突的短答、先问后放行 |
 | [learn-codebase 当前 SKILL](https://github.com/ktaletsk/learn-codebase/blob/main/SKILL.md) | 学习journal、先预测再解释及短回复节奏 | 保留学习记忆；不搬150词上限或频繁下一步询问，不用提问阻止阅读 |
 
-### v1.9.0 对详细教材写法的重新适配
+### 详细教材写法的本地参照与公开适配
 
-本轮完整阅读本地 `replicate-learning` 的 Skill、批次全文/零件/概念词典模板、十七节节选、Java 与 Python 黄金例、通用方法、质量契约、阶段工作流与质量事故档案，提取写法后自行重写。该参照无本项目可确认的公开固定版本链接，因此不提供私人目录、宿主项目路径或未经核验的上游地址，也不把本地读取称为公开可复现行为测试。没有复制其代码、教学事实或大段模板措辞。
+v1.9.0 完整阅读本地 `replicate-learning` 的 Skill、批次全文/零件/概念词典模板、十七节节选、Java 与 Python 黄金例、通用方法、质量契约、阶段工作流与质量事故档案，提取写法后自行重写；该本地参照声明 Apache-2.0，采用其组织思路而非逐字复制。没有可确认的公开固定版本链接，因此不披露私人目录、宿主路径或未经核验的地址，也不称为公开可复现行为测试。没有复制其代码、教学事实或大段模板措辞。此前对本项目旧稿的静态接纳未满足用户最新反馈，v1.10.0 针对实际缺口继续适配，不把“黄金例”名称当质量证据。
 
 | 参照中的具体设计 | 本项目 v1.9.0 的落点 | 有意调整 |
 |---|---|---|
@@ -44,6 +44,8 @@ Skill格式按 [Agent Skills规范](https://agentskills.io/specification)，安�
 | 事故显示全绿、裸行号、自检表仍可漏源码/机制/正文错误 | 一次语义通读分别判断事实与初学者可读，缺口直接修正文 | 不引入 gate 工具、质量 JSON、机械覆盖率、章数/词数指标、hash 仪式或反复全量复检 |
 
 保留本项目的 `.codelearn/` 持久化、横向审计、真实能力证据和独立重建，不采用参照的自动开发/提交/运行义务或以阅读替代能力验收。公开教学材料与规则不能证明模型稳定遵循，也不能保证读者掌握；固定骨架只减少遗漏机会。
+
+v1.10.0 另实际查阅 [Write your Own Virtual Machine](https://www.jmeiners.com/lc3-vm/)、[Diátaxis Explanation](https://diataxis.fr/explanation/) 与 [Diátaxis Tutorials](https://diataxis.fr/tutorials/)。前者将概念、真实代码、执行机制和使用连接起来，适配为完整因果单元；不采用允许跳过核心原语的建议，因为本 Skill 默认零基础。Explanation 强调联系、上下文、原因和例子，适配为架构及机制判断；Tutorials 的具体有意义进展适配为每课一个因果目标，但其避免解释的分工不直接用于本 Skill 的综合教材。以上是教法组织的推论，不是效果保证，也不复制原文。
 
 以下是原方法作者、官方教育材料或维护者资料支持的设计取舍，不是本 Skill 教学效果的试验报告。来源内容由导师消化进当前教学，不要求学习者先读这些教材。
 

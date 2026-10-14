@@ -42,7 +42,17 @@ npx skills add . --list
 
 ## 已有行为证据
 
-### v1.9.0 教材合同与本轮教材试写
+### v1.10.0 修订范围与证据边界
+
+本版改教学合同、作者骨架及公开完整例课，保留十章路线、记忆 schema v1、能力与重建验收，不改应用或发布脚本。v1.9.0 的 Principal 静态审读是当时有限范围的判断；用户最新明确拒绝其深度和排版，因此不作为当前教材质量达标的证明。历史隔离 Java 试稿、篇幅或一次 demo 均不证明普适质量。本版结构/格式检查也只证明所检查的文档属性，不能证明目标应用运行、模型稳定遵守或学习者掌握。最终实际发布检查结果在执行后记录，不提前沿用旧版通过结论。
+
+本次十章公开主例由 Luna/max 实际生成。Principal 独立阅读全文后指出 API 解释仍偏摘要、初学者术语和源码段排版仍有缺口；还指出把中间第二个 `Setup` 改为 `Install` 时，`#setup-1` 会通过检查却转指第三个 `Setup`，先前推演遗漏了这个语义变化。作者按反馈修订，Principal 后续独立复核并通过主课主体及四项事实修正。这是有界的静态教学稿复核，不代表用户满意、课程运行、模型长期遵守或学习者掌握。
+
+- Principal 实际运行 `python -X utf8 scripts/validate.py`：36 个发布文件、128 个本地链接/锚点，v1.10.0、schema v1 与发布范围检查通过。
+- Principal 实际运行 `python -X utf8 C:\Users\13610\.codex\skills\.system\skill-creator\scripts\quick_validate.py deep-codebase-learning`，结果为 `Skill is valid!`。
+- 教材最终小修后实际运行 `git diff --check`，通过。回读确认仍为文档 V0 修改；没有运行应用测试、构建或浏览器，也没有进行真实学习效果试验。
+
+### v1.9.0 教材合同与历史试写
 
 本轮完成 `deep-codebase-learning/references/quality-example.md` 的完整十章公开初学者示例，依据公开脚本 `scripts/validate.py` 的实际 `heading_ids` 和真实调用讲解标题锚点；旧的四段局部示例仍保留为局部参照。另完成 `reports/v1.9.0/配置到历史上限-试写.md` 的十章隔离真实源码试稿，范围为配置绑定、校验、轮数乘二、`loadHistory` 的数量实参及结果接收。Principal 已复读返修后的 A/B，接纳它们作为静态教学试用稿与公开展开参照。复审涵盖源码教学注释、初学者前置解释、校验器注册关系、Stream/消费者讲解、summaryEnabled 初值区分、资料版本措辞及 slug 碰撞边界。该接纳不证明目标应用运行通过、所有项目适配或长期行为稳定；未运行应用，不写入真实 `.codelearn`，也不改变学习者掌握状态。
 

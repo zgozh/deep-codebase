@@ -4,7 +4,7 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.9.0. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.10.0. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -101,7 +101,7 @@ Lessons may continue while stage ability remains unverified. Final completion st
 
 Repairs retain a recoverable previous version and preserve correct, necessary explanations. Read the complete initial lesson once; then reread local repairs and affected dependencies. Broad rewrites, major source changes, or unclear impact warrant another full read. Keep a brief method/scope/gaps record rather than per-paragraph reports or lesson hashes. Detailed syntax, mechanisms, scenarios and reasons remain essential. Evidence does not establish that rule length alone caused quality problems, or that this workflow guarantees speed or compliance.
 
-Version 1.9.0 replaces free-form chapter organization with the stable teaching sequence and detailed source expansion above. One semantic read-through judges factual correctness and beginner readability independently; a reviewer's own knowledge cannot supply missing article content. Link destinations must support adjacent claims, not merely exist. No new gate tools, quality JSON schemas, check matrices or runtime dependencies are added. Headings, length and structural checks cannot guarantee model compliance or learning outcomes.
+Version 1.10.0 retains ten chapters and explains each involved actor's boundary, ownership, lifetime and contract, the real path to a visible result, and how framework intervention changes runtime behavior. Before the source, establish the problem, actual input and a complete clickable locator; inside it, preserve cohesive original code with teaching annotations; after it, use readable small sections to explain every displayed line, replay values and reason about design. These layers serve distinct purposes. Authors read the full example before their first complete lesson or a major rewrite, then reuse the understood style. One semantic read-through judges factual correctness and beginner comprehension independently. The user rejected the previous example's depth and layout despite earlier static review; this correction and any structural checks do not establish general teaching quality or learning outcomes. No new gate tools, check matrices or runtime dependencies are added.
 
 ## Update and boundaries
 

@@ -1,6 +1,6 @@
 interface:
   display_name: "Deep Codebase Learning"
   short_description: "Learn codebases through detailed notes and on-demand answers"
-  default_prompt: "使用 $deep-codebase-learning 带我从零深度学习当前项目，按真实业务安排路线、按十章次序写独立详细教材，完整源码后逐行讲透；聊天简短链接并随时答疑。已有 .codelearn/ 时恢复最新偏好和进度；首次提供单会话或主会话规划审查、子 agent 编写的选择。"
+  default_prompt: "使用 $deep-codebase-learning 带我从零深度学习当前项目，按真实业务安排路线、按十章写独立详细教材，讲清架构角色与完整可见流程；源码前准备、真实完整源码及教学注释、源码后可读逐行推导各负其责，框架机制用具体输入讲透。聊天简短链接并随时答疑。已有 .codelearn/ 时恢复最新偏好和进度；首次提供单会话或主会话规划审查、子 agent 编写的选择。"
 policy:
   allow_implicit_invocation: true
