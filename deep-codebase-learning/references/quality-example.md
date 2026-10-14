@@ -1,8 +1,11 @@
-# 完整功能主课：浏览器打开 `/plain.html`，服务器如何识别请求、读取文件并返回页面
+# 小型完整功能读码示例：浏览器打开 `/plain.html`，服务器如何识别请求、读取文件并返回页面
 
-> **当前完整功能主课。** 本课沿一条完整路径：浏览器发出 `GET /plain.html`，Python 标准库解析请求并调用项目处理器，处理器从进程当前目录找到 `plain.html`，读出文件字节（每个字节由 8 个二进制位组成），组装 HTTP 响应，浏览器再把响应正文解释为 HTML。下方原有的 Markdown 标题检查课保留为历史局部读码参照，不能用它的篇幅或范围校准完整功能课。固定主例 `server.py` 只有约 108 行；这只是微型程序的长度，不是课程片段的长度标准。这里按职责展示完整重要方法及必要的调用者、注册、配置和消费者；遇到较长职责时会连续分块展示并把解释跟完。
+> **小型完整功能的读码示例。** 本课沿着源码实际完成的 `GET /plain.html` 路径：浏览器发出请求，Python 标准库解析并调用项目处理器，处理器从进程当前目录找到 `plain.html`、读出文件字节（每个字节由 8 个二进制位组成）、组装响应，浏览器再把响应正文解释为 HTML。下方原有的 Markdown 标题检查课保留为历史局部读码参照，不能用它的篇幅或范围校准本例。
 >
-> **源码与证据范围。** 项目源码固定为 [aosabook/500lines 提交 `fba689d101eb5600f5c8f4d7fd79912498e950e2` 的 `web-server/code/03-handlers/server.py` 原行 1–108](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L1-L108) 和同目录 [`plain.html` 原行 1–9](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/plain.html#L1-L9)。行号来自固定提交的原始文件字节和 LF 换行，不来自网页抽取后的显示行号。机制依据是 CPython 2.7.18 的 `BaseHTTPServer.py`、`SocketServer.py` 与该版本标准库文档；HTTP/1.1 的消息边界只用 RFC 9112 说明通用格式。源码是 Python 2 时代的示例，本文不把它改写成 Python 3，也没有启动服务或打开浏览器；运行命令只作可选操作说明。
+>
+> 这份小例子用于校准一个源码单元的代码前阅读准备、完整代码展示、代码后逐行推演、局部值演算、机制说明和上下游接线写法。它展示这些材料如何围绕一个真实、完整的 HTTP 文件读取响应路径组织；它不能证明大型仓库架构、前后端状态协作、全栈学习路线或其他技术栈已被完整覆盖。真实 lesson 应按项目实际结构与教学目标选择源代码规模和调用追踪深度，不受本例行数约束。固定主例 `server.py` 只有约 108 行，这只是示例程序的规模，不是课程片段的长度标准；遇到较长职责时会连续分块展示并把解释跟完。
+>
+> **源码与证据范围。** 项目源码固定为 [aosabook/500lines 提交 `fba689d101eb5600f5c8f4d7fd79912498e950e2` 的 `web-server/code/03-handlers/server.py` 原行 1–108](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L1-L108) 和同目录 [`plain.html` 原行 1–9](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/plain.html#L1-L9)。行号来自固定提交的原始文件字节和 LF 换行，不来自网页抽取后的显示行号。机制依据是 CPython 2.7.18 的 `BaseHTTPServer.py`、`SocketServer.py` 与该版本标准库文档；本例实际默认 HTTP/1.0 响应的长度和边界依 RFC 1945 解释，第3章用 RFC 9112 说明 HTTP/1.1 的通用消息格式。源码是 Python 2 时代的示例，本文不把它改写成 Python 3，也没有启动服务或打开浏览器；运行命令只作可选操作说明。
 
 ## 1. 业务场景与本课目标
 
@@ -294,7 +297,7 @@ sequenceDiagram
 
 #### 架构位置、时机与输入
 
-Python 从文件顶部顺序执行模块级语句。`import` 绑定可供后文查找的名字；`class` 语句建立类并执行缩进类体。原行 11–40 定义三个 `case` 类，因此执行 `Cases` 赋值时它们都已存在。此时没有连接，也没有连接专属的 `self.path`、`self.full_path`。
+Python 从文件顶部顺序执行模块级语句。`import` 把导入的对象绑定到名字；`class` 语句执行缩进类体并创建类对象。原行 11–40 先定义三个 `case` 类型，随后执行 `RequestHandler` 类体中的原行 50–52：三个构造调用从左到右各创建一个新实例，`Cases` 列表保存这些对象的引用。每次真正执行这个模块时，处理器类体运行一次；普通重复 `import` 通常复用解释器已缓存的模块，不会再次执行类体。类体完成后名字 `RequestHandler` 才绑定到新类；直接运行或首次导入都会建立规则表，但导入本身不会进入文件末尾的监听入口。此时还没有连接，也没有连接专属的 `self.path`、`self.full_path`。Python 2.7 对 `class` 语句的执行规则见[语言参考](https://docs.python.org/2.7/reference/compound_stmts.html#class-definitions)。
 
 #### 源码定位与阅读准备
 
@@ -323,6 +326,8 @@ class ServerException(Exception):
 原行 3 的横线只是注释。原行 5 建立 `ServerException` 类；括号中的 `Exception` 是 Python 通用异常基类，继承它后，自定义类型能被 `raise` 抛出，也能被 `except Exception` 捕获。原行 6 是文档字符串，原行 7 的 `pass` 是空类体所需的占位语句，表示这个子类没有再添加自己的字段或方法；它仍继承 `Exception` 的构造方式、异常文字与其他父类行为。
 
 执行 `class` 只定义一种以后可创建的类型，不会立即发生失败。等规则执行 `raise ServerException(...)` 才创建并抛出异常对象；对象沿调用栈寻找匹配的 `except`。它没有 HTTP 状态码和网络行为，后面要由处理器构造页面并明确选择 `404`。
+
+类体里的 `def test`、`def act` 会创建函数对象并把名字放进类的命名空间；定义时不会运行函数体，只有后续调用才会执行其中的文件判断或动作。原行 5 的文档字符串成为类的 `__doc__` 说明；`pass` 是合法空语句，不会抛出或返回业务值。三个规则类都继承 `object`，没有自定义构造函数或实例字段，因此本例创建出的规则实例只靠方法接收显式传入的 handler。
 
 #### 完整源码：处理器的共享表和错误模板（原行 44–62）
 
@@ -358,6 +363,8 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 `Cases = [...]` 是类体中的赋值，所以建立 `RequestHandler` 类时立即调用三次 `case_no_file()`、`case_existing_file()`、`case_always_fail()`，并按该顺序把新对象放进列表。这个列表是类属性，附着于类，可供所有处理器实例查找；它不是每条连接复制的路径状态。后文 5.4 逐个跟读规则方法。
 
+在请求到来后，表达式 `H.Cases` 先在处理器实例 `H` 自己的属性字典里查找；本例没有实例级 `Cases`，于是继续到 `RequestHandler` 类属性并取回同一个列表。普通属性查找不会复制列表，也不会把列表变成某个连接专属的版本。因而三个 case 对象和模板字符串在各连接间共享；每次规则调用则把当前 `H` 显式作为 `handler` 传入，路径仍是实例级数据。以后若把临时路径或请求结果写进共享 case 对象的字段，就会把一个连接的值暴露给其他调用；若只是新增一个无状态规则并按顺序注册，当前接线无需为每个连接另造规则副本。
+
 ##### 原行 54–62：模板是数据，不负责发送
 
 原行 54 是注释。原行 55 把多行文字赋给类属性 `Error_Page`；开引号后紧跟的反斜线去掉字符串开头的换行。`{path}`、`{msg}` 是稍后由 `.format(...)` 替换的占位符：`<h1>` 中的 `{path}` 显示当前请求路径，`<p>` 中的 `{msg}` 显示错误文字。HTML 标签在第一章已介绍；这里的 `</body>`、`</html>` 分别闭合正文区域和整个 HTML 文档，原行 62 的三引号则结束 Python 字符串。模板不调用网络接口，也不选择状态码。当前实现没有对插入值做 HTML 转义，因此两个值会原样进入 HTML；错误正文的调用点会在 5.7 展开。
@@ -366,7 +373,7 @@ class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
 #### 初始化的工程含义和接线
 
-类属性保存所有连接共用的规则表和模板；请求路径放在单个 `handler` 实例上。循环每次显式把当前 `handler` 传给 `test(handler)` 或 `act(handler)`。若把 `full_path` 存到共享 `case` 对象上，不同请求会争用同一份可变状态。改列表顺序会改变匹配结果；改模板改变错误正文；这些定义都不会自行启动服务器。
+当前连接路径 `full_path` 留在 handler 实例上，而规则表与模板由所有连接共享；每次调用都把 handler 显式传给规则，因此规则无需保存请求状态。要扩展判断，必须创建规则并登记到正确位置；只定义类不会被循环发现，登记在恒真兜底之后也永远轮不到。改模板影响所有错误页，改 `Cases` 顺序则影响运行时首个匹配者。初始化代码提供的是共享配置，实际请求动作仍由后续 handler 方法触发。
 
 ### 5.2 项目入口 创建监听服务器并等待连接
 
@@ -405,9 +412,13 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
 
 `BaseHTTPServer.HTTPServer(serverAddress, RequestHandler)` 把地址值和类对象传给标准库构造器。这里没有写 `RequestHandler()`，所以此处未创建请求 handler。服务器保存这个类，创建并绑定监听 socket；赋值把服务器实例绑定到模块级名字 `server`。模块级 `if` 块不创建新的局部作用域。
 
+这条构造链明确了“传类”之后谁调用它。`HTTPServer` 是标准库 `TCPServer` 的 HTTP 子类；父类构造器保存 `RequestHandlerClass`，按 IPv4 / TCP 默认类型创建监听 socket，再依次调用 `server_bind()` 和 `server_activate()`。前者把 socket 绑定到本课的空主机、8080 端口，后者调用系统 `listen()` 开始等待连接。绑定或监听失败时构造器关闭刚建的 socket 并重新抛错，因此服务器变量不会得到完整实例，下一行也不会执行。[固定版 `TCPServer` 构造、bind 与 listen 实现](https://github.com/python/cpython/blob/v2.7.18/Lib/SocketServer.py#L405-L443)和[Python 2.7 `HTTPServer` / `TCPServer` 文档](https://docs.python.org/2.7/library/basehttpserver.html)支撑这条源码映射；这类系统资源异常不是项目的 `ServerException`。
+
 ##### 原行 108：持续等待连接
 
 `server.serve_forever()` 进入标准库的持续循环。CPython 2.7.18 的实现把服务器对象传给 `select.select([self], [], [], poll_interval)`。`select` 等待列表中对象对应的操作系统资源变为可读、可写或出现异常；这里仅监视读集合。操作系统用一个整数文件描述符识别被打开的 socket 等资源；`select` 可接收这个整数，也可接收实现 `fileno()` 并返回该整数的对象。就绪后，返回列表包含传入的服务器对象；`if self in r` 才会调用 `accept()`，取出新的已连接 socket 和客户端地址。CPython 文档还说明 Windows 的 `select` 只接受 socket；这里 `TCPServer.fileno()` 指向监听 socket 的描述符，因此这一限制不排除本例的监听端。被监视的是监听端，不是处理器的 `wfile`。[CPython 2.7.18 `select.rst` 的 `select()` 接口与平台说明，原行 61–101](https://github.com/python/cpython/blob/v2.7.18/Doc/library/select.rst#L61-L101)；服务器到 `fileno()` 的接线原文在第六章。
+
+`accept()` 返回连接专属的 socket 与客户端地址后，默认的 `TCPServer.process_request()` 直接调用 `finish_request()`；后者才执行 `RequestHandlerClass(request, client_address, server)` 并构造新处理器。处理器初始化再把三个参数保存到实例，设置 `rfile` / `wfile`，调用 HTTP 处理，最后清理。因为当前入口没有使用 `ThreadingMixIn` 或 `ForkingMixIn`，默认服务器一次同步完成当前处理器后才回到接受新连接的循环；慢处理会占住服务线程。这里的类对象正是按连接创建实例的入口，源码见 [`process_request` 与 `finish_request`](https://github.com/python/cpython/blob/v2.7.18/Lib/SocketServer.py#L315-L335)；生命周期细节见[处理器构造函数](https://github.com/python/cpython/blob/v2.7.18/Lib/SocketServer.py#L649-L657)。
 
 #### 同一启动输入的结果与重要失败
 
@@ -467,6 +478,8 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
 
 原行 66 的 `try:` 开始保护后续缩进语句；只有这些语句抛出可匹配异常，才会跳到同一方法的 `except`。原行 67 是空行，不改变执行。原行 68 的英文注释提示要确定请求目标。原行 69 调用 `os.getcwd()` 取得进程当前目录，再用 `+` 接上基类放入 `self.path` 的请求目标。本课代入 `/work/500lines/web-server/code/03-handlers` 和 `/plain.html`，得到字符串 `/work/500lines/web-server/code/03-handlers/plain.html`。这不是标准库自动映射出的路径：该表达式没有解码 URL、规范化 `..` 或检查文件根目录边界。
 
+再代一个常见请求目标可看出 query 的边界：标准库解析请求行时把第二段原样存入 `self.path`，不会在这里把问号后的部分拆成独立变量。于是 `GET /plain.html?download=1 HTTP/1.1` 代入同一拼接式后得到 `/work/500lines/web-server/code/03-handlers/plain.html?download=1`；本例规则把这个完整字符串交给文件系统检查，不会自动定位到不带 query 的 `plain.html`。[固定版 `parse_request` 保存 `command`、`path` 和版本字段的位置](https://github.com/python/cpython/blob/v2.7.18/Lib/BaseHTTPServer.py#L232-L299)。这是由标准库赋值与项目拼接共同推出的静态结果，不是浏览器实测。
+
 ##### 原行 70–72：按列表顺序取得规则并检查
 
 原行 70 是空行，原行 71 的注释提示下面要找处理规则。原行 72 的 `for case in self.Cases:` 逐项取得 5.1 类体建立的共享规则对象，赋给局部名 `case`。每轮调用 `case.test(self)` 时，点号左侧 `case` 自动绑定成规则方法里的 `self`；括号里的当前处理器显式传给 `handler`。因此规则可以读取这条请求的 `handler.full_path`，不用把连接状态写进共享 case。
@@ -513,6 +526,8 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
 
 项目位置：AOSA 500 Lines 固定提交 `fba689d101eb5600f5c8f4d7fd79912498e950e2`，`web-server/code/03-handlers/server.py`，符号 `case_no_file.test` 与 `case_no_file.act`，原行 11–18；[固定原文](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L11-L18)。读时先分清 `test` 的布尔返回值与 `act` 的异常副作用：前者被外层 `if` 消费，后者会改变控制流。
 
+Python 2.7 的 `os.path.exists(path)` 会询问这条路径能否指向一个现存对象。文件系统里的**符号链接**可以先理解成一块写着另一条路径的路牌；检查时操作系统会沿它去找目标。若路牌指向的目标已不存在，这就是断链，`exists` 会返回 `False`。这类判断会读取目标的属性信息：`stat` 是操作系统查询文件类型、大小等属性的能力，不会打开文件读取正文，也不会锁住目标；若当前进程没有检查路径所需的权限，也可能得到 `False`。[Python 2.7 的 `exists` 规则](https://docs.python.org/2.7/library/os.path.html#os.path.exists)适用于这里的 API。因此本段假设 `/missing.html` 对应路径不存在，`exists=False`；但这个布尔值不能说明具体原因一定是文件不存在，断链或无法检查也可能得到相同结果。
+
 ##### 完整源码与教学注释
 
 ```python
@@ -558,6 +573,8 @@ class case_no_file(object):  # 教学注释：类定义建立一种规则，不�
 
 项目位置：AOSA 500 Lines 固定提交 `fba689d101eb5600f5c8f4d7fd79912498e950e2`，`web-server/code/03-handlers/server.py`，符号 `case_existing_file.test` 与 `case_existing_file.act`，原行 22–29；[固定原文](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L22-L29)。先看 `isfile` 的布尔值如何选分支，再看 `act` 传给读取函数的是哪一个实参。
 
+Python 2.7 的 `os.path.isfile(path)` 会判断路径最终指向的对象是不是普通文件，并且会像上面的 `exists` 一样跟随符号链接。[历史版本 `isfile` 规则](https://docs.python.org/2.7/library/os.path.html#os.path.isfile)与源码的 `return os.path.isfile(handler.full_path)` 对上：假设当前目录里的链接 `public-copy` 写着目标 `/srv/private/secret.html`，操作系统会沿这条路径检查目标；若目标存在且是普通文件，`exists` 和 `isfile` 都可能返回 `True`，规则随后把路径交给 `open`，操作系统再沿链接读取目标。若目标已经消失，这条链接就是断链，两项检查都会返回 `False`。
+
 ##### 完整源码与教学注释
 
 ```python
@@ -579,7 +596,13 @@ class case_existing_file(object):  # 教学注释：这是共享规则表中的�
 
 ##### 用同一输入局部演算与重要失败
 
-对 `/plain.html`：第一规则返回 `False`，`E.test(H)` 调用 `isfile` 得到 `True`，`do_GET` 于是执行 `E.act(H)`，再调用 `H.handle_file(H.full_path)`。若 `/subdir` 是目录，`isfile` 为 `False`，不会执行 `act`，循环继续到兜底。即使 `isfile` 刚返回 `True`，文件也可能在 `open` 前被另一进程删除；读取方法仍须处理 `IOError`。
+对 `/plain.html`：第一规则返回 `False`，`E.test(H)` 调用 `isfile` 得到 `True`，`do_GET` 于是执行 `E.act(H)`，再调用 `H.handle_file(H.full_path)`。若 `/subdir` 是目录，`isfile` 为 `False`，不会执行 `act`，循环继续到兜底。
+
+这还说明检查与使用之间存在时间缝隙：`exists` 和 `isfile` 各自查询路径状态，随后 `handle_file` 才打开；前面的查询没有锁定一个仍有效的文件对象。文件变化、权限变化或链接目标变化，都可能让下一步看到不同状态。对本例 `/plain.html` 的静态演算只假设这些变化没有发生；源码通过 `handle_file` 的 `IOError` 捕获处理打开/读取失败，而不是把前置布尔值当成成功保证。
+
+##### 从路径拼接到读取的越界条件演算
+
+假设 `os.getcwd()` 仍为 `/work/500lines/web-server/code/03-handlers`，并且标准库已把收到的原始请求目标 `/../shared.txt` 放进 `self.path`。这是假设服务端确实收到该原样路径；客户端或浏览器可能先规范化它，本文不声称浏览器一定会如此发送。原行 69 只做字符串拼接，于是 `H.full_path` 得到 `/work/500lines/web-server/code/03-handlers/../shared.txt`，尚未规范化。再假设其上一级目录中的 `/work/500lines/web-server/code/shared.txt` 存在、是普通文件且当前进程可读：`N.test(H)` 中的 `exists` 跟随文件系统对 `..` 的解析，返回 `True`，所以缺失规则返回 `False`；`E.test(H)` 的 `isfile` 返回 `True`，`E.act(H)` 将这条路径交给 `H.handle_file`。`open(full_path, 'rb')` 也会解析 `..`，从 `03-handlers` 的父目录 `code` 打开并读出 `shared.txt`；若读取和响应写出都成功，原行 85 的 `send_content(content)` 使用默认 `status=200`。因此，若把启动目录 `03-handlers` 当作允许的文件根，这条条件路径会从其目录之外取到响应数据。这是对当前源码的静态条件推演，不是请求或文件系统实测。
 
 ##### 机制与工程判断
 
@@ -681,13 +704,19 @@ class case_always_fail(object):  # 教学注释：这是规则表最后的兜底
 
 `open(full_path, 'rb')` 尝试以读取模式打开路径，返回文件对象；`as reader` 把对象绑定到 `reader`。若打开本身失败，不会产生 `reader`，异常直接进入 `except`。`b` 在 Windows 这类区分模式的平台上阻止文本换行转换；它不负责 Unicode 解码，Python 2 的普通 `str` 原本就是字节串。
 
-##### 原行 84–85：read 的值离开 with 后仍可用
+##### 原行 84–85：读入 content，关闭 reader 后再发送
 
-`reader.read()` 没有长度参数，从当前位置读到文件末尾，结果赋给局部变量 `content`。退出 `with` 时执行文件对象的清理行为，`reader` 关闭；正常离开和块内异常退出都会经过清理。`with` 不创建新的 Python 局部作用域：`content` 离开缩进块后仍绑定读到的内容，`reader` 名称仍存在但指向已关闭对象。原行 85 在文件关闭之后调用 `send_content(content)`。
+`with expression as target` 先求值表达式，调用上下文对象的 `__enter__()`，把它返回的值绑定给 `target`；离开缩进块时调用 `__exit__()`。Python 2.7 的 [with 语句规则](https://docs.python.org/2.7/reference/compound_stmts.html#the-with-statement)规定：块内异常会作为参数交给 `__exit__()`，只有它返回真值时异常才被抑制。对本课固定的 CPython 2.7.18 内建文件对象，`file_exit` 调用 `close()`；关闭正常时它丢弃 `close()` 的返回值并返回 `None`，所以 `reader.read()` 若抛出 `IOError`，清理后原异常会继续到外层 `except IOError`。若 `close()` 自己失败，源码会把清理异常传出；[CPython `fileobject.c` 原行 2033–2045](https://github.com/python/cpython/blob/v2.7.18/Objects/fileobject.c#L2033-L2045)核实了这两种情况。这里 `open` 新建 reader 时读位置在文件开头。
+
+原行 84 的 `reader.read()` 没有长度参数，从当前位置读到文件末尾；成功返回的字节串赋给局部变量 `content`。`with` 不创建新的 Python 局部作用域，因此离开代码块后 `content` 仍绑定读到的内容；`reader` 名称仍存在，但指向已关闭对象。原行 85 才调用 `self.send_content(content)`，使用已读出的字节串，而不是已关闭的 reader。
 
 固定 plain.html 的原始内容为 116 字节，其中有 9 个 LF。如果只把这 9 处换为 CRLF，Windows 文本形式会多 9 字节，成为 125。这里解释二进制读取为何保留长度所依赖的字节形式；这些数值来自固定文件的静态内容，不是一次运行结果。
 
 ##### 原行 86–88：异常对象被重新绑定成文字
+
+原行 87 的 `{0}` 取第一个位置实参 `self.path`，`{1}` 取第二个位置实参 `IOError` 对象；源码没有写 `!r`（选择供开发者查看对象表示的 `repr`）、`!s`（选择 `str` 消息文本）或定制格式说明。`__format__` 是 Python 格式化设施按值的类型调用的特殊方法，不是本项目新增函数；本例因此由默认对象格式化走到 `str(error)`。[Python 2.7.18 格式字段](https://github.com/python/cpython/blob/v2.7.18/Doc/library/string.rst#L221-L243)说明字段如何取值，[转换规则](https://github.com/python/cpython/blob/v2.7.18/Doc/library/string.rst#L273-L281)说明 `!s`/`!r` 的选择，[默认对象格式化实现](https://github.com/python/cpython/blob/v2.7.18/Objects/typeobject.c#L3602-L3643)说明空格式说明的处理。`IOError` 属于 `EnvironmentError`：两项参数时可分别取得 `errno`（错误号）与 `strerror`（系统错误文本），三项时还可有 `filename`（相关文件路径）；本行没有逐个读取这些属性，而是格式化异常对象本身。[Python 2.7.18 异常属性规则](https://github.com/python/cpython/blob/v2.7.18/Doc/library/exceptions.rst#L103-L124)。因此具体异常文字会受操作、操作系统和异常构造参数影响，不能把所有 `IOError` 说成同一种固定句式。
+
+这一步是异常对象变为普通说明字符串，不同于先前把异常对象直接交给 `handle_error`。如果异常是文件操作产生的，`IOError` 可能保留文件名和系统错误信息；如果它来自 `wfile.write`，仍会经过同一个格式表达式并被写成“cannot be read”说明。对象先在这里格式化，下一层收到的 `msg` 已是字符串。
 
 `except IOError as msg` 把被捕获的异常对象暂时绑定到局部名 `msg`。这个 `IOError` 可能来自 `open`、`read()`，也可能来自原行 85 的网络写出。原行 87 调用 `format`，将 `self.path` 和异常对象作为两个位置实参填入消息；格式化后 `msg` 被重新赋值为普通字符串，原异常对象不再由这个局部名引用。原行 88 将字符串传给 `handle_error`。
 
@@ -744,11 +773,21 @@ class case_always_fail(object):  # 教学注释：这是规则表最后的兜底
 
 `send_response(status)` 是从标准库基类继承的方法；它按当前协议版本写状态行，并在 Python 2.7.18 中还写标准的 `Server`、`Date` 响应头。对成功调用，程序尝试写 `HTTP/1.0 200 OK`。若这一步抛 `IOError`，后面的项目头部、空行和正文都不会执行。
 
+固定版源码能看到报文不是先在内存组装后一次提交：`send_response` 用 `wfile.write` 写状态行，再逐个调用 `send_header`；本方法随后单独写两个项目头、空行和正文。`send_header` 按字段名、冒号和值后加 `\r\n` 写一行，`end_headers` 写一个 `\r\n` 作为边界。[基类实际写出位置](https://github.com/python/cpython/blob/v2.7.18/Lib/BaseHTTPServer.py#L389-L423)。所以头部或正文中的后续步骤失败时，先前写出无法撤回；这正是 `handle_file` 不能把一次失败发送当成尚未开始响应的原因。
+
 ##### 原行 98–99：项目头部和长度值
 
 原行 98 调用 `send_header` 写 `Content-type: text/html`，告诉浏览器按 HTML 解释正文；这个头不会转换正文内容。原行 99 先调用 `len(content)`，再经 `str(...)` 把整数转成十进制头部文字。成功路径的 `content` 是二进制读取到的 Python 2 字节串，因此长度是实际准备发送的字节数。固定 `plain.html` 的长度是 116。若正文换成 Unicode 文本或另一编码，必须先确定最终要写出的字节，再按那些字节计算长度，不能拿字符数替代。
 
 ##### 原行 100–101：头部结束后才写正文
+
+这里的 `wfile` 不是 `open()` 得到的磁盘文件。CPython 2.7.18 接受连接后把 socket 存入 `self.request`；`StreamRequestHandler.setup()` 将它绑定为 `self.connection`，再调用 `self.connection.makefile('wb', self.wbufsize)` 建立写流，而该类的 `wbufsize` 默认是 `0`。[原始连接和流的创建位置](https://github.com/python/cpython/blob/v2.7.18/Lib/SocketServer.py#L681-L706)。同版本 `socket._fileobject.write()` 把字节追加到自己的写缓冲区；因缓冲大小为零，它随即调用 `flush()`，后者用底层 socket 的 `sendall()` 发送这些字节。[写入、刷新和 `sendall` 调用](https://github.com/python/cpython/blob/v2.7.18/Lib/socket.py#L296-L328)。这只说明 Python 文件接口立即推进到 socket 发送接口，不代表浏览器已经收到、解析或显示。
+
+把本次真实输入代入：`plain.html` 的二进制内容是 116 字节，小于该实现每次刷新使用的至少 8192 字节分块上限，因此在没有异常的静态推演中，正文这次 `write` 会令 `flush` 对 116 字节调用一次 `sendall`。这是 Python 层循环次数的推导，不是实测系统调用数量；`sendall` 内部怎样调用操作系统、TCP 何时送达、浏览器何时读取和解释正文，属于后续边界，当前源码没有确认信号。
+
+返回值也沿调用链逐层变成 `None`：正常的 `_fileobject.write()` 和 `send_content()` 都没有显式返回正文或发送确认；`handle_file` 调用 `send_content` 后不接收其结果，`case_existing_file.act` 又不接收 `handle_file` 的结果，`do_GET` 对 `case.act(self)` 同样不检查返回值，只在动作正常结束后执行 `break`。`handle_error` 也只是调用 sender 后走到方法末尾。因而正常路径按副作用继续、失败路径按异常转入 5.7 所述的嵌套重试；一路返回的 `None` 只表示没有交回业务值，不是客户端交付证明。
+
+HTTP/1.0 报文按起始行、头字段、空行、正文的次序组织；行与行之间用 CRLF 分隔，空行标出正文开始。[RFC 1945 §4.1 的报文结构](https://www.rfc-editor.org/rfc/rfc1945.html#section-4.1)与[§4.2 的头字段格式](https://www.rfc-editor.org/rfc/rfc1945.html#section-4.2)描述这两部分。该版本 §10.4 规定 `Content-Length` 是十进制八位字节数，§7.2.2 说明有该头时用它确定正文长度；没有时，响应正文由服务器关闭连接来结束。[长度字段](https://www.rfc-editor.org/rfc/rfc1945.html#section-10.4)和[正文长度判定](https://www.rfc-editor.org/rfc/rfc1945.html#section-7.2.2)正好对应本方法：它总是写 `Content-Length`，所以静态的 116 个正文字节就声明 116，而不能按 Unicode 字符个数计。此处实际响应默认 HTTP/1.0；这些 RFC 条款解释的是它选择的报文版本，不代表项目完整处理了所有 HTTP 情形。
 
 原行 100 的 `end_headers()` 写出头部结束所需的空行；对端据此区分头部与正文。原行 101 的 `wfile.write(content)` 把正文交给当前已接受连接的输出流。状态行和头部先于正文；`write` 返回只表示这次调用没有报告错误，不证明字节已完整到达浏览器。
 
@@ -796,11 +835,32 @@ class case_always_fail(object):  # 教学注释：这是规则表最后的兜底
 
 ##### 原行 92：模板占位符得到本请求的具体值
 
+先看 `msg` 到底是什么：缺失规则用唯一字符串参数 `'/missing.html' not found` 构造 `ServerException`；`do_GET` 的 `except Exception as msg` 将该异常实例绑定到局部名 `msg`，再交给 `handle_error`。该类体只有 `pass`，没有自定义 `__str__` 或 `__format__`。[构造点与捕获点](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L17-L18) [异常类定义](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L5-L7) [外层捕获](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L65-L79)。`__format__` 是 Python 格式化设施按对象类型调用的特殊方法，不是本项目新增函数；格式字符串中的 `{path}` 和 `{msg}` 按同名关键字实参取值。`{msg}` 没有 `!s`、`!r` 或 `:` 后的格式说明，因此走默认格式协议；5.5 已说明 `!s` 选择 `str` 风格文字，`!r` 选择供开发者查看的 `repr` 表示。[Python 2.7.18 的字段规则](https://github.com/python/cpython/blob/v2.7.18/Doc/library/string.rst#L221-L243) [转换规则](https://github.com/python/cpython/blob/v2.7.18/Doc/library/string.rst#L273-L281)。
+
+异常基类把构造参数保存在实例的 `args` 元组中；元组按顺序保存值，不能原地增删或替换元素。本例只有一个字符串参数，所以 `msg.args` 只有这条消息。[Python 2.7.18 对 `args` 的定义](https://github.com/python/cpython/blob/v2.7.18/Doc/library/exceptions.rst#L59-L64)。模板格式化的是异常对象的格式结果，并不直接读取 `args` 字段。
+
+对这个没有覆盖格式方法的异常类，继承的默认对象格式化器把空格式说明交给 `str(msg)`；默认对象格式化对字符串格式说明调用 `PyObject_Str`，空格式说明则沿字符串格式化规则得到同样文字。[CPython 默认对象格式化实现](https://github.com/python/cpython/blob/v2.7.18/Objects/typeobject.c#L3602-L3643) [空格式说明的一般规则](https://github.com/python/cpython/blob/v2.7.18/Doc/library/string.rst#L320-L322)。`BaseException` 的 `str` 在只有一个参数时取该参数的字符串形式；这里唯一参数本身就是 `"'/missing.html' not found"`，所以插入的是这条消息，不是类名，也不是 `repr` 形式的 `ServerException(...)`。[CPython 异常字符串与表示实现](https://github.com/python/cpython/blob/v2.7.18/Objects/exceptions.c#L98-L115) [不同的 `repr` 实现](https://github.com/python/cpython/blob/v2.7.18/Objects/exceptions.c#L155-L177)。如果以后给 `ServerException` 覆盖 `__str__` 或 `__format__`，正文中的消息也会随之改变。
+
+因而缺失路径这次可逐步核对为：异常的唯一消息参数是 `"'/missing.html' not found"`；`{path}` 取到 `'/missing.html'`；`{msg}` 经上述默认格式链得到 `'/missing.html' not found`；模板原样组合成前面的两行 HTML。`Error_Page` 仍是共享模板，结果只保存在本次调用的局部 `content`。`.format(...)` 只负责格式化，不会对路径或消息做 HTML 转义；文件错误传来的 `msg` 则已在 5.5 先成为普通字符串，进入此处时不再是 `IOError` 对象。
+
+缺失输入的值链是具体的：`case_no_file.act(H)` 把 `'/missing.html' not found` 作为唯一参数构造 `ServerException`；异常文字随后进入 `{msg}`，`H.path` 的 `/missing.html` 进入 `{path}`。所以模板里对应的两行正文是：
+
+```html
+        <h1>Error accessing /missing.html</h1>
+        <p>'/missing.html' not found</p>
+```
+
+这里是从源码和静态输入得出的模板结果片段，不是运行观察。
+
 self.Error_Page 通过当前实例查找到共享模板字符串。`.format(path=self.path, msg=msg)` 的关键字实参 `path=self.path` 把请求目标交给 `{path}`；`msg=msg` 把异常对象或已有文字交给 `{msg}`。这些关键字只是给格式方法传值，不会给 handler 新增字段。对缺失请求，模板正文会出现 `/missing.html` 和异常消息；对文件错误，消息中还带 `handle_file` 拼出的说明。
 
 format 把值转换为模板文字，但没有 HTML 转义。由于结果仅在函数局部名 content 保存，原模板不会被改写；下一条请求仍从类属性读取模板。如果请求路径或异常文本里有 HTML 特殊字符，这里会将它们放入 HTML 源文而非转义。
 
 ##### 原行 93：选择失败状态并调用 sender
+
+用一个明确是假设的程序故障看这个宽捕获：假定某次 `GET /plain.html` 中，规则的 `test` 因代码错误抛出 `TypeError('bad value')`。当前 `do_GET` 的 `try` 包着规则遍历和 `case.test(self)`，而 Python 2.7 中 `TypeError` 属于 `Exception`；于是 `except Exception as msg` 把异常对象交给 `handle_error`，`{msg}` 按上面解释的格式规则成为 `bad value`，随后原行 93 仍调用 `send_content(content, 404)`。[当前捕获范围](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L65-L79) [Python 2.7.18 的异常层级](https://github.com/python/cpython/blob/v2.7.18/Doc/library/exceptions.rst#L49-L73)。这是帮助读者跟踪控制流的假设故障，不是原规则已发生的运行记录；现有 `test` 方法没有发送响应，故按这个假设第一次错误页写出从 404 开始。
+
+`404` 因而是本次调用选择写入的状态，不是 `TypeError` 或 `IOError` 自动映射的结果；实际 `open`/`read` 的 `IOError` 也会由 5.5 的捕获路径进入这里并收到同一个 404 参数。工程上要把请求目标不存在与程序内部算错区分开：当前宽泛捕获会把后者伪装成文件访问错误，妨碍维护者定位。若前一轮响应已写出状态行、头部或正文，后续调用只是再次尝试写字节，不能改写已交给连接的内容；这也是 5.7 前面的三次发送推演不能保证最后得到完整 404 的原因。
 
 `send_content(content, 404)` 把新生成的正文和整数 `404` 交给输出方法；该实参覆盖默认 `status=200`。状态来自调用位置，不来自 `Exception` 类型或正文文字。成功写完时 `handle_error` 隐式返回 `None`。若发送抛出 `IOError`，本方法没有自己的 `except`；异常会交给调用栈中仍包住该调用的外层代码，具体在哪层被捕获要看入口。
 
@@ -827,7 +887,7 @@ format 把值转换为模板文字，但没有 HTML 转义。由于结果仅在�
 
 ## 6. 关键机制与官方资料解读
 
-本章标准库片段来自 CPython 官方仓库固定标签 `v2.7.18`，每段均在代码前列出模块、符号、原行和不可变链接；解释依据同标签的实现与 `.rst` 文档。它们不是 AOSA 示例代码的一部分。CPython 源码的许可应以该标签随附的[官方 LICENSE](https://github.com/python/cpython/blob/v2.7.18/LICENSE)为准；本篇末尾的 AOSA MIT 说明只对应 AOSA 的示例文件，不覆盖这里摘录的标准库代码。
+本章标准库片段来自 CPython 官方仓库固定版本标签 `v2.7.18`，每段均在代码前列出模块、符号、原行和对应源码链接；AOSA 示例则引用固定提交 SHA。CPython 的链接定位到版本标签，并不把标签称为不可变提交。机制解释依据同标签的实现与 `.rst` 文档；这些标准库片段不是 AOSA 示例代码的一部分。CPython 源码的许可应以该标签随附的[官方 LICENSE](https://github.com/python/cpython/blob/v2.7.18/LICENSE)为准；本篇末尾的 AOSA MIT 说明只对应 AOSA 示例文件，不覆盖这里摘录的标准库代码。
 
 ### 监听服务器如何变成一次连接处理
 
@@ -1377,7 +1437,7 @@ MIME（Multipurpose Internet Mail Extensions，多用途互联网邮件扩展）
 
 ### 已展开、静态推演和未实测的边界
 
-AOSA 项目语句及原注释、固定提交中的 `plain.html` 字节数、CPython 2.7.18 的类/方法实现，是本文引用的源码事实；HTTP 消息边界来自 RFC 9112 的一般说明。`/work/500lines/...`、浏览器发出的请求和 `/guide/index.html` 是标明的教学输入，输出说明是按这些输入逐步推导的结果，不是运行记录。没有安装 Python 2.7、运行服务器、发送请求、打开浏览器，也没有实测 bind 冲突或网络写中断。本文只说明本版本实际展示的处理路径，不据此宣称它完整符合 HTTP/1.1，也没有展开路径规范化、权限模型或生产部署方案。
+AOSA 项目语句及原注释、固定提交中的 `plain.html` 字节数、CPython 2.7.18 的类/方法实现，是本文引用的源码事实；HTTP/1.0 响应正文长度依据 RFC 1945，HTTP/1.1 通用消息边界说明依据 RFC 9112。`/work/500lines/...`、浏览器发出的请求和 `/guide/index.html` 是标明的教学输入，输出说明是按这些输入逐步推导的结果，不是运行记录。没有安装 Python 2.7、运行服务器、发送请求、打开浏览器，也没有实测 bind 冲突或网络写中断。本文只说明本版本实际展示的处理路径，不据此宣称它完整符合 HTTP/1.1，也没有展开路径规范化、权限模型或生产部署方案。
 
 ### 下一课从哪个调用点继续
 
