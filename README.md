@@ -4,11 +4,11 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.0。
+`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.1。
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
-v1.11.0 将完整功能作为教学尺度：实际使用现场、真实架构协作图、启动/装配至可见结果的具体交接、全部展示源行、官方机制及完整操作教程都写进正文。作者只凭正文复演后同次核事实，自己的经验不能补漏。此前 v1.10.0 小 helper 的静态接纳已撤回其完整教学质量参照资格；历史局部解释仍可用于对应语法，不把检查通过当效果保证。
+课程从实际使用现场和系统协作进入源码。每个有行为的源码单元先讲具体问题、设计思路、真实调用与输入，再展示完整实现；代码后解释所有行，并在当前单元展开局部演算、机制判断、上下游与实际接入。重要方法用自然小标题导航，后续章节再贯通全链和扩展用法，让你能按正文读懂这一段怎样运行、为什么这样设计以及怎么用。
 
 ## 快速开始
 

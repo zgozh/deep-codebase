@@ -4,9 +4,9 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.11.0. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.11.1. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
-The teaching scale is a complete real feature: an actual usage scene, architecture cooperation diagram, setup and registration through concrete handoffs to visible results, every displayed source line, official mechanism rules, and a usable operating tutorial. Reviewers replay the feature using the lesson body alone, then check facts in the same read; their own expertise cannot fill missing steps. The earlier v1.10.0 helper acceptance is withdrawn as a reference for complete teaching quality. Local syntax explanations retain their limited value; structural checks do not prove teaching outcomes.
+Lessons start with real usage and system cooperation, then enter the source. Each source unit with behavior explains its concrete problem, design approach, real caller and inputs before showing the complete implementation. After the code, it explains every line, walks through local execution, derives mechanism and design judgments, and teaches its actual integration and consumers within that unit. Natural subheadings make important methods easy to navigate; later chapters connect the full flow and extension tutorial.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 

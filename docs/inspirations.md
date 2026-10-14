@@ -30,7 +30,8 @@ Skill格式按 [Agent Skills规范](https://agentskills.io/specification)，安�
 
 | 直接源码 | 实际机制 | 本项目取舍 |
 |---|---|---|
-| [Anthropic grader](https://github.com/anthropics/skills/blob/main/skills/skill-creator/agents/grader.md) / [skill-creator](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md) | 看实际产物，核事实/过程/质量断言，反问判据是否也放过错误输出 | 同次通读检查当前相关错误能否被拦住；不搬日常每课的评测查看器、CLI或大型多轮盲测 |
+| [Anthropic grader](https://github.com/anthropics/skills/blob/main/skills/skill-creator/agents/grader.md) / [skill-creator](https://github.com/anthropics/skills/blob/main/skills/skill-creator/SKILL.md) | 实际产物和具体断言须有证据；表面遵守和弱判据会造成虚假信心，反馈应归纳成可复用指导并渐进披露 | v1.11.1 将详细合同、作者动作、质量状态和短证据各归一处；通读实际正文，少量定位/推导支持结论而不代替通读。不搬 JSON 评测基础设施、查看器或多轮盲测 |
+| [Tutorial-Codebase-Knowledge nodes.py](https://github.com/The-Pocket/Tutorial-Codebase-Knowledge/blob/main/nodes.py) 的 OrderChapters / WriteChapters | 用户重要内容和基础先于内部实现；编章时结合相关文件、上下文章节与前后课链接 | 按因果和概念依赖安排内容，使用当前局部上下文并保存接续点；不搬短源码摘录、固定词数、最大概念数或全仓上下文，不宣称稳定教学效果 |
 | [deepwiki-open prompts.py](https://github.com/AsyncFuncAI/deepwiki-open/blob/main/api/prompts.py) 的 CODEMAP_SKELETON/ENRICH | 引用仅取已有上下文的真实路径/原行/片段；扩写不改原引用和步骤，不足不编 | 保留已确认源段与调用事实，例子另标；不搬两阶段JSON、全仓wiki/RAG依赖或其短段篇幅限制 |
 | [awesome-copilot mentor](https://github.com/github/awesome-copilot/blob/main/agents/mentor.agent.md) | 搜调用用法，追问Why与取舍，以提示/苏格拉底式互动辅导 | 吸收用法搜证与取舍；不采用与默认详细独立教材冲突的短答、先问后放行 |
 | [learn-codebase 当前 SKILL](https://github.com/ktaletsk/learn-codebase/blob/main/SKILL.md) | 学习journal、先预测再解释及短回复节奏 | 保留学习记忆；不搬150词上限或频繁下一步询问，不用提问阻止阅读 |
@@ -50,6 +51,8 @@ v1.9.0 完整阅读本地 `replicate-learning` 的 Skill、批次全文/零件/�
 | 事故显示全绿、裸行号、自检表仍可漏源码/机制/正文错误 | 一次语义通读分别判断事实与初学者可读，缺口直接修正文 | 不引入 gate 工具、质量 JSON、机械覆盖率、章数/词数指标、hash 仪式或反复全量复检 |
 
 保留本项目的 `.codelearn/` 持久化、横向审计、真实能力证据和独立重建，不采用参照的自动开发/提交/运行义务或以阅读替代能力验收。公开教学材料与规则不能证明模型稳定遵循，也不能保证读者掌握；固定骨架只减少遗漏机会。
+
+v1.11.1 再读本地批次模板第⑥节，复用完整代码、逐行解释、机制、怎么用及上下游接入的教学职责；这些要求归入唯一教学合同，不复制十七章节、闸门工具或字数规则，也不因精炼 Skill 而缩减教材深度。
 
 v1.10.0 另实际查阅 [Write your Own Virtual Machine](https://www.jmeiners.com/lc3-vm/)、[Diátaxis Explanation](https://diataxis.fr/explanation/) 与 [Diátaxis Tutorials](https://diataxis.fr/tutorials/)。前者将概念、真实代码、执行机制和使用连接起来，适配为完整因果单元；不采用允许跳过核心原语的建议，因为本 Skill 默认零基础。Explanation 强调联系、上下文、原因和例子，适配为架构及机制判断；Tutorials 的具体有意义进展适配为每课一个因果目标，但其避免解释的分工不直接用于本 Skill 的综合教材。以上是教法组织的推论，不是效果保证，也不复制原文。
 
