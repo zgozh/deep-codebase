@@ -49,7 +49,7 @@ npx skills add . --list
 本次十章公开主例由 Luna/max 实际生成。Principal 独立阅读全文后指出 API 解释仍偏摘要、初学者术语和源码段排版仍有缺口；还指出把中间第二个 `Setup` 改为 `Install` 时，`#setup-1` 会通过检查却转指第三个 `Setup`，先前推演遗漏了这个语义变化。作者按反馈修订，Principal 后续独立复核并通过主课主体及四项事实修正。这是有界的静态教学稿复核，不代表用户满意、课程运行、模型长期遵守或学习者掌握。
 
 - Principal 实际运行 `python -X utf8 scripts/validate.py`：36 个发布文件、128 个本地链接/锚点，v1.10.0、schema v1 与发布范围检查通过。
-- Principal 实际运行 `python -X utf8 C:\Users\13610\.codex\skills\.system\skill-creator\scripts\quick_validate.py deep-codebase-learning`，结果为 `Skill is valid!`。
+- Principal 实际使用官方 Skill Creator 的 `quick_validate.py` 校验 `deep-codebase-learning`，结果为 `Skill is valid!`。
 - 教材最终小修后实际运行 `git diff --check`，通过。回读确认仍为文档 V0 修改；没有运行应用测试、构建或浏览器，也没有进行真实学习效果试验。
 
 ### v1.9.0 教材合同与历史试写
