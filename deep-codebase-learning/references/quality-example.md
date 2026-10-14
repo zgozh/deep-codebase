@@ -1555,13 +1555,7 @@ Python 先算最内层 `heading.lower()`，把它的结果交给 `re.sub`；替�
 
 这与 `Setup` 重复三次的计数不是一回事：重复计数按基础 slug 记次数；碰撞是两个不同基础来源产生同一个最终字符串。成员检查只回答“集合里有没有 `setup-1`”，不回答它对应哪一个标题。当前脚本因而可能把一个有歧义的片段当成存在。
 
-#### 一次响应结束后，处理器和连接怎样收尾
-
-在正常 `/plain.html` 路径里，项目 `do_GET` 写完正文后返回；继承的 `BaseHTTPRequestHandler.handle_one_request()` 随之返回给 `handle()`。默认响应协议是 HTTP/1.0，连接关闭标志通常保持为真，因此 `handle()` 不再循环读下一条请求。随后 `BaseRequestHandler.__init__` 的 `finally` 调 `finish()`：流处理器尝试刷新仍打开的 `wfile`，再关闭读写流。处理器构造调用返回后，`BaseServer.process_request()` 调 `shutdown_request(request)`；TCPServer 结束已接受连接并关闭 socket。监听 socket仍归服务器持有，供下一轮 `serve_forever` 接受新连接。
-
-缺失文件时，项目异常先被 `do_GET` 捕获并尝试写 404；若写出成功，接着走同一条 `handle_one_request`、`handle`、`finish`、`shutdown_request` 收尾链。文件读取失败也可能在 `handle_file` 内部转换为错误页后正常回到规则循环，再执行 `break`，然后走正常清理。若状态、头部或正文写入抛错，错误页的第二次写入也可能失败，异常再交给服务器级错误钩子；清理代码仍尝试刷新/关闭流和连接，但它不能撤回已写字节，也不能证明浏览器收到了完整页面。本文只把 `200` 或 `404` 页面描述为整条相应写出成功时的可见结果。
-
-## 8. 设计取舍与使用/扩展方法
+### 8. 设计取舍与使用/扩展方法
 
 #### 为什么分开读文件、算标题和报告错误
 
