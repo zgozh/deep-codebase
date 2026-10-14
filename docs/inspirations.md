@@ -18,6 +18,12 @@ Skill格式按 [Agent Skills规范](https://agentskills.io/specification)，安�
 
 ## 公开教学方法的适配
 
+### v1.11.0 完整功能教材的适配
+
+本轮 Principal 实际读 [AOSA 的 A Simple Web Server](https://aosabook.org/en/500L/a-simple-web-server.html) 及其 [固定版本源码](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py)，采用从真实浏览器动作、服务器/库/项目处理器分工到文件读取和响应消费的完整功能尺度，作为自编十章主课的源事实。旧 helper 降为局部语法参照，不再用其十章齐全校准整个项目功能。该历史源码为 Python 2，不能无说明改成 Python 3 原文；[许可](https://github.com/aosabook/500lines/blob/master/LICENSE.md) 区分 MIT 代码与 CC BY 3.0 书文，主课自行写作，不大段翻译书文或复制插图。
+
+本轮亦实际读 [Crafting Interpreters 的 Scanning 源章节](https://github.com/munificent/craftinginterpreters/blob/master/book/scanning.md)，取其具体输入、完整职责代码、局部机制与工程解释相连的教法，落到第五章原行推导和第六章机制展开。只适配组织思想，正文自编；书文/插图的 CC BY-NC-ND 4.0 与代码 MIT 区分，不翻译复用其书文或插图。以上是方法与源事实的来源，不能证明本 Skill 的学习效果；当前验收仍须只凭实际课程正文复演功能并核事实。
+
 ### 本轮 GitHub 源码对照
 
 以下是2026-10-14读取当前 main 原源码后的设计适配，分支会继续变化；不是教学效果验证、热门度排名或上游背书，最初固定提交参照仍保留。
