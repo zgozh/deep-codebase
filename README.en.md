@@ -4,7 +4,7 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.8.1. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.9.0. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 
@@ -34,9 +34,11 @@ For explicit selection in Codex: `Use $deep-codebase-learning to teach me this p
 
 ## Notes first, questions welcome
 
-Every lesson produces a self-contained technical article, not a file-responsibility overview or chat summary. It explains currently needed concepts in plain language at their first relevant use, expands acronyms accurately, gives concrete examples, and traces who calls whom, when execution happens, where values come from, how state changes, and who consumes results. A frontend flow returns to the visible UI; non-UI projects trace the relevant caller or output.
+Each complete lesson follows ten teaching chapters: business goal; system position and architecture; prerequisites; end-to-end flow and scope; detailed source reading; mechanisms and official documentation; one dataset through normal and failure paths; tradeoffs and usage/extension; common confusions and answered review; learning outcome, evidence limits and next lesson. Their order and purpose remain stable while the feature route adapts to the repository. The first landscape lesson adapts this structure truthfully using system/business maps and actual repository evidence rather than claiming a completed code trace. Local chat questions need no ten-chapter treatment.
 
-Real source excerpts include project-relative paths, symbols, and reliable original line locations. Every meaningful statement in a complete source responsibility segment is explained after the code by original line or small semantic group: syntax, concrete values, state changes, reasons, and consumers. Inline teaching comments are supplementary. Added comments are identified and do not modify the project source. You may follow locations to inspect the repository, but the lesson cannot rely on that action to fill missing explanations.
+Every new term receives a brief explanation before first use, including architecture introductions, then sufficient teaching: full name and plain meaning, problem solved, mechanism, project use, concrete example, distinctions and analogy limits. A one-sentence definition is not completion. Chapter six deepens mechanisms; it cannot postpone foundations needed to read chapter five.
+
+Chapter five is the substance: each causal unit follows problem/caller/input → complete real method or cohesive responsibility → detailed prose after the code for every displayed line → boundaries and local replay → usage/upstream/downstream and actual registration where relevant. Explain syntax, concrete values, execution, conditions, state, returns, reasons and consumers. Long methods may use consecutive labeled blocks, preserving relevant lines and matching structure; do not substitute fragments or synthetic closing lines for original source. License, blank and repetitive closing lines may be grouped. Inline teaching comments supplement prose. Explain implementation ideas, mechanisms, alternatives, tradeoffs and concrete failure paths with evidence, building engineering and architecture judgment alongside beginner foundations.
 
 Framework and browser APIs are explained where they intervene: what they provide, how the project connects to them, when they act, and what they manage or call afterward. Helpful official documentation must actually be read for the applicable version. The tutor explains its concrete rules and mechanisms, maps them to project code, states what they can and cannot establish, and then provides a direct section link. Readers do not have to research documentation to complete the lesson.
 
@@ -99,7 +101,7 @@ Lessons may continue while stage ability remains unverified. Final completion st
 
 Repairs retain a recoverable previous version and preserve correct, necessary explanations. Read the complete initial lesson once; then reread local repairs and affected dependencies. Broad rewrites, major source changes, or unclear impact warrant another full read. Keep a brief method/scope/gaps record rather than per-paragraph reports or lesson hashes. Detailed syntax, mechanisms, scenarios and reasons remain essential. Evidence does not establish that rule length alone caused quality problems, or that this workflow guarantees speed or compliance.
 
-The lesson template now guides each step from necessary context through a complete annotated source segment, variable origins, syntax/values/reasons, a concrete replay, and its actual consumer. Check whether the caller really awaits; retain JSX and branch boundaries. Repairs briefly record additions, changes, moves and removals while preserving necessary explanations. Keep current revision records aligned without overwriting the active learning position when repairing an older lesson. Record the skill version actually loaded, not merely installed. No fixed chapter layout or runtime tool is added.
+Version 1.9.0 replaces free-form chapter organization with the stable teaching sequence and detailed source expansion above. One semantic read-through judges factual correctness and beginner readability independently; a reviewer's own knowledge cannot supply missing article content. Link destinations must support adjacent claims, not merely exist. No new gate tools, quality JSON schemas, check matrices or runtime dependencies are added. Headings, length and structural checks cannot guarantee model compliance or learning outcomes.
 
 ## Update and boundaries
 

@@ -42,6 +42,14 @@ npx skills add . --list
 
 ## 已有行为证据
 
+### v1.9.0 教材合同与本轮教材试写
+
+本轮完成 `deep-codebase-learning/references/quality-example.md` 的完整十章公开初学者示例，依据公开脚本 `scripts/validate.py` 的实际 `heading_ids` 和真实调用讲解标题锚点；旧的四段局部示例仍保留为局部参照。另完成 `reports/v1.9.0/配置到历史上限-试写.md` 的十章隔离真实源码试稿，范围为配置绑定、校验、轮数乘二、`loadHistory` 的数量实参及结果接收。Principal 已复读返修后的 A/B，接纳它们作为静态教学试用稿与公开展开参照。复审涵盖源码教学注释、初学者前置解释、校验器注册关系、Stream/消费者讲解、summaryEnabled 初值区分、资料版本措辞及 slug 碰撞边界。该接纳不证明目标应用运行通过、所有项目适配或长期行为稳定；未运行应用，不写入真实 `.codelearn`，也不改变学习者掌握状态。
+
+首稿阶段的 `scripts/validate.py` 曾发现公开示例代码块中的假设 `guide.md#setup-1` 被当作仓库本地链接。已将教学输入收窄为五行标题，并将 `setup-1` 明确作为外层假设片段；当时复跑通过 36 个发布文件、UTF-8、JSON/YAML、123 个本地链接/锚点，并报告 Skill v1.9.0 / schema v1 契约及发布范围检查通过。Principal 随后发现语义教学缺口；本次完成源码注释、解释深度、注册链、Stream/消费者及锚点碰撞边界返修后，重新执行 `python -X utf8 scripts/validate.py`，实际通过 36 个发布文件、UTF-8、JSON/YAML、123 个本地链接/锚点和 v1.9.0/schema v1 发布范围检查。`quick_validate.py deep-codebase-learning` 首稿阶段曾返回 `Skill is valid!`；本次未改 Skill 元数据，沿用该项仍适用的证据。返修后 `git diff --check` 在本次最终编辑完成后执行。
+
+返修后 Principal 已完成静态复审并接纳两稿作为试用稿；这只表示正文可用于静态教学试读，不证明目标应用运行通过、其他项目复用正确或长期行为稳定。没有运行应用、Maven、构建、浏览器、数据库或付费 API，也不声称学习效果或模型稳定性已经验证。
+
 ### v1.8.1 五项风险的有界规则修订
 
 本轮针对正文/状态脱节、await调用事实、返修丢解释、变量/JSX边界缺失与宽预读，回读合同/模板并核共享规则，实际读取 MDN async/Promise.resolve/catch 与 React JSX/条件渲染/props 章节。两个公开虚构示意由独立上下文作者编写，主会话实际通读代码、解释和例子，核其结构、变量来源、调用返回/Promise链及JSX真假选择；局部修正Python真实来源与JS/JSX虚构范围、catch未声明形参仍收到但忽略拒绝原因、新链最终兑现的措辞后确认。它们是人工设计的讲法示范，不是模型使用整套Skill对新真实仓库的独立前向、应用/React运行或学习者效果证明。整包实际执行 `python -X utf8 scripts/validate.py` 通过36发布文件/122本地链接、v1.8.1/schema v1；官方格式检查返回 `Skill is valid!`，`git diff --check` 通过。本次仅措辞回填，未改链接/版本/schema，不重复全结构检查，也不保证所有项目或速度。
