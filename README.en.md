@@ -4,11 +4,15 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.11.3. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.11.4. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
 Lessons follow initialization and user actions into real source. Every behavior unit uses navigable sections for problem/approach, trigger/input, reading preparation, complete annotated source, prose for every line, local execution/failure, mechanism/judgment, and usage/integration/change impact. Short examples do not determine source size in real lessons: preserve complete necessary methods, components, configuration readers and direct callers, creation/registration and consumers. Long source uses consecutive blocks without dropping difficult lines; unrelated whole files and minimum line counts are unnecessary. Later chapters deepen the flow without replacing local teaching.
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
+
+The [lesson template](deep-codebase-learning/assets/templates/stage-note.md) also provides internal sections and concrete ways to develop all ten chapters, from beginner explanations to development and architecture judgments. Adapt headings and combine or reference sufficiently taught material when justified; retain the meaning, mechanisms and values needed here. This is a writing scaffold, not a fill-in ritual or a content limit. The same read-through checks applicable section duties; each chapter's single review entry includes the actual checked section scope and a concrete location or gap, without a separate review table for every section.
+
+Version 1.11.4 groups source explanations by evaluation and behavior boundaries. Each consecutive source block has adjacent prose that teaches how to read it, executes concrete values, and derives the relevant mechanisms and design choices. One read-through compares source and prose, then records one short factual/teaching result per chapter and actual 5.x unit in the existing review. Checked items cite a concrete prose location; gaps identify the expression and missing explanation; unchecked necessary scope keeps the whole lesson draft. Complete headings and a correct call chain cannot substitute for teaching. Local repairs reuse unaffected evidence. No new tools, large matrices, or claims of repaired real lessons or proven learning outcomes are added.
 
 ## Start learning
 
