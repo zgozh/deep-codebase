@@ -42,6 +42,16 @@ npx skills add . --list
 
 ## 已有行为证据
 
+### v1.11.6 Mermaid边标签修复与解析范围
+
+用户报告syntax error后，主会话实际复现fixture浏览器试写A第一张flowchart中的 `H -->|response.json()| J`：固定官方Mermaid 10.9.3和11.4.1均抛Parse error，报错包含 `got PS`；最小改为 `H -->|"response.json()"| J` 后，两版均可解析。已读官方 [流程图特殊字符](https://mermaid.js.org/syntax/flowchart.html#special-characters-that-break-syntax) 与 [语法验证](https://mermaid.js.org/config/usage.html#syntax-validation-without-rendering)，共享规则仅补边标签引号及等待parse结果，不加工具或检查矩阵。
+
+本轮采用现成Playwright浏览器在about:blank加载固定官方模块，本地执行并等待parse，仅处理虚构/公开图代码，未上传私有源码。首次复测三稿共6图，修前A第一图在两版均失败，另5图在两版均解析通过；公开diagrams两图及quality-example两图在11.4.1均解析通过。首次修后复测曾因旧window变量已丢失而失败；改为在同一次调用中显式import固定的两个版本模块后，复测成功，这次工具上下文问题与图语法无关。成功返回形态实际为10.9.3的true与11.4.1含diagramType的对象；false或异常均失败，不能用未等待的Promise或固定对象形态判成功。
+
+最终复测覆盖三稿修订后的6图、diagrams两图与quality-example两图，共10张图分别在Mermaid 10.9.3和11.4.1等待parse，20项全部成功。修后A第一图另在11.4.1实际调用mermaid.render并成功生成24925字符的SVG。该结果证明这次调用生成了SVG，不证明未知Markdown/IDE阅读器会正确显示；不保证所有平台兼容。修前A第一图两版解析失败的事实仍保留，与修后成功结果分别记录。
+
+这是v1.11.5之后新增的浏览器内图语法解析与SVG生成证据，不改写原轮未运行应用/浏览器的历史范围。未安装CLI、npm包或项目依赖，未运行目标应用、构建、服务或用户学习实验；原有首稿退修、审读漏项、隔离偏差及普适性/效果限制继续保留。本版V0实际检查通过39个发布文件、196个本地链接/锚点，版本v1.11.6、schema v1；官方`quick_validate.py`返回`Skill is valid!`，`git diff --check`通过。这些结构、版本和格式检查不证明教材质量、所有阅读器显示或用户学习成效。
+
 ### v1.11.5 开发试写方法与状态
 
 本版先落实共享作者任务、冷读任务与按需 [单元校准](../deep-codebase-learning/references/teaching-calibration.md)，再用 [三个完整虚构案例](evals/cases.md) 作有限迁移试写。评测仅在维护开发时使用，不是 Skill 每课流程、运行依赖或适用栈白名单，不读取私人学习记录。源码单元示范与十章整课分别判断。

@@ -4,7 +4,9 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.11.5. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.11.6. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+
+Version 1.11.6 defaults to quoted [flowchart edge labels](deep-codebase-learning/references/diagrams.md) and awaits syntax parsing, allowing the different success shapes observed in tested versions. The unquoted `response.json()` label failed in both versions; [recorded parsing scope](docs/validation.md#v1116-mermaid边标签修复与解析范围) does not establish rendering on every platform.
 
 Version 1.11.5 adds reusable author/cold-reading tasks and optional [source-unit calibration](deep-codebase-learning/references/teaching-calibration.md), without language or lesson-size limits. Three Luna Max cross-stack ten-chapter drafts required repairs after independent cold reading; targeted repairs and rereading support limited static trial reading. Anonymous unit review distinguished three core categories but also made an overstated criticism. [Actual scope, missed issues and execution deviations](docs/validation.md#v1115-开发试写方法与状态) do not establish strict isolation, universality or improvement. These are development evaluations, not runtime dependencies or a per-lesson workflow.
 
