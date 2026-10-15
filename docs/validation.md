@@ -52,6 +52,10 @@ npx skills add . --list
 
 本次 V0 实际通过：`python -X utf8 scripts/validate.py` 检查 41 个发布文件、196 个本地链接/锚点及 v1.11.7/schema v1 合约；官方 `quick_validate.py deep-codebase-learning` 返回 `Skill is valid!`；`git diff --check` 实际退出码为 0。
 
+另有一次真实两篇笔记返修周期记录：2026-10-15 13:17:04.839Z 至 15:09:54.787Z，历时 1h52m49.948s；初稿分别于 13:48:59 和 13:50:05 冻结，之后有 8 次返修任务派发。49 次等待与 37 次 60 秒睡眠请求在观测中跨时 67m16s，并与作者工作重叠，不能当作净等待浪费或主动工时拆分。图表输出曾截断，解析先遇 TypeError，随后定位到真实语法错误；最终还修复了状态补丁锚点和断言。流程调整只针对合并等待、批处理已知修复和复用未受影响检查，不减少语义通读或承诺提速，已发生的漏项仍保留记录。
+
+一次 24 行虚构 Python 文件输出修订试写中，作者 Luna Max 只读冻结 Skill、原始案例并查阅 Python 3.11 官方资料；新鲜独立 Luna Max 只读首稿、案例和 Skill，未读 key。首轮独审发现工作目录前置缺口，但未指出正文仍按源码定义顺序展开、入口留到最后，以及缺少具体替代方案；这些由 Principal 指出后，审读者复核同意。作者保留可恢复基线，按实际入口和调用重排讲解，补充当前工作目录、`[]`、`+=` 与文件参数替代方案。定点回读又发现重复替代段和丢失的两个官方链接；修订删除重复段，补回 `with` 与入口引用，并核 UTF-8 和隐式返回 `None` 的解释。PowerShell/正则回读传输失败后改用简单 UTF-8 回读，没有删减教学内容。Principal 完整通读终稿并窄查最后链接；当前单元可用于有限静态试用，但不是十章整课或用户验收。终稿经过定向修复和 Principal 审读，不算初稿盲审通过或独立终审，也不证明模型 100% 遵循或速度提升；本次不扩成新的全课试验。
+
 ### v1.11.6 Mermaid边标签修复与解析范围
 
 用户报告syntax error后，主会话实际复现fixture浏览器试写A第一张flowchart中的 `H -->|response.json()| J`：固定官方Mermaid 10.9.3和11.4.1均抛Parse error，报错包含 `got PS`；最小改为 `H -->|"response.json()"| J` 后，两版均可解析。已读官方 [流程图特殊字符](https://mermaid.js.org/syntax/flowchart.html#special-characters-that-break-syntax) 与 [语法验证](https://mermaid.js.org/config/usage.html#syntax-validation-without-rendering)，共享规则仅补边标签引号及等待parse结果，不加工具或检查矩阵。
