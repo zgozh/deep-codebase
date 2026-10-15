@@ -4,7 +4,9 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.4。
+`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.5。
+
+v1.11.5 提供可采用的作者/冷读任务及按需 [源码单元校准](deep-codebase-learning/references/teaching-calibration.md)，不限定语言或真实课规模。三次Luna Max跨栈十章首稿经独立冷读均退修，定点补缺并复读影响范围后仅可作有限静态试读；另一次匿名单元冷读辨别核心三类差异，也出现过强批评。[实际范围、审读漏项与执行偏差](docs/validation.md#v1115-开发试写方法与状态) 不支持严格隔离、普适性或效果提升结论；这是开发验证，不是运行依赖或每课流程。
 
 > Flow before files. Understanding before coverage. Evidence before mastery. Reconstruction before completion.
 

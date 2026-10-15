@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.11.4"
+  version: "1.11.5"
 ---
 
 # Deep Codebase Learning
@@ -45,6 +45,7 @@ Conversation is not the learning record. Journal is the structured record of the
 | 每节教学、源码、知识绕行、答疑、实验 | [teaching.md](references/teaching.md) |
 | 启动/恢复、逐轮保存、中断、源码变化 | [memory.md](references/memory.md) |
 | 首次模式询问、模式切换或委派教材 | [authoring.md](references/authoring.md) |
+| 重大深度反馈、难以分辨概述与充分单元教学 | [teaching-calibration.md](references/teaching-calibration.md) |
 | Quiz/复述、阶段门禁、审计、重建 | [evaluation.md](references/evaluation.md) |
 | 每节笔记、显式总结、文章质量与路径 | [notes.md](references/notes.md) |
 | 任意 Mermaid 编写/修改 | [diagrams.md](references/diagrams.md) |
