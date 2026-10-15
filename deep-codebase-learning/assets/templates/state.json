@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "skill_version": "1.11.6",
+  "skill_version": "1.11.7",
   "project": {
     "name": null,
     "root_hint": ".",

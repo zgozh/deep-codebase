@@ -42,6 +42,16 @@ npx skills add . --list
 
 ## 已有行为证据
 
+### v1.11.7 表达式教学与中间接线迁移检查
+
+此前真实源码教材的两篇审读曾漏放不忠实的分块、未教的前置概念和被跳过的适配/界面接线，对有处理函数但当前未核到生产路径的分支缺少边界说明，并留下返修后重复正文。本版将这些经验归纳进现有作者任务、教学规范和 review 短记：沿具体值核生产者、转交表达式和消费者，保持真实源码作用域边界，先教本次操作所需的概念模型，并把重复解释并回承担该教学职责的位置；仅补可选的同源码短对照，不增加工具、schema 或重型流程。
+
+一次新的独立静态迁移审读只提供冻结 Skill 与原始 `docs/evals/transfer-case.md`，未提供 key 或先前结论。审读识别出源码分块、编码/字节单位、`make_delivery` 闭包接线三项目标缺口，并保留“输出路径”解释充分的判断。首次读取因 PowerShell 默认编码和合并输出截断而无效，随后对指定 Skill、teaching、authoring、review 模板和原始案例分别用 UTF-8 有界读取；审读未执行虚构程序，也未读取维护者答案或真实项目源码。
+
+这是一项单次定性检查：没有同案例旧版对照、整课编写、重复性或效率比较，也不证明审读稳定性、真实学习效果或全课质量。冻结 Skill 已同步至本机安装目录；22 个源文件的相对路径和字节逐一匹配，未发现额外文件，也未删除目标目录内容。
+
+本次 V0 实际通过：`python -X utf8 scripts/validate.py` 检查 41 个发布文件、196 个本地链接/锚点及 v1.11.7/schema v1 合约；官方 `quick_validate.py deep-codebase-learning` 返回 `Skill is valid!`；`git diff --check` 实际退出码为 0。
+
 ### v1.11.6 Mermaid边标签修复与解析范围
 
 用户报告syntax error后，主会话实际复现fixture浏览器试写A第一张flowchart中的 `H -->|response.json()| J`：固定官方Mermaid 10.9.3和11.4.1均抛Parse error，报错包含 `got PS`；最小改为 `H -->|"response.json()"| J` 后，两版均可解析。已读官方 [流程图特殊字符](https://mermaid.js.org/syntax/flowchart.html#special-characters-that-break-syntax) 与 [语法验证](https://mermaid.js.org/config/usage.html#syntax-validation-without-rendering)，共享规则仅补边标签引号及等待parse结果，不加工具或检查矩阵。
