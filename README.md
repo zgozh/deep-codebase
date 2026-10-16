@@ -4,7 +4,9 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.6。
+`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.8。
+
+v1.11.8 用 [试行扩写基线](deep-codebase-learning/references/teaching.md#试行扩写基线重要小节要展开到什么程度) 指导重要小节和首次语义组充分展开，并在既有一次通读中核具体值、机制与判断。数字是工程试行展开目标，没有统计最佳证明；事实与教学判断优先，已充分承担职责的短段凭具体正文依据保留，不凑字；不设整课字数目标、源码体量上限或新计数工具。旧公开示例仅供写法参照，尚未按新基线验收，本次修改不证明真实教材已修复或试用通过。
 
 v1.11.6 修补 [流程图边标签](deep-codebase-learning/references/diagrams.md)：默认双引号包裹，并等待异步语法解析结果，兼容已测版本的不同成功返回形态。`response.json()` 裸边标签错误已在两个版本复现；[当前解析范围](docs/validation.md#v1116-mermaid边标签修复与解析范围) 不代表所有平台渲染通过。
 

@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.11.7"
+  version: "1.11.8"
 ---
 
 # Deep Codebase Learning
@@ -17,6 +17,8 @@ Conversation is not the learning record. Journal is the structured record of the
 **默认完全初学者，详细笔记是正式教学交付物。** 每节笔记须独立读懂，不要求先看聊天、翻源码或自学未解释概念。聊天默认简短说明覆盖范围并给可点击笔记链接；用户提问直接充分答疑，不扩成整节课。仅明确要求“在聊天完整讲一节”时展开完整课堂。实质缺漏修订笔记及关联记录，单纯即时澄清不必重写。两种渠道遵守同一 [教学交付合同](references/teaching.md#唯一教学交付合同)，不能用职责概述、术语列表或裸代码替代详细教学。
 
 ## 开始或继续
+
+重要小节与代码后语义组按 [试行扩写基线](references/teaching.md#试行扩写基线重要小节要展开到什么程度) 充分成稿并同次审读；默认展开目标帮助发现内容缺口，事实与教学判断优先，已有充分解释按正文依据保留，不机械凑字。
 
 1. 确定项目根，遵循当地 AGENTS.md。已明确项目就直接开始；只有源码不可访问等真正阻塞才澄清。学习请求包含维护 `.codelearn/` 的意图，服从宿主权限，无需管理命令。
 2. 执行 [记忆协议](references/memory.md) PRE-TURN LOAD，恢复最新反馈、已有教材范围、能力证据和返回点，不覆盖历史。全新项目按 [规划协议](references/planning.md) 与 [state 模板](assets/templates/state.json) 初始化，Inventory 增量补齐，不等全仓精读。
