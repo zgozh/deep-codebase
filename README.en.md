@@ -4,7 +4,9 @@
 
 [中文](README.md) · [Usage](docs/usage.md) · [Design](docs/design.md) · [Validation](docs/validation.md) · [Contributing](CONTRIBUTING.md)
 
-Version 1.11.8. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.11.9 clarifies bounded consecutive source reading, cohesive patches with short anchors, and batching known gaps from the same review in the existing [authoring workflow](deep-codebase-learning/references/authoring.md), retaining teaching depth; [execution observations](docs/validation.md#v1119-长耗时返修的执行观察与局部复查) do not establish faster work or whole-lesson acceptance.
+
+Version 1.11.9. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
 
 Version 1.11.8 adds a [trial expansion baseline](deep-codebase-learning/references/teaching.md#试行扩写基线重要小节要展开到什么程度) for important subsections and first explanations of semantic groups. Authors develop concrete values, mechanisms and judgments; the existing read-through checks substance as well as expansion. These engineering trial targets have no statistically proven optimum and do not mechanically determine acceptance. Factual accuracy and sufficient teaching take priority; a shorter section that fulfills its duties can be retained with precise prose evidence, without padding or rewriting adequate content. There is no whole-lesson word target, source-size cap or new counting tool. Existing public examples illustrate writing shape and have not been accepted against the new baseline; this change does not establish repaired real lessons or a passed semantic trial.
 
