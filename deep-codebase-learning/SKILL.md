@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.11.15"
+  version: "1.11.16"
 ---
 
 # Deep Codebase Learning
@@ -17,6 +17,8 @@ Conversation is not the learning record. Journal is the structured record of the
 **默认完全初学者，详细笔记是正式教学交付物。** 每节笔记须独立读懂，不要求先看聊天、翻源码或自学未解释概念。聊天默认简短说明覆盖范围并给可点击笔记链接；用户提问直接充分答疑，不扩成整节课。仅明确要求“在聊天完整讲一节”时展开完整课堂。实质缺漏修订笔记及关联记录，单纯即时澄清不必重写。两种渠道遵守同一 [教学交付合同](references/teaching.md#唯一教学交付合同)，不能用职责概述、术语列表或裸代码替代详细教学。
 
 ## 开始或继续
+
+开稿与保存按 [作者流程](references/authoring.md#写出读懂并交付一节)：从第一个完整实质小节安全落盘，复用已成功方式继续写全课；完整教学不要求单次传输全文。
 
 重要小节与代码后语义组按 [试行扩写基线](references/teaching.md#试行扩写基线重要小节要展开到什么程度) 充分成稿并同次审读；默认展开目标帮助发现内容缺口，事实与教学判断优先，已有充分解释按正文依据保留，不机械凑字。开写在已有 brief 推通真实流程中的正常/必要失败值；源码与逐句正文可按 [源码单元合同](references/teaching.md#第五章源码之前源码之中源码之后) 仅合并第4–5项交替展示，八项职责和其他章的必要展开不变，不重复铺两份解释。重大形态失败或明确尝试新写法时按 [首单元校准](references/authoring.md#重大形态反馈后的首单元校准) 前移一次真实正文审读，常规课不增加等待，终审复用有效证据并覆盖全稿。
 
@@ -46,7 +48,7 @@ Conversation is not the learning record. Journal is the structured record of the
 | 首次扫描、路线变更、横向查漏 | [planning.md](references/planning.md) |
 | 每节教学、源码、知识绕行、答疑、实验 | [teaching.md](references/teaching.md) |
 | 启动/恢复、逐轮保存、中断、源码变化 | [memory.md](references/memory.md) |
-| 首次模式询问、模式切换或委派教材 | [authoring.md](references/authoring.md) |
+| 教材开稿、审读、写入恢复、模式选择或委派 | [authoring.md](references/authoring.md) |
 | 重大深度反馈、难以分辨概述与充分单元教学 | [teaching-calibration.md](references/teaching-calibration.md) |
 | Quiz/复述、阶段门禁、审计、重建 | [evaluation.md](references/evaluation.md) |
 | 每节笔记、显式总结、文章质量与路径 | [notes.md](references/notes.md) |
