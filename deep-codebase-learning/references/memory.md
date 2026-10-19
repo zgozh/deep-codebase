@@ -119,7 +119,7 @@ knowledge/index 只路由当前有用概念到 `knowledge/<topic-id>.md`，多�
 
    收尾只核本轮受影响记录的四项一致性，不重写历史：
    - 本课 ID/路径、实际内容边界、quality/verification及审读方法一致；正文还有待修必要内容不能对应活动 delivered。single 自查可交付，delegated 须主会话实际审读后统一登记。
-   - 当前修订事件与中文 notes 索引、相关 stage 检查点、review、journal 指向同一最新修订；历史创建事件/旧 review 可保留。修旧课保留当前 current.stage/topic、awaiting 与 next_action，不能把当前学习位置倒写为被修旧课。
+   - 当前修订事件与中文 notes 索引、相关 stage 检查点、review、journal 指向同一最新修订；历史创建事件/旧 review 可保留。修旧课保留当前学习位置、有效返回点、待评估能力及真实能力证据，不能把 current.stage/topic 倒写为被修旧课；同时纠正本次影响的 roadmap/Stage/index/coverage/open_loops 及 next_action 中的过期条件或范围描述。有效下一目标可保留；最新意图确需换下一步时保存原返回点并记录因果理由，不硬冻结旧文字。只同步受影响记录，不每轮全量重算，不凭教材修订提升 mastery 或完成阶段。
    - state.skill_version 记录本轮确实加载使用的 Skill 版本，有价值修订提交时同步；仅安装新版不够，不批改历史创建元数据。源码 revision 与 Skill 版本独立。
    - 最新 committed 事件与 state.journal.last_event/next_sequence、pending 清理一致，解析相关 JSON 并回读实际路径。顺序仍 pending→必要 projections→验证→committed→state 指针，不能无事件跳清 pending；中断依既有幂等恢复补齐，不重复事件或重写正文。
 

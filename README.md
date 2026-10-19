@@ -4,9 +4,9 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-v1.11.12 在既有 [作者流程](deep-codebase-learning/references/authoring.md) 中补充NaN请求拼装根因与短传输示例，同一拼装错误再现改可靠局部写入，保留教学要求与现稿，不新增审查轮次。
+v1.11.13 在既有 [路线规划](deep-codebase-learning/references/planning.md) 和 [作者流程](deep-codebase-learning/references/authoring.md) 中落实完整功能与因果目标、真实前置出处、交接和复杂支路回收；修旧课保留学习位置并纠正受影响的过期描述。重要小节与首次语义组沿用试行展开下限及窄例外，不设整课总字数指标，不新增审查轮次或记录。
 
-`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.12。
+`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.13。
 
 v1.11.8 用 [试行扩写基线](deep-codebase-learning/references/teaching.md#试行扩写基线重要小节要展开到什么程度) 指导重要小节和首次语义组充分展开，并在既有一次通读中核具体值、机制与判断。数字是工程试行展开目标，没有统计最佳证明；事实与教学判断优先，已充分承担职责的短段凭具体正文依据保留，不凑字；不设整课字数目标、源码体量上限或新计数工具。旧公开示例仅供写法参照，尚未按新基线验收，本次修改不证明真实教材已修复或试用通过。
 
