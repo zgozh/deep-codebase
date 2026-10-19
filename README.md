@@ -4,9 +4,9 @@
 
 [English](README.en.md) · [使用指南](docs/usage.md) · [设计与记忆](docs/design.md) · [验证与限制](docs/validation.md) · [贡献](CONTRIBUTING.md)
 
-v1.11.14 在已有 [作者流程](deep-codebase-learning/references/authoring.md) 先推通正常/必要失败值；[源码单元](deep-codebase-learning/references/teaching.md#第五章源码之前源码之中源码之后) 仅第4–5项可合成连续源码与紧邻充分正文，避免重复铺解释。[可选校准](deep-codebase-learning/references/teaching-calibration.md) 增加连贯对照，审读先找正文证据再判断。保留十章、八职责和全部展开下限，不新增工具或审查轮次，尚未证明提速或教学效果。
+v1.11.15 在重大教学形态失败或明确尝试新写法时，按 [作者流程](deep-codebase-learning/references/authoring.md#重大形态反馈后的首单元校准) 将一次校准前移到同稿首个真实代表核心单元，避免浅讲扩散后才发现；常规课仍完整稿一次审读，终审复用有效证据并覆盖全稿。十章、八职责和全部展开下限不变，不新增样例稿、工具或每单元门禁；效果仍待真实行为验证。
 
-`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.14。
+`deep-codebase-learning` 是一个 Agent Skill。默认以**详细、可独立阅读的初学者教材**带你学习真实业务链，聊天简短给范围与笔记链接，并随时答疑。进度保存在目标项目 `.codelearn/`，固定会话或换会话都能继续。当前版本 1.11.15。
 
 v1.11.8 用 [试行扩写基线](deep-codebase-learning/references/teaching.md#试行扩写基线重要小节要展开到什么程度) 指导重要小节和首次语义组充分展开，并在既有一次通读中核具体值、机制与判断。数字是工程试行展开目标，没有统计最佳证明；事实与教学判断优先，已充分承担职责的短段凭具体正文依据保留，不凑字；不设整课字数目标、源码体量上限或新计数工具。旧公开示例仅供写法参照，尚未按新基线验收，本次修改不证明真实教材已修复或试用通过。
 
