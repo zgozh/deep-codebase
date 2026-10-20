@@ -6,7 +6,9 @@
 
 Version 1.11.15 moves one [calibration](deep-codebase-learning/references/authoring.md#重大形态反馈后的首单元校准) to the first real, representative core unit in the same draft after major teaching-form failures or an explicit trial of a new writing approach. Routine lessons retain one complete-draft review; final review reuses valid evidence and covers the whole draft. All ten chapters, eight duties and expansion minimums remain. No separate sample, tool or per-unit gate is added; behavior and efficiency effects remain unverified.
 
-Version 1.11.18. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+Version 1.11.19. This Agent Skill plans a repository-specific route, teaches real execution flows, and saves durable memory in the target project's `.codelearn/`. Detailed notes are the default complete lesson. Chat gives a brief scope and clickable note link, with direct answers whenever you ask questions. Keep one conversation or resume in a new one.
+
+Version 1.11.19 moves existing writing guidance into a small reference routed before the first write or revision. It clarifies truncated reading, baseline comparisons for untracked drafts and source consistency across chapters. No tool, expansion target or review round is added; whole-lesson acceptance, speed gains and stable improvement remain unproven.
 
 Version 1.11.18 consolidates existing writing rules into one patch shape, ordered hunks per file and three failure-recovery categories. It adds no tool or teaching requirement and does not establish execution stability or speed gains.
 

@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.11.18"
+  version: "1.11.19"
 ---
 
 # Deep Codebase Learning
@@ -26,7 +26,7 @@ Conversation is not the learning record. Journal is the structured record of the
 2. 执行 [记忆协议](references/memory.md) PRE-TURN LOAD，恢复最新反馈、已有教材范围、能力证据和返回点，不覆盖历史。全新项目按 [规划协议](references/planning.md) 与 [state 模板](assets/templates/state.json) 初始化，Inventory 增量补齐，不等全仓精读。
 3. 首次提供一次 [编写模式选择](references/authoring.md)：默认单会话；环境支持且用户选择时，主会话规划与独立审查、子 agent 编写。尚未选择保持单会话，不让选择或环境缺少子 agent 阻塞首节。模式不是知识测验，不锁定模型。
 4. 全景尚未充分交付就先写第一节：业务问题 → 能力 → 模块边界 → 白话端到端流程，再逐层进入真实源码。有前后端则贯通。完整路线含其他能力、横向审计和重建；不以问卷、文件表或陌生问题开场。
-5. 选择一个可理解的因果目标，实际读相关源码与适用版本官方章节，按 [教学协议](references/teaching.md) 和 [教材模板](assets/templates/stage-note.md) 尽早写完整十章小课，必要资料缺口随写随查。首次完整课或重大反馈时按正在写的章节读取 [小型完整功能读码示例](references/quality-example.md) 的相关写法，确需整体对照才读整例；已读未变内容复用，不复制技术事实。它不是大型全栈代表课或真实课尺寸上限。十章是每节认知骨架，不是十个业务步骤或项目固定阶段；实际流程按因果次序放第五章5.x单元。每单元完成问题/思路、触发输入、阅读准备、完整注释源码、逐行正文、局部运行/失败、机制判断与用法接入；长源码连续分块，每块紧邻充分正文，前中后职责可定位。新概念先短释再深入教，真实使用、架构协作和全链均展开；多参与者功能另给时序/数据流图。第六章深化最难的实际创建/注册/分派/消费机制，把官方规则讲进正文。大目标拆课，保留必要深度，全景按证据适配。
+5. 首次写入或返修前实际读取 [写入约定](references/writing-io.md) 当前必要正文，已读未变复用，不为此全读作者流程或所有参考。选择一个可理解的因果目标，实际读相关源码与适用版本官方章节，按 [教学协议](references/teaching.md) 和 [教材模板](assets/templates/stage-note.md) 尽早写完整十章小课，必要资料缺口随写随查。首次完整课或重大反馈时按正在写的章节读取 [小型完整功能读码示例](references/quality-example.md) 的相关写法，确需整体对照才读整例；已读未变内容复用，不复制技术事实。它不是大型全栈代表课或真实课尺寸上限。十章是每节认知骨架，不是十个业务步骤或项目固定阶段；实际流程按因果次序放第五章5.x单元。每单元完成问题/思路、触发输入、阅读准备、完整注释源码、逐行正文、局部运行/失败、机制判断与用法接入；长源码连续分块，每块紧邻充分正文，前中后职责可定位。新概念先短释再深入教，真实使用、架构协作和全链均展开；多参与者功能另给时序/数据流图。第六章深化最难的实际创建/注册/分派/消费机制，把官方规则讲进正文。大目标拆课，保留必要深度，全景按证据适配。
 6. 按 [作者流程](references/authoring.md) 一次通读核每章实际小节的适用职责，逐块对照源码及代码后正文，覆盖每个5.x单元，同时分别核事实与教学；按 [review 模板](assets/templates/review.md#教材通读与修订note-quality) 留每章/单元短记录，必要未核或未补整课仍 draft。single 自查，delegated 主会话独立读子稿；自身经验、标题或全链正确不补正文缺漏。核最终稿已吸收本轮版本要求与最新反馈，保留可恢复旧版和正确必要解释，局部修只复读影响链。做必要文档 V0/保存/索引，不跑应用测试/构建/浏览器，不新增工具、大矩阵或教材 hash 仪式。
 7. 每个 meaningful interaction 在结束响应及换 Topic 前执行 POST-TURN LEARNING COMMIT。完整教材实际通读、必要修稿/V0、保存和索引成功记 delivered；single 可 ready/self_review，真实独审范围可 validated，未完整稿与备课留 prepared。交付不表示用户已阅读或掌握，写出/读过笔记均不提升 mastery。聊天只报告主题、实际范围和入口，不重复整课；必要交付失败必须说明。
 
@@ -48,7 +48,8 @@ Conversation is not the learning record. Journal is the structured record of the
 | 首次扫描、路线变更、横向查漏 | [planning.md](references/planning.md) |
 | 每节教学、源码、知识绕行、答疑、实验 | [teaching.md](references/teaching.md) |
 | 启动/恢复、逐轮保存、中断、源码变化 | [memory.md](references/memory.md) |
-| 教材开稿、审读、写入恢复、模式选择或委派 | [authoring.md](references/authoring.md) |
+| 首次写入/返修前、写入故障恢复 | [writing-io.md](references/writing-io.md) |
+| 教材编写与审读、模式选择或委派 | [authoring.md](references/authoring.md) |
 | 重大深度反馈、难以分辨概述与充分单元教学 | [teaching-calibration.md](references/teaching-calibration.md) |
 | Quiz/复述、阶段门禁、审计、重建 | [evaluation.md](references/evaluation.md) |
 | 每节笔记、显式总结、文章质量与路径 | [notes.md](references/notes.md) |
