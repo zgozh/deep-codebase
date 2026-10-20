@@ -2,6 +2,8 @@
 
 本页保留既有写法参照，尚未按 v1.11.8 [试行扩写基线](teaching.md#试行扩写基线重要小节要展开到什么程度) 逐节验收；不能以旧例篇幅或历史审读代替当前展开要求，也不声称真实教材已经修复。
 
+> **阅读路线。** 当前主例是第 1–10 章的 HTTP 文件服务，从具体请求沿源码走到响应；页面后半的历史局部、JavaScript 与 JSX 示例是按需查阅的参照，不属于主例续章，也不代表本页的扩写基线或全课验收结论。
+
 > **小型完整功能的读码示例。** 本课沿着源码实际完成的 `GET /plain.html` 路径：浏览器发出请求，Python 标准库解析并调用项目处理器，处理器从进程当前目录找到 `plain.html`、读出文件字节（每个字节由 8 个二进制位组成）、组装响应，浏览器再把响应正文解释为 HTML。下方原有的 Markdown 标题检查课保留为历史局部读码参照，不能用它的篇幅或范围校准本例。
 >
 >
@@ -410,6 +412,8 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
 
 圆括号与逗号创建二元组：第一项是空主机字符串，第二项是整数 `8080`。CPython 2.7.18 的 IPv4 socket 规则中，空主机表示任意本地 IPv4 接口，并非只绑定 `127.0.0.1`。浏览器用 `127.0.0.1` 这个回环（loopback）地址可以连回本机，但服务器监听范围仍覆盖其他可用 IPv4 接口。若端口已被占用，绑定会在下一行构造服务器时失败，等待循环不会开始。
 
+把主机改成 `127.0.0.1`、端口仍取 `8080`，服务器就只把监听地址指定为本机回环接口；本机浏览器访问同一个 `http://127.0.0.1:8080/plain.html` 仍可连接。差异在可达范围：空主机（IPv4 的 `INADDR_ANY`）接受发往本机其他 IPv4 接口地址的连接机会也存在，而回环绑定不接受从那些接口地址到来的连接。绑定范围只决定程序在哪些本地地址等待连接，不等于某个远端一定能或一定不能到达；路由、防火墙、虚拟网卡及操作系统配置仍会影响实际可达性。这里比较的是两个绑定值的设计含义，没有测量网络暴露情况。[Python 2.7.18 `socket` 地址格式说明](https://docs.python.org/2.7/library/socket.html)将 IPv4 的空字符串定义为 `INADDR_ANY`，并将地址绑定交给 `bind()`。
+
 ##### 原行 107：构造监听服务器并保存处理器类
 
 `BaseHTTPServer.HTTPServer(serverAddress, RequestHandler)` 把地址值和类对象传给标准库构造器。这里没有写 `RequestHandler()`，所以此处未创建请求 handler。服务器保存这个类，创建并绑定监听 socket；赋值把服务器实例绑定到模块级名字 `server`。模块级 `if` 块不创建新的局部作用域。
@@ -500,6 +504,8 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
 
 成功 /plain.html：full_path 是工作目录加请求目标；缺失规则返回 False，文件规则返回 True；动作读取并发送，正常返回后 break。缺失 /missing.html：第一规则的动作抛 ServerException，break 被跳过，except 捕获。目录 /subdir：缺失测试和文件测试都返回 False，循环到兜底规则；它的异常同样回到 except。若路径获取或某个 test 抛出其他普通 Exception，也会进入该异常出口，因此错误页面可能掩盖程序缺陷。
 
+把最后一种情况具体化：假设 `case.test(self)` 内因程序错误抛出 `TypeError`。当前 `except Exception` 会把它当作请求错误交给 `handle_error`，于是代码尝试以 404 输出异常页面；这不是“TypeError 对应 HTTP 404”的协议规则，而是宽捕获把不同原因送进同一项目分支。缺失文件的 `ServerException` 则是本程序有意表示“没有目标”的异常，当前代码同样捕获并尝试 404。一个较窄的设计是只在这里捕获预期的 `ServerException`：缺失文件仍进入项目错误页；未预期的 `TypeError` 则不冒充文件缺失，而沿 handler 调用栈到标准库服务器级错误钩子。CPython 2.7.18 的 `BaseServer._handle_request_noblock` 在处理器调用抛出异常时调用服务器的 `handle_error` 并关闭该连接；默认钩子记录 traceback（异常抛出时各调用层次的记录），并不替项目选择 HTTP 500（表示服务端内部错误）或保证写出错误响应。[本课第四章的处理器生命周期说明](#4-端到端流程与本课边界)与[第六章服务器级异常钩子原文](https://github.com/python/cpython/blob/v2.7.18/Lib/SocketServer.py#L280-L298)给出这条上层交接。这个窄捕获是工程改法的推演，没有改动或运行示例。
+
 #### 机制判断
 
 有序循环让第一个返回真的规则获得动作机会。`try` 从路径拼接一直包到规则动作，能把项目异常集中转成错误页，也会把意外的普通 `Exception` 当作请求错误。动作的副作用、`None` 返回值与 `break` 是三件不同的事：循环只根据条件选择动作，不会等待一个“成功”返回标记。
@@ -557,6 +563,8 @@ class case_no_file(object):  # 教学注释：类定义建立一种规则，不�
 
 把测试和动作拆开后，外层可以在副作用前比较路径类别；但这个规则的布尔值只表达“路径不存在”，不等于 HTTP 404。异常是 Python 控制流对象，HTTP 状态要在错误处理方法中另行选择。权限或路径格式错误若需要不同结果，需细分异常或判断，而不能从 `True` 本身推断原因。
 
+这里的权限边界会改变实际走向：若目标文件确实存在，但当前进程因为目录权限等原因无法查询它的属性，而 `os.path.exists` 因此返回 `False`，原行 15 的 `not False` 就是 `True`。外层遂执行原行 18 抛出的 `ServerException`，`do_GET` 再把它交给 `handle_error`，尝试返回 404；这条布尔结果本身没有保留“无法查询”的原因，所以当前程序会把它和确定缺失合并。若产品要区分权限拒绝，可改用能保留查询失败原因的路径检查，并按目标平台实际错误分类决定是否映射为 403（表示服务端理解请求但拒绝访问）；不能单凭 `exists=False` 推出权限结论，也没有在本例中验证这种实现。
+
 ##### 使用方法、上下游与接入影响
 
 上游是 `do_GET` 在 `for` 中调用 `N.test(H)`；缺失时动作把 `ServerException` 交回 `do_GET`，再由它调用 `handle_error`。若新增一种路径类别，要说明它应排在该缺失判断之前还是之后，并在类属性 `RequestHandler.Cases` 注册实例。修改异常类型会影响 `do_GET` 的捕获边界；修改错误文字会影响错误页正文，但不改变这里的测试结果。
@@ -605,6 +613,8 @@ class case_existing_file(object):  # 教学注释：这是共享规则表中的�
 ##### 从路径拼接到读取的越界条件演算
 
 假设 `os.getcwd()` 仍为 `/work/500lines/web-server/code/03-handlers`，并且标准库已把收到的原始请求目标 `/../shared.txt` 放进 `self.path`。这是假设服务端确实收到该原样路径；客户端或浏览器可能先规范化它，本文不声称浏览器一定会如此发送。原行 69 只做字符串拼接，于是 `H.full_path` 得到 `/work/500lines/web-server/code/03-handlers/../shared.txt`，尚未规范化。再假设其上一级目录中的 `/work/500lines/web-server/code/shared.txt` 存在、是普通文件且当前进程可读：`N.test(H)` 中的 `exists` 跟随文件系统对 `..` 的解析，返回 `True`，所以缺失规则返回 `False`；`E.test(H)` 的 `isfile` 返回 `True`，`E.act(H)` 将这条路径交给 `H.handle_file`。`open(full_path, 'rb')` 也会解析 `..`，从 `03-handlers` 的父目录 `code` 打开并读出 `shared.txt`；若读取和响应写出都成功，原行 85 的 `send_content(content)` 使用默认 `status=200`。因此，若把启动目录 `03-handlers` 当作允许的文件根，这条条件路径会从其目录之外取到响应数据。这是对当前源码的静态条件推演，不是请求或文件系统实测。
+
+若把 `03-handlers` 当作允许读取的根目录，设计检查需要判断解析后的目标是否仍在根目录之内，而不是检查两个路径字符串有没有相同前缀。例如 `/srv/site` 与兄弟目录 `/srv/site-backup/secret.html` 共享字符前缀，却不是同一目录树；Python 2.7 的 `os.path.commonprefix` 是逐字符比较，文档明确说它可能返回无效路径，因此不能拿它验证目录包含关系。`os.path.realpath` 在操作系统支持符号链接时会返回消除路径中符号链接后的规范路径，可作为理解“实际解析目标”的一部分；但还要按目录组件边界比较目标与根，不能只比较字符串。路径段 `..` 可能离开根内目录，根内符号链接也可能指向根外目标。即使检查时解析过路径，检查与稍后 `open` 之间目标仍可能变化，因此单独的先解析再检查不能证明消除 TOCTOU（time-of-check to time-of-use，即检查与使用之间状态变化）或覆盖所有攻击。[CPython 2.7.18 `os.path.commonprefix` 文档](https://github.com/python/cpython/blob/v2.7.18/Doc/library/os.path.rst#L59-L63) 与 [`realpath` 规则](https://github.com/python/cpython/blob/v2.7.18/Doc/library/os.path.rst#L234-L239)。这是从当前越界条件推导的设计要求，不是已实现或已验证的安全修复，也不提供未经验证的代码。
 
 ##### 机制与工程判断
 
@@ -734,6 +744,10 @@ class case_always_fail(object):  # 教学注释：这是规则表最后的兜底
 
 `with` 管理 reader 的生命周期，让文件在网络输出前关闭；`with` 退出会调用清理，即使读取块抛异常。一次 `read()` 读完整个文件，发送方法因此能直接计算完整长度，代价是内存用量随文件大小增长。一个 `try` 包住读盘和网络写入，代码少一条分支，却把网络故障写成“文件不可读”。
 
+一种可行的控制流形状是让 `try` 只负责打开、读取和关闭 reader，在读盘异常的 `except` 中形成并交付错误页，再用 `else` 调用 `send_content(content)`。Python 的 `try` 语句只有在受保护部分正常流出、没有抛异常且没有执行 `return`、`continue` 或 `break` 时才执行 `else`；`else` 中抛出的异常不会由前面的 `except` 捕获。[CPython 2.7.18 的 try 语句规则原文](https://github.com/python/cpython/blob/v2.7.18/Doc/reference/compound_stmts.rst#L284-L288) 本例的受保护部分只读盘、没有这些提前退出语句，所以 `/plain.html` 的 `content` 绑定为原始 116 字节后正常进入 `else` 调用 sender；若 sender 抛错，异常向上层传播。若 `open` 或 `read()` 抛 `IOError`，错误分支尝试 `handle_error`，`else` 整块跳过；即使错误页正常写完，也不会继续引用这条失败路径没有赋值的 `content`。这比把 `send_content` 放在整个 `try/except` 之后更清楚，因为后者可能在错误处理正常返回后落到未绑定变量的发送调用。
+
+但若成功响应的 `wfile.write` 在 `else` 中途抛错，它已不属于读盘捕获；本层不会把它改写成“文件不可读”。只移动 sender 还不够：当前外层 `do_GET` 的 `except Exception` 仍会接住冒出的 `IOError`，调用 `handle_error` 并尝试 404。要避免上层也把写失败伪装成文件错误，还需按 5.3 的讨论把 `do_GET` 捕获收窄到预期的 `ServerException`；读盘 `IOError` 仍由 `handle_file` 转成错误页，网络写 `IOError` 则交给标准库服务器级错误钩子，而不承诺某个 HTTP 500 响应。若状态行、头部或一部分正文已经写出，先前字节不能撤回，剩余响应仍可能写不完；分类和交接更准确，不等于修复网络故障。以上是以正常 116 字节、读失败和部分写失败三种情形推导的设计比较，不是当前源码行为或已验证补丁。
+
 #### 用法、上下游与修改影响
 
 上游是普通文件规则以 `handler.handle_file(handler.full_path)` 传入路径；成功下游是 `send_content(content)`，读取失败下游是 `handle_error(msg)`。若要区别磁盘读错和网络写错，需把发送语句移出读盘错误捕获范围，并单独决定连接写失败时怎样结束。改成流式读取不能只替换 `read()`：`Content-Length` 的来源、写块顺序和失败后的协议边界都要重新设计。
@@ -801,6 +815,8 @@ HTTP/1.0 报文按起始行、头字段、空行、正文的次序组织；行�
 
 方法按固定顺序逐项写出，没有先组成一个可撤销的整体。状态和头部先于正文，是接收端按 HTTP 消息边界解析的前提；`Content-Length` 数的是最终字节。部分写出失败后不能把先前的 200 收回。`send_content` 不捕获异常，因此错误能否重试由外层调用者决定。
 
+工程上可以先在内存中把状态行、头部、空行和正文整理为一个完整字节串，再开始第一次 `wfile.write`；这会把正文格式、头部长度等构造错误留在网络输出之前，避免代码已经写出 `200` 后才发现后续内容无法构造。可是一次 Python 层写调用不能提供网络事务的原子性保证，也就是不能保证报文要么全收到、要么全没收到：底层仍可能分段发送，并在部分字节已经交出后报告错误；对端可能只收到这个前缀，而已送出的字节不能撤回。当前 `plain.html` 的完整正文仍是 116 字节，且本例先把它读入内存；即使改为一次写完整报文，也只能改进“构造先于输出”的次序，不能保证 socket 已向对端交付整条报文，也不能保证浏览器已收到全部 116 字节。这个替代描述的是设计边界，不是当前实现。
+
 #### 用法、上下游与修改影响
 
 上游成功调用来自 `handle_file` 并省略状态，错误页调用来自 `handle_error` 并传入 `404`。下游是同一个 handler 的 `wfile`。若增加文件类型，必须从文件类型信息确定正确的 `Content-type`；若改变正文编码，要先得到实际发送字节并按其长度写头。修改写出顺序会影响客户端识别响应边界，也会影响后续错误处理是否可能再次尝试。
@@ -858,7 +874,29 @@ self.Error_Page 通过当前实例查找到共享模板字符串。`.format(path
 
 format 把值转换为模板文字，但没有 HTML 转义。由于结果仅在函数局部名 content 保存，原模板不会被改写；下一条请求仍从类属性读取模板。如果请求路径或异常文本里有 HTML 特殊字符，这里会将它们放入 HTML 源文而非转义。
 
+##### 原行 92 插值例：动态路径进入 HTML 文本位置
+
+先沿 HTML 解析规则看插值所在位置：`<h1>...</h1>` 和 `<p>...</p>` 的开始、结束标签之间形成承载正文的文本节点。HTML 解析器逐字符处理源码，把识别出的标签结构与普通正文文字交给后续处理；tokenizer（词法分析器）是其中负责将字符输入拆成标记与文字等识别单元的阶段。此处 tokenizer 处于 Data state（数据状态），先把输入当作普通正文读取；遇到 `<` 时转入 tag-open state（标签开始状态），开始识别标签。映射到本次假设值 `/<em>MARK</em>`，`<em>` 和 `</em>` 会作为标签，`em` 元素表示其内容带有强调语义。[HTML Standard §13.2.5.1 的 Data state](https://html.spec.whatwg.org/multipage/parsing.html#data-state)与[`em` 元素定义](https://html.spec.whatwg.org/multipage/text-level-semantics.html#the-em-element)说明了这里用到的解析规则。
+
+回到原行 92 的 `.format(path=self.path, msg=msg)`：只作静态演算，假设请求目标原样为 `/<em>MARK</em>`，并且这条路径确实不存在；还假设标准库交给项目的 `self.path` 保留了服务端收到的尖括号。本例没有实测请求编码，客户端可能把尖括号编码成 `%3C` 和 `%3E`。在当前模板里，`{path}` 会把该路径写进 `<h1>`，缺失异常的消息又把同一路径写进 `<p>`，所以未转义的 HTML 源码会含有下面两行。HTML tokenizer 会把值里的 `<em>` 和 `</em>` 解析成标记，`MARK` 成为 `em` 元素的内容，具有强调语义；显示的是 `MARK`，而不是供读者看到的字面字符串 `<em>MARK</em>`。
+
+```html
+<h1>Error accessing /<em>MARK</em></h1>
+<p>'/<em>MARK</em>' not found</p>
+```
+
+若要让路径作为文字显示，需按原始输入逐个字符做一次 HTML 文本转义：`&` 变为 `&amp;`，`<` 变为 `&lt;`，`>` 变为 `&gt;`。这里使用的命名字符引用以 `&` 开头、以分号结束，用名称表示相应字符；在本例的文本位置，HTML tokenizer 会把 `&amp;`、`&lt;` 和 `&gt;` 解析为对应的 `&`、`<` 和 `>` 文本字符。具体解析过程见 HTML Standard 的 [Character reference state](https://html.spec.whatwg.org/multipage/parsing.html#character-reference-state) 和 [Named character reference state](https://html.spec.whatwg.org/multipage/parsing.html#named-character-reference-state)。每个原始字符只转换一次，不能把刚生成的 `&lt;` 再当原始输入转换成 `&amp;lt;`，否则页面会显示编码拼写而非尖括号。映射到本次路径后，模板源文的对应行会变成：
+
+```html
+<h1>Error accessing /&lt;em&gt;MARK&lt;/em&gt;</h1>
+<p>'/&lt;em&gt;MARK&lt;/em&gt;' not found</p>
+```
+
+浏览器解析这些字符引用后，文本节点包含字面 `/<em>MARK</em>`，其中 `em` 字样不再成为元素。这个效果是官方解析规则对条件输入的静态推演，不是本例浏览器观察；路径是否以原样尖括号到达服务端仍受请求编码与客户端处理影响，本文没有验证这一边界。
+
 ##### 原行 93：选择失败状态并调用 sender
+
+这条错误链调用的是 `send_content(content, 404)`；沿用本课的普通 HTTP/1.1 请求且写出成功时，状态行按基类默认值是 `HTTP/1.0 404 Not Found`。原始成功文件的 116 字节只属于 `/plain.html`；这里的 `content` 是填入路径、异常消息后的错误 HTML，若做了转义还会改变字节数，`send_content` 会重新对最终正文调用 `len(content)`，不能沿用 `116`。长度必须对应实际写出的字节；本段只给出求值规则，没有运行以测量一份错误正文。
 
 用一个明确是假设的程序故障看这个宽捕获：假定某次 `GET /plain.html` 中，规则的 `test` 因代码错误抛出 `TypeError('bad value')`。当前 `do_GET` 的 `try` 包着规则遍历和 `case.test(self)`，而 Python 2.7 中 `TypeError` 属于 `Exception`；于是 `except Exception as msg` 把异常对象交给 `handle_error`，`{msg}` 按上面解释的格式规则成为 `bad value`，随后原行 93 仍调用 `send_content(content, 404)`。[当前捕获范围](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L65-L79) [Python 2.7.18 的异常层级](https://github.com/python/cpython/blob/v2.7.18/Doc/library/exceptions.rst#L49-L73)。这是帮助读者跟踪控制流的假设故障，不是原规则已发生的运行记录；现有 `test` 方法没有发送响应，故按这个假设第一次错误页写出从 404 开始。
 
@@ -1213,6 +1251,9 @@ MIME 是 Multipurpose Internet Mail Extensions（多用途互联网邮件扩展�
 #### 标准库按什么顺序把响应写到连接
 
 源码定位：CPython 2.7.18 `Lib/BaseHTTPServer.py`，`send_response`、`send_header`、`end_headers` 原行 389–423；[固定版本原文](https://github.com/python/cpython/blob/v2.7.18/Lib/BaseHTTPServer.py#L389-L423)。
+
+先补这几个条件所针对的旧协议边界。RFC 1945 §4.1 定义的 HTTP/0.9 简单请求只允许 `GET`，请求行由 `GET`、一个空格、请求目标和 CRLF（回车加换行）组成，例如 `GET /plain.html` 后接 CRLF；它没有版本字段，也没有请求头。对应的简单响应只包含可选正文，靠服务器关闭连接结束，不含状态行或响应头。因此这里检查请求版本是不是 HTTP/0.9 时，旧请求会跳过状态行、头行和头部空行，但后续项目 `wfile.write(content)` 仍可能写正文。这个分支解释的是标准库对旧式请求的兼容方式，不表示当前项目为 HTTP/0.9 构造完整状态/头部响应；本课常规 HTTP/1.1 请求仍走默认 HTTP/1.0 响应路径。[RFC 1945 §4.1 的 Simple-Request](https://www.rfc-editor.org/rfc/rfc1945.html#section-4.1)、[§5.1 的请求行差异](https://www.rfc-editor.org/rfc/rfc1945.html#section-5.1)与[§6 的 Simple-Response 定义](https://www.rfc-editor.org/rfc/rfc1945.html#section-6)给出该边界。
+
 ```python
     def send_response(self, code, message=None):
         """Send the response header and log the response code.
@@ -1314,10 +1355,10 @@ CPython 2.7.18 的这些方法直接 `write` 到 `wfile`；不存在 Python 3 `h
 
 ```powershell
 Set-Location '<500lines-checkout>\web-server\code\03-handlers'
-python2.7 .\server.py
+& '<existing-python27-path>\python.exe' .\server.py
 ```
 
-第一条命令改变工作目录；第二条直接执行脚本，没有目录参数。启动时主入口绑定源码常量端口 8080，`os.getcwd()` 因而应得到这个 `03-handlers` 目录。进程不会打印项目自定义的“启动成功”文字，因为源码没有该打印语句。若系统找不到 `python2.7`，表示当前环境没有这个命令；若绑定时端口已被占用，服务器构造会报错并无法监听；若工作目录不对，请求目标就会映射到错误位置。
+第一条命令改变工作目录；第二条用 PowerShell 调用运算符 `&` 执行引号中的解释器完整路径，脚本仍没有目录参数。把占位符 `<existing-python27-path>` 换成已有隔离 Python 2.7 可执行文件所在路径；若路径含空格，引号会让 PowerShell 把它作为一个路径参数交给 `&`。启动时主入口绑定源码常量端口 8080，`os.getcwd()` 因而应得到这个 `03-handlers` 目录。进程不会打印项目自定义的“启动成功”文字，因为源码没有该打印语句。找不到这份已有解释器时命令无法启动；若绑定时端口已被占用，服务器构造会报错并无法监听；若工作目录不对，请求目标就会映射到错误位置。这里仅说明调用形式，不要求安装或实际运行 Python 2.7。
 
 进程已启动时，在浏览器打开 `http://127.0.0.1:8080/plain.html`。按静态代码推演，若该目录下确有原始文件，成功响应状态应为 200，页面主体显示 `Plain Page` 和 `Nothin' but HTML.`，标签页标题为 `Plain Page`。若打开 `http://127.0.0.1:8080/missing.html`，项目应尝试返回 404 和错误 HTML。上面是阅读代码可以推导的预期信号，不是浏览器实测。关闭等待中的历史进程可在其终端按 Ctrl+C。
 
@@ -1363,7 +1404,7 @@ class case_directory_index_file(object):  # 教学注释：这是独立变体新
 
 这张有序表先处理不存在的路径，再把普通文件交给原来的文件 case，随后才尝试目录首页，最后由恒真的 `case_always_fail` 兜底；逐行见[变体原行 65–68](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server-index-page.py#L65-L68)。普通文件 `/plain.html` 仍由第二条规则读取，正常发送后 `break` 会阻止目录规则接手。若请求 `/guide` 且目录及其 `index.html` 都存在，前两条 `test` 返回假，目录规则依次得到 `isdir=True`、`isfile=True`，调用 `handle_file('/work/500lines/web-server/code/03-handlers/guide/index.html')`，沿用默认 200 响应。若目录存在但没有 `index.html`，`isdir=True`、`isfile=False`，目录规则不匹配，最终由兜底规则抛出 `ServerException` 并走项目 404 错误页。这里假设的目录和首页文件只用于静态推演，不是仓库实测内容。
 
-若要对照运行这个同提交变体，工作目录仍须切到前一小节的 `web-server/code/03-handlers/`，只把脚本换成 `python2.7 .\server-index-page.py`；变体入口原行 121–124 仍设置空主机和端口 8080，见[启动代码](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server-index-page.py#L121-L124)。这是可选的历史环境操作说明，不是运行记录。
+若已有隔离 Python 2.7 可执行文件，PowerShell 中可把脚本换为 `& '<existing-python27-path>\python.exe' .\server-index-page.py`；变体入口原行 121–124 仍设置空主机和端口 8080，见[启动代码](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server-index-page.py#L121-L124)。这里仍是可选的命令形状，不要求安装旧运行时或执行它，也不是运行记录。
 
 ### 三个实现选择会怎样改变接线
 
@@ -1418,7 +1459,7 @@ MIME（Multipurpose Internet Mail Extensions，多用途互联网邮件扩展）
 
 ### 命令行目录参数是否改变文件根目录
 
-运行 `python2.7 server.py some-folder` 时，`some-folder` 只是进入 `sys.argv` 的文字；本文件虽然 `import sys`，但没有读取它。入口仍把 `('', 8080)` 作为地址传给服务器，路径仍由 `os.getcwd() + self.path` 形成。例如终端当前目录为 `/work/.../03-handlers` 且目标为 `/plain.html`，最终路径就是 `/work/.../03-handlers/plain.html`。误把脚本路径或命令行尾参当作文件根目录，会导致工作目录一变就找错文件。见[第5.2节项目入口](#52-项目入口-创建监听服务器并等待连接)。
+若从 PowerShell 用 `& '<existing-python27-path>\python.exe' .\server.py some-folder` 启动，`some-folder` 只是进入 `sys.argv` 的文字；本文件虽然 `import sys`，但没有读取它。入口仍把 `('', 8080)` 作为地址传给服务器，路径仍由 `os.getcwd() + self.path` 形成。例如终端当前目录为 `/work/.../03-handlers` 且目标为 `/plain.html`，最终路径就是 `/work/.../03-handlers/plain.html`。误把脚本路径或命令行尾参当作文件根目录，会导致工作目录一变就找错文件。见[第5.2节项目入口](#52-项目入口-创建监听服务器并等待连接)。
 
 ### `GET`和`POST`为什么进入不同错误路径
 
