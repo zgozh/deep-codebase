@@ -8,7 +8,7 @@
 
 默认交付详细、可独立阅读的初学者教材，聊天简短给范围和笔记链接，并随时答疑；学习记录保存在项目 `.codelearn/`。默认单会话，也可选择 [主会话规划独审、子作者编写](deep-codebase-learning/references/authoring.md#首次选择与所有权)；写作可参考 [完整功能示例](deep-codebase-learning/references/quality-example.md)。
 
-v1.11.26试用版按用户最新偏好，以丰富正文、每章详细展开及 [完整课交付下限](deep-codebase-learning/references/teaching.md#用户指定的完整课交付下限) 为首检，不因达到最低就停止相关内容。当前厚稿经全文审读和反馈后修复可作有界静态样本，不能证明无反馈首稿可靠、稳定、提速、真人学习或应用运行；[实际证据与限制](docs/validation.md) 和 [开发历史](CHANGELOG.md) 保留负结果与返工边界。
+v1.11.27试用版把 [整课交付硬约束](deep-codebase-learning/SKILL.md#整课交付硬约束) 明确放在主入口。独立普通学习请求中，作者无需额外扩写提示，自主补至2415行，本次数量过线；整体教学仍FAIL，完整输入漏项、错误建议及源码后浅讲等已知问题保留。本次是数量入口改进试用，不代表语义问题已修复，也不保证首稿稳定或提速；[实际证据与限制](docs/validation.md) 和 [开发历史](CHANGELOG.md) 保留负结果。
 
 ## 快速开始
 
