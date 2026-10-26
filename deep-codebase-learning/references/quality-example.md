@@ -1,6 +1,6 @@
 # 小型完整功能读码示例：浏览器打开 `/plain.html`，服务器如何识别请求、读取文件并返回页面
 
-本轮只校订主例中 HTTP/1.1 Host 与 TCP 传输边界、5.1 初始化、5.2 端口修改，以及第 6 章绑定与等待机制的因果说明；这不构成主例其余小节、历史示例或全课的验收结论。
+本轮仅对主例 §5.3 做 r5 v1.11.28 源码单元校准：五段连续原码各置于对应范围标题之前，并补足逐组说明；这不代表主例其他章节、历史示例或整课已验收。
 
 > **阅读路线。** 当前主例是第 1–10 章的 HTTP 文件服务，从具体请求沿源码走到响应；页面后半的历史局部、JavaScript 与 JSX 示例是按需查阅的参照，不属于主例续章，也不代表本页的扩写基线或全课验收结论。
 
@@ -467,11 +467,9 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
 
 #### 源码定位与阅读准备
 
-项目位置：AOSA 500 Lines 固定提交 `fba689d101eb5600f5c8f4d7fd79912498e950e2`，`web-server/code/03-handlers/server.py` 的 `RequestHandler.do_GET`，原始文件物理行 64–79；[固定提交中的原始代码](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L64-L79)。这段方法跨三个连续语义组：先建立受保护的路径赋值，再按序测试并执行，最后处理普通异常。注意 `except` 与 `try` 对齐；它接续前面的同一个 `try`，不是另一个作用域。下面每块只展示一次原语句，后面紧邻解释它怎样影响同一条请求。
+项目位置：AOSA 500 Lines 固定提交 `fba689d101eb5600f5c8f4d7fd79912498e950e2`，`web-server/code/03-handlers/server.py` 的 `RequestHandler.do_GET`，原始文件物理行 64–79；[固定提交中的原始代码](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L64-L79)。这段方法的控制流可概括为三个阶段：先建立受保护的路径赋值，再按序测试并执行，最后处理普通异常；下文将连续源码按五个原行组展开。注意 `except` 与 `try` 对齐；它接续前面的同一个 `try`，不是另一个作用域。下面每块只展示一次原语句，后面紧邻解释它怎样影响同一条请求。
 
 #### 连续源码与紧邻逐行推导（五组）
-
-##### 原行 64–66：定义入口并开始保护后续处理
 
 ```python
     # Classify and handle request.
@@ -479,11 +477,17 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
         try:
 ```
 
+##### 原行 64–66：定义入口并开始保护后续处理
+
 第一行是源码注释，概括“分类并处理请求”，不会执行。`def do_GET(self):` 中 `def` 定义方法，括号列出参数；当前绑定方法只有 `self` 这个参数，它就是前文的连接处理器。行尾冒号开始方法的缩进代码块；下一层缩进里的 `try:` 是方法体中的第一条语句，它自己的冒号又开始受保护的代码块。下文更深缩进的路径和规则语句继续属于这个 `try`，直到末尾与 `try` 对齐的 `except`。
 
 `try:` 保护路径赋值、规则测试和动作调用；其中任何一步抛出 `Exception` 子类，都会跳到方法末尾的异常出口。这里没有自动撤销已经发生的副作用：若某个动作先写出一部分响应再抛错，后面的错误处理不能收回那些字节。下一个源码块仍在这个 `try` 的缩进作用域内。
 
-##### 原行 67–69：把请求目标接到进程工作目录后
+还要分清定义与执行：类体运行时，`def` 把函数对象登记为处理器的方法；模块导入不会逐行运行方法体。标准库把请求分派到当前实例的 `do_GET` 并调用它后，控制流才进入 `try`。因此这个 `except` 只覆盖本次方法调用中 `try` 缩进下的项目语句，不覆盖此前的请求解析；它也只是转交异常，不会回滚已经写出的响应字节。
+
+标准库在进入方法体前已经完成 `do_GET` 名称查找并调用；若方法查找或调用前的分派失败，方法内的 `try` 还没有开始，不能捕获那个错误。进入 `try` 后，路径赋值、规则测试或动作中抛出的 `Exception` 才落进这个出口。缩进在此决定保护范围：`except` 与 `try` 对齐，表示它处理整个受保护的缩进语句块；若把捕获放进规则循环，每轮错误处理后还可能继续下一条规则，控制流就不再是当前的一次请求只走一个错误出口。
+
+由于 `try` 主体还包含对规则对象方法的调用，异常不必由 `do_GET` 自己的赋值语句产生：若 `case.test(self)` 或 `case.act(self)` 向外抛出 `Exception`，且被调用方法没有先捕获它，异常会让当前调用中的函数依次退出，逐层把控制权交回等待它们的调用者，直到遇到匹配的 `except`。所以捕获边界取决于异常是否从受保护的调用链传播出来，而不是异常最初在哪个类定义；已经在规则内部处理并正常返回的异常不会再到达这里。
 
 ```python
 
@@ -491,11 +495,13 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
             self.full_path = os.getcwd() + self.path
 ```
 
+##### 原行 67–69：把请求目标接到进程工作目录后
+
 空行只是分隔源码段落。注释提示要辨认请求目标；赋值右侧先调用 `os.getcwd()` 取进程当前目录字符串，再由字符串 `+` 把 `self.path` 接在后面，结果绑定到当前 handler 的实例属性 `full_path`。[Python 2.7 的 `os.getcwd()` 说明](https://docs.python.org/2.7/library/os.html#os.getcwd)说明它返回当前工作目录。按上面的假设代入，左侧最终保存 `/work/500lines/web-server/code/03-handlers/plain.html`；这是静态演算，不是运行观察。
 
 这个表达式是直接拼接，不是 `os.path.join()`，也没有在此处删除 query、解码百分号转义、规范化 `..` 或检查允许访问的根目录。以同一目录代入 `GET /plain.html?download=1 HTTP/1.1`，`self.path` 含有问号及其后文本，拼接结果就是 `/work/500lines/web-server/code/03-handlers/plain.html?download=1`。程序会把这整个字符串交给文件系统规则；若磁盘上没有这个完整文件名，请求就不会匹配普通的 `plain.html`。这由解析字段和本行拼接静态推出，并不声称浏览器一定原样发出了该请求，也不声称做过浏览器实测。
 
-##### 原行 70–72：依次取出已登记的规则
+这个结果保存在当前 `handler` 实例的 `full_path` 属性里，后续 `case.test(self)` 从同一个对象读取；`self.path` 没有被覆盖，因此异常处理还能使用原请求目标构造路径说明。`os.getcwd()` 在每次 `do_GET` 执行时求值；若服务进程在两次请求之间改变了工作目录，下一次拼出的磁盘路径也会改变，因为这里没有在服务器启动时缓存目录。
 
 ```python
 
@@ -503,11 +509,15 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
             for case in self.Cases:
 ```
 
+##### 原行 70–72：依次取出已登记的规则
+
 这一组仍属于 `try`。`self.Cases` 从当前 handler 实例上取得类共享的有序列表。`for case in self.Cases:` 表示逐项把列表中已有的规则对象引用绑定到局部名 `case`；它既不创建新规则，也不复制对象，每轮会让这个局部名指向下一项。当前请求的状态仍由显式传入的 handler 提供，规则对象本身不保存这条请求的路径。[固定源码中的 `Cases` 登记顺序](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L50-L52)。
 
 `for` 按列表顺序开始每一轮；它本身不判断路径，也不执行文件读取。下一块的 `if` 才会调用当前 `case` 的测试方法，所以第一条匹配规则会影响之后哪些测试和动作根本不会发生。
 
-##### 原行 73–75：用测试的布尔值选择动作
+对当前固定列表，缺失规则或普通文件规则会在前面返回真并由后面的动作块结束循环；现存目录之类的其余目标会继续到末尾的恒真规则。若以后删掉兜底、让列表为空或所有测试都为假，循环会自然结束，`try` 正常完成并跳过 `except`，`do_GET` 也就隐式返回 `None`，而不是自动生成错误页。
+
+`Cases` 是类属性，列表和其中的规则实例会被各个 handler 复用；`full_path` 则保存在每次请求自己的 handler 上。若未来改为并发处理，或让请求状态留在规则对象供后续使用，把某次请求的路径写进共享规则对象就可能让请求读到彼此覆盖的状态。当前实现把 handler 作为参数传给规则方法，因此复用规则时仍从本次 handler 读取路径，路径不会存进规则实例。
 
 ```python
                 if case.test(self):
@@ -515,13 +525,17 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
                     break
 ```
 
+##### 原行 73–75：用测试的布尔值选择动作
+
 `case.test(self)` 同时出现两个接收者：点号左边的 `case` 被绑定为规则方法的 `self`，括号里的当前请求 handler 显式传给它的 `handler` 参数。测试方法返回 `True` 或 `False`；`if` 只在结果为真时进入缩进块。对普通文件 `/plain.html`，假定 `exists(full_path)=True`，第一条缺失规则返回 `not True`，也就是 `False`；普通文件规则得到 `isfile(full_path)=True`，于是 `case.act(self)` 把同一个 handler 交给文件规则动作，动作再调用 `handler.handle_file(handler.full_path)`。若测试返回 `False`，动作与 `break` 都跳过，循环才会继续检查下一个规则。[三种真实规则的测试与动作源码：缺失规则](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L11-L18)、[普通文件规则](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L22-L29)和[兜底规则](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L33-L40)。
 
 `act(self)` 的返回值没有被赋给变量，也没有拿来判断成功与否。普通文件动作没有显式 `return`，因此在 `handle_file` 正常结束后返回 `None`；真正有用的工作是它调用 `handle_file` 读取并写出响应。调用正常返回，解释器才会继续执行下一行 `break`，退出最近的 `for`。如果动作抛异常，控制流直接离开此处，`break` 不会执行。动作内部若捕获文件错误、调用项目错误处理后正常返回，循环同样会走到 `break`。所以 `None` 是“调用正常结束”的返回值，不代表响应成功；副作用和返回值是两回事。
 
 同一轮也能演算两个失败值。若请求 `/missing.html` 且假定该路径不存在，第一条规则的 `test` 为真，`act` 抛出项目的 `ServerException`，所以不会走到 `break`，而是跳到同一个 `try` 的异常出口。若 `/subdir` 是现存目录，缺失规则因 `exists=True` 返回假，普通文件规则因 `isfile=False` 返回假，兜底规则才会返回真并抛出 `ServerException`。这些真假值和分支是根据规则源码以及给定磁盘状态推导的，不是实测结果。
 
-##### 原行 76–79：把 try 内的普通异常交给项目处理器
+在本例的三种规则里，`test` 明确返回布尔值；Python 的 `if` 实际做真值判断，因此若未来实现返回其他对象，也会按对象的真假进入或跳过动作块。读当前规则时可把真假与磁盘状态一一对应；改动规则返回类型时，则要确认它仍表达是否接手请求，不能让文件对象或空值意外改变可达顺序。
+
+普通文件规则的 `test` 只用 `os.path.isfile` 检查路径类型，并没有打开文件；只有它返回真，`act` 才调用 `handle_file`。因此匹配成功代表规则接手请求，不代表文件可读或响应已经写完。若文件在检查后、打开前被其他进程删除，`handle_file` 仍会尝试 `open`，并由它自己的 `IOError` 路径处理失败；这两个动作之间没有锁住文件状态。
 
 ```python
 
@@ -530,9 +544,19 @@ if __name__ == '__main__':  # 教学注释：仅作为脚本运行时启动服�
             self.handle_error(msg)
 ```
 
+##### 原行 76–79：把 try 内的普通异常交给项目处理器
+
 注释标出异常出口。`except` 与原行 66 的 `try` 对齐，仍在同一个方法里；它接收 try 主体中抛出的 `Exception` 子类。`as msg` 绑定的是异常对象本身，不是已经转成字符串的消息；项目的 `handle_error` 再决定如何使用它。[Python 2.7 的 try 语句与异常绑定说明](https://docs.python.org/2.7/reference/compound_stmts.html)和[内置异常层级](https://docs.python.org/2.7/library/exceptions.html)说明了这种捕获范围。`KeyboardInterrupt`、`SystemExit` 属于 `BaseException` 体系而不是 `Exception`，不会由此处捕获。
 
 这里的 `self.handle_error(msg)` 接收者是当前项目 handler 实例。项目在 `RequestHandler` 上自行定义了 `handle_error(msg)`，并尝试通过 `send_content` 输出自己的 404 错误页；标准库同名的 `BaseServer.handle_error(request, client_address)` 属于服务器对象的继承链，不是 handler 方法，也不是这里调用的接收者。[项目 `handle_file`、项目错误页和响应写出实现](https://github.com/aosabook/500lines/blob/fba689d101eb5600f5c8f4d7fd79912498e950e2/web-server/code/03-handlers/server.py#L81-L103)。若 `handle_error` 本身或错误页写出又抛出异常，它不在当前 `try` 主体内，不会被同一条 `except` 再次捕获，而会继续回到标准库调用栈。
+
+如果 `try` 主体正常结束，解释器会跳过 `except`。例如普通文件动作中的 `handle_file` 正常返回后，`break` 退出循环，文件响应已经由该动作尝试写出；本分支不会再补写 404。`do_GET` 没有显式 `return`，所以正常结束时隐式得到 `None`，这和异常处理器是否执行是两条不同路径。
+
+反过来，对 `GET /missing.html`，缺失规则的动作抛出 `ServerException`；该项目异常继承 `Exception`，因此解释器停止执行当前 `try` 主体，把同一个异常对象绑定到 `msg`，并跳过尚未执行的动作与 `break`。`as msg` 不会在这里把对象转换成字符串；`self.handle_error(msg)` 收到原对象，之后由项目错误页构造代码消费它。规则测试里的 `TypeError` 也符合 `Exception`，即使它不是“资源不存在”，仍会进入同一处理器；宽捕获把不同原因汇到同一 404 响应尝试，是当前项目的错误映射选择。
+
+异常出现在调用链的哪个位置会影响已有副作用：`case.test` 若抛错，动作还未执行；`case.act` 若在写出部分响应后抛错，栈展开仍会来到 `except`，但已经写出的字节不能撤销。`handle_error` 随后只是尝试写项目错误页，不检查旧响应已写到哪，也不保证第二次写入完整。若这个错误页处理本身再抛异常，它位于原 `try` 的 `except` 主体中，不会被同一个 `except` 再捕获，而会继续向标准库调用栈传播。
+
+对 `/missing.html`，规则构造的 `ServerException` 携带由原 `handler.path` 生成的 not-found 文本。这里仍把整个异常对象作为 `msg` 传下去；`handle_error` 的 `Error_Page.format(path=self.path, msg=msg)` 才会把它放进 `{msg}` 占位符，随后 `send_content(content, 404)` 负责响应写出。对象、模板插值后的字符串和写出内容是三个不同值，所以这里不能把异常对象提前说成已经格式化的错误消息。
 
 #### 同一请求值的成功、重要失败与边界
 

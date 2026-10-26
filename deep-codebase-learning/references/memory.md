@@ -26,19 +26,21 @@
   reviews/<review-id>.md     Quiz/实验/阶段评审/审计/重建证据
 ```
 
-只创建已用到的文件；首轮至少 state、roadmap、project-map、当前 stage、三个 index 及当前分片。空列表表示尚无证据，不生成不存在的模块。使用 [state](../assets/templates/state.json)、[mastery](../assets/templates/mastery.json)、[coverage](../assets/templates/coverage.md)、[journal](../assets/templates/journal.md) 模板。
+只创建已用到的文件。初次最低state和当前Stage必须在首篇正文前一次建立：用真实项目身份、当前写作位置/返回点和未知能力，不等稿件完成才初始化。长期学习按实际进展建立roadmap、project-map、三个index及当前分片；局部正式笔记只建立当前必要记录，不因.codelearn为空生成空全套。已有state先恢复并保留历史，不重置项目/学习者或已有索引；集中收尾是更新/提交已有记录，不是延迟初始化。空列表表示尚无证据，使用 [state](../assets/templates/state.json)、[mastery](../assets/templates/mastery.json)、[coverage](../assets/templates/coverage.md)、[journal](../assets/templates/journal.md) 模板。
 
 所有文本使用 UTF-8。Windows PowerShell 读取中文必须显式 `Get-Content -Encoding UTF8`，写入用明确 UTF-8 的文件工具；不要依赖系统默认编码。给 Windows PowerShell 5.1 执行的含非 ASCII 脚本用 UTF-8 BOM 或不含非 ASCII 的脚本内容，避免模板/日志乱码被误当成学习状态损坏。
 
-state 的必需字段：`schema_version`、`skill_version`、`project`（name、root_hint、revision、identity_sources）、`learner`（背景已知/未知、目标、语言）、`mode`、`phase`、`current`（stage/topic/source_refs）、`return_points`、`awaiting`、`next_action`、`focus_files`、`journal`（active_file/last_event/next_sequence）、`open_loops`、`pending_commit`、`updated_at`。
+新建或续写状态使用实际 [state.json模板](../assets/templates/state.json) 及其已有字段形状：`schema_version`、`skill_version`、`project`（name、root_hint、revision、identity_sources）、`learner`（背景已知/未知、目标、语言）、`mode`、`phase`、`current`（stage/topic/source_refs）、`return_points`、`awaiting`、`next_action`、`focus_files`、`journal`（active_file/last_event/next_sequence）、`open_loops`、`pending_commit`、`updated_at`。自创state.yaml及learning等字段即使写`schema_version: 1`也不表示兼容；发现历史不同结构时按既有断写恢复保留与核实，不用模板覆盖用户历史，不强填全套空文件或重复记录。
 
 初始化时按实际用户语言和目标填写 learner，未知背景保持 unknown；`learner.teaching_default=beginner` 表示教学策略，不是用户能力事实。旧 schema v1 没有该可选字段也按 beginner 教学，当前更新 state 时可补入，不重置历史。模板文本不构成用户能力证据，也不锁定教学语言。日期使用 ISO 8601，未发生的时间用 null，不虚构历史。
 
 - 路径相对项目根；root_hint 只帮助发现迁移，不能作为唯一身份或失效依据。模块/Stage/Concept/Event ID 稳定且全项目唯一。迁移目录时优先根据源码身份与布局判断，不盲写旧绝对路径。
 - state/focus_files/journal/rubric/next_action 中的学习记忆路径统一相对项目根，如 `.codelearn/stages/S01.md`；Markdown点击链接则相对所在文档。读取或恢复写入前解析路径，记忆写入必须位于当前项目 `.codelearn/`，不得跟随逃出该目录的软链接；source_refs 位于当前项目内。超范围路径作为未知/冲突处理，不自动访问。
-- `revision` 存 git branch/commit（无 Git 可 null）及相关源码内容指纹。SHA256 用宿主工具计算，不自行生成假的 hash。每个 source_ref 至少 path、symbol（可空）、revision/hash、evidence_kind。相同版本共享 revision，已 dirty 或非 Git 源文件保存内容 hash。
+- `revision` 存 git branch/commit（无 Git 可 null）及相关源码内容指纹。current.source_refs必须是对象数组，不能是字符串数组；每个对象至少path、symbol（可空）、revision或hash（未知可空）、evidence_kind。可直接用[renderer](writing-io.md#渲染当前part)按实际raw生成的真实hash元信息，不手造SHA256或猜revision，不另建hash账本。相同版本共享真实revision，dirty或非Git源码保存内容hash。
+
+新建state、相关JSON变化及新会话必要恢复时，对实际文件用[check_state.py](../scripts/check_state.py)作只读V0。它只验证v1结构，不证明路径存在、revision/hash有效、教学或掌握；保留合法旧v1的可选项和未知字段，legacy仅修必要字段并留历史，不能因报错全量重建或创建空projections。
 - `awaiting` 为 null 或 `{kind, prompt, topic, source_refs, issued_event, rubric_ref}`；仅保存通过教学就绪检查、适合当前目标的待答题。不是每轮必填，无题时 null。评分标准放 reviews 文件按需读；尚未回答不能当失败或通过，用户要求先讲解时原题移到 journal/阶段待复习项而非继续占住当前 awaiting。
-- `next_action` 存 type、target、reason、load（必要路径）、completion_condition，不能只是“继续”。`focus_files` 仅当前 stage/当前 mastery 与 coverage 分片/当前知识记录/相关 review。
+- `next_action` 存 type、target、reason、load（必要路径）、completion_condition：指向当前下一具体因果问题/源码符号及必要加载位置，不能只是“继续”或交付确认。能力 waiting 不把下一教材动作卡成 WAIT；必要源证据失效或不可用时先重验证/恢复，不编造下一步。`focus_files` 仅当前 stage/当前 mastery 与 coverage 分片/当前知识记录/相关 review。
 - `open_loops` 只放当前阻塞/误解/未解题/复习的 ID 与路径；其他历史通过 index 查找，不把所有问题复制到 state。
 - schema_version 未知时只读并报告需要兼容，保留文件；v1 不猜测升级或重置历史。
 
@@ -110,18 +112,20 @@ knowledge/index 只路由当前有用概念到 `knowledge/<topic-id>.md`，多�
 
 ## POST-TURN LEARNING COMMIT
 
-每个 meaningful interaction 在响应结束或换 Topic 前保存实际有价值变化，中断留最小 checkpoint，不等整课成功。按 [作者流程](authoring.md#写出读懂并交付一节) 完成必要通读/V0和交付，未变证据不重复检查。prepared 与 delivered 分开，只有充分解释及来源才支持 explained；教材/阅读不升 mastery。没有新价值的问候不造事件。
+编写中每章/内聚单元原文part持久保存，并在现Stage当前任务一段记实际路径/顺序、当前章/next及未完范围；只加载当前必需part。这些写作数据不是已教或学习者证据，不为每内部toolturn重复全套索引/state/journal/review，也不提升mastery。真实有价值互动或中断仍及时最小checkpoint，最终沿下方PERSIST集中projections与一次影响范围V0；不能只留摘要代替已写正文的可恢复基线。
+
+每个meaningful interaction保存实际有价值变化，真实中断/反馈留最小checkpoint，不等整课成功；初稿保存后的阶段切换仍在本次编写中，不为了提交学习记录而主动结束。只按实际完成记录初稿/扩写/审读边界，内部hunk或计数不是新learning event。依 [作者流程](authoring.md#单一落稿任务) 完成本次已授权的扩写与累计审读，最终索引/state/stage/journal/review沿下方PERSIST集中同步，未变证据不重复检查。draft/prepared及next_action只是中间保存，不授权推迟本次展开；真实阻碍或用户暂停才以未完稿结束并记原因/返回点，不能以任务大或字数不足代替阻碍。只有充分解释及来源才支持explained；教材/阅读不升mastery，能力waiting不随写作增长。没有新价值的问候不造事件。
 
 1. **CLASSIFY**：判定有哪些学习事件，回答是否 independent/hinted/tutor-provided。
 2. **EXTRACT**：提取新事实、出处、用户理解、错误/纠正、问题、预测、实际结果；不要捏造未运行观察。
 3. **EVALUATE**：按真实证据评估 mastery/coverage、gap/misconception、源码有效性。正式笔记只支持实际充分解释/追踪范围；没有学习者表现，不增加 mastery，包括 L1。用户说读过或懂不等于独立理解。
-4. **PERSIST**：追加 pending 事件/writes/deltas，写 state.pending_commit；唯一主会话更新必要 coverage/mastery/knowledge/review/stage/roadmap、教材/索引。按影响范围回读校验相关 JSON/current Stage/Topic、事件/pending、路径/源码定位和真实审读方法；完整教材通读修正、V0/保存/索引后记 delivered，single 无需独审。未完整稿仍 prepared，不升 explained coverage。projections 校验后事件 committed；最后更新 state 指针/current/awaiting/next_action 并清 pending，只改指针就只补相关检查。无题 awaiting=null，交付不证明用户阅读或掌握。
+4. **PERSIST**：追加 pending 事件/writes/deltas，写 state.pending_commit；实质内容及累计覆盖全稿的内容审读完成后，唯一主会话集中更新本轮必要 coverage/mastery/knowledge/review/stage/roadmap、教材/索引，再一次按影响范围V0回读校验相关 JSON/current Stage/Topic、事件/pending、路径/源码定位和真实审读方法。完整教材通读修正、V0/保存/索引条件满足才记 delivered，single 无需独审；未完整稿仍 prepared，不升 explained coverage。projections 校验后事件 committed；最后更新 state 指针/current/awaiting/next_action 并清 pending。最后仅状态/指针变化只补相关JSON与指针检查，不再通读教材或重复全部链接；中途有价值变化与中断仍及时最小checkpoint。无题 awaiting=null，交付不证明用户阅读或掌握。
 
    收尾只核本轮受影响记录的四项一致性，不重写历史：
    - 本课 ID/路径、实际内容边界、quality/verification及审读方法一致；正文还有待修必要内容不能对应活动 delivered。single 自查可交付，delegated 须主会话实际审读后统一登记。
    - 当前修订事件与中文 notes 索引、相关 stage 检查点、review、journal 指向同一最新修订；历史创建事件/旧 review 可保留。修旧课保留当前学习位置、有效返回点、待评估能力及真实能力证据，不能把 current.stage/topic 倒写为被修旧课；同时纠正本次影响的 roadmap/Stage/index/coverage/open_loops 及 next_action 中的过期条件或范围描述。有效下一目标可保留；最新意图确需换下一步时保存原返回点并记录因果理由，不硬冻结旧文字。只同步受影响记录，不每轮全量重算，不凭教材修订提升 mastery 或完成阶段。
    - state.skill_version 记录本轮确实加载使用的 Skill 版本，有价值修订提交时同步；仅安装新版不够，不批改历史创建元数据。源码 revision 与 Skill 版本独立。
-   - 最新 committed 事件与 state.journal.last_event/next_sequence、pending 清理一致，解析相关 JSON 并回读实际路径。顺序仍 pending→必要 projections→验证→committed→state 指针，不能无事件跳清 pending；中断依既有幂等恢复补齐，不重复事件或重写正文。
+   - 最新 committed 事件与 state.journal.last_event/next_sequence、pending 清理一致；必要V0实际解析目标项目state.json及相关JSON，按上述模板字段形状核current、next_action与事件/文件指针并回读实际路径，不能以YAML可读或schema版本号代替。顺序仍 pending→必要 projections→验证→committed→state 指针，不能无事件跳清 pending；中断依既有幂等恢复补齐，不重复事件或重写正文。
 
 5. **CHECKPOINT**：每节教材及时落盘，Topic 内容收束和用户学习闭环分开；边界或显式总结再综合，独立复述/实验 waiting 不阻止写作。保留真实个人理解/待验证、机制与证据；结束/切阶段/积累时 checkpoint、阅读入口和下一步。同一固定会话也执行。答疑发现实质文章缺漏同步修订与索引/进度，不凭澄清重写整课。
 6. **STAGE CHECK**：核对 exit criteria，尚未交付/尚未评估为正常 in_progress；教材可继续到合理后续内容，未验收阶段仍开放。能力通过才标完成，不能将每个 waiting 变强制测验或补救。阶段综合教材可先合格，能力门禁和文章门禁分别记。
