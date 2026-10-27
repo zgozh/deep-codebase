@@ -110,12 +110,37 @@ class AssembleNoteTests(unittest.TestCase):
             self.assertEqual(result['error'], error)
             self.assertFalse((self.root / 'absent').exists())
             self.assert_sources_unchanged()
+        (self.root / 'source.txt').write_bytes(b'actual source\n')
+        (self.root / 'cli.md').write_bytes(b'<!-- codelearn-source {"path":"source.txt","first":1,"last":1,"language":"text","title":"actual"} -->\n')
         process = subprocess.run([sys.executable, '-B', str(SOURCE), '--workspace', str(self.root),
-                 '--part', 'first.md', '--output', 'candidate.md', '--source-root', str(self.root),
+                 '--part', 'cli.md', '--output', 'candidate.md', '--source-root', str(self.root),
                  '--final-note', 'notes/final.md'], capture_output=True)
         self.assertEqual(process.returncode, 0, process.stderr)
-        self.assertEqual(json.loads(process.stdout)['include_count'], 0)
-        self.assertEqual((self.root / 'candidate.md').read_bytes(), self.first)
+        self.assertEqual(json.loads(process.stdout)['include_count'], 1)
+        self.assertIn(b'actual source\n', (self.root / 'candidate.md').read_bytes())
+
+    def test_source_mode_rejects_zero_expansion_before_creating_output_parent(self):
+        raw = ('# 中文\\n\\n<!-- codelearn-source {"path":"missing.go",'
+               '"first":1,"last":2,"language":"go","title":"原行"} -->\\n').encode('utf-8')
+        source = self.root / 'literal-newlines.md'
+        source.write_bytes(raw)
+        self.assertNotIn(b'\n', raw)
+        self.assertIn(b'\\n', raw)
+        with patch.object(assemble.tempfile, 'NamedTemporaryFile') as create:
+            result = assemble.assemble_note(self.root, [Path('first.md'), source],
+                        Path('not-created/candidate.md'), source_root=self.root,
+                        final_note=Path('notes/final.md'))
+            create.assert_not_called()
+        self.assertEqual(result['error'], 'no_source_includes')
+        self.assertEqual(result['include_count'], 0)
+        self.assertFalse(result['saved'])
+        self.assertFalse((self.root / 'not-created').exists())
+        self.assertEqual(source.read_bytes(), raw)
+        self.assert_sources_unchanged()
+        # Raw publication remains byte transport, with no implicit rendering or repair.
+        copied = assemble.assemble_note(self.root, [source], Path('raw-copy.md'))
+        self.assertTrue(copied['saved'])
+        self.assertEqual((self.root / 'raw-copy.md').read_bytes(), raw)
 
     def test_single_part_publication_preserves_all_bytes(self):
         result = self.run_assemble([Path("first.md")], Path("formal.md"))

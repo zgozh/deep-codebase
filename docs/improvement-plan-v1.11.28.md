@@ -1,5 +1,9 @@
 # v1.11.28 教学改进方案（试用版，有已知验证限制）
 
+本页保留v28设计与历史边界；v1.11.29源码专用扩写试用版本已完成文本修订与有限单元校准，R34最终修订稿仅获该单元静态教学接受，原稿不足及R27等旧FAIL保留。普通短指令完整课程、跨项目稳定与效率尚未验收，整个方案不据此标完成。下文未发布、未安装等状态均指对应验证阶段当时情况，不代表当前远端或本机安装状态，见[当前验证范围](validation.md#v11129-候选边界)。
+
+本轮专用厚写把当前源码与正确原文、具体缺口、匹配示范、实际写回位置相邻分隔，复用现有例文片段而不增第三本示范。设计依据是 OpenAI [reasoning best practices](https://developers.openai.com/api/docs/guides/reasoning-best-practices) 的直接指令、材料分隔与一致示例，以及 [rethinking skills and prompts](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) 的精确触发、渐进披露和按目标模型验证；Anthropic [context engineering](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) 与 [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) 支持高信号上下文、匹配的少量示范和明确材料边界。现有合同和首次完整例文输入保留，之后只按缺口复用必要片段，不把这些文章变成运行时必读材料或追加检查清单。[论坛作者经验](https://www.reddit.com/r/ClaudeAI/comments/1opxgq4/i_was_wrong_about_agent_skills_and_how_i_refactor/)仅作第一手设计参照，未经独立验证；不采用无可靠证据的提升百分比或强制XML。上述来源是设计依据，不能证明Luna教学深度、稳定性或耗时改善。
+
 本方案已落实当前共享指令与模板，基线仍为v1.11.27。当前只编辑raw parts，装配时自动渲染真实源码，累计审读后原字节复制发布；预览不参与装配。小勘误做补丁，教学不足用具体语义组/例值/保留范围驱动完整厚写。默认源码写法输入切为[完整单元示范](../deep-codebase-learning/references/source-unit-example.md)，旧整课示例按需参考；合同、数字与schema1不变，CLI捕获不是产品选项。
 
 R23普通首用JS传输失败无稿；R24自动初稿/扩写达到2931行仍整课未过；R25集中返修2976行改善部分解释，仍非严格整课通过。R26经Root全文核对和4项集中修正，仅单元校准接受。机械raw直装已验证，不等于普通单会话完整课程稳定或快速通过；具体体量/耗时与边界见[最新验证记录](validation.md#当前结论试用版有已知验证限制)。以下是保留的设计依据及历史进展，不能将旧快照待验状态或工具流程当作当前用法。
@@ -157,7 +161,7 @@ C 收尾七处单行替换净零行，E 净增九行，没有大删；四课也�
 
 writing-io的纯内存示例分开职责：从真实raw、first/last构造当前源码组的代码/原行标题/充分正文行数组及带范围的数量观测；当前完整单元收集多组和真实源前/后正文，再以实际唯一oldLines和newLines自动生成一个原生Update。无需每组独立patch或手抄后继标题锚；源码、原注释、空行、坐标和URL同源，项目及依赖摘录同样适用。示例不成为runtime工具，没有JS的宿主用已有等效能力。
 
-按实际完成保存边界；内部hunk/计数不是learning event。必要中断/反馈沿现有Stage/journal/state留最新写作位置，最终索引/state/stage/journal/review集中同步，能力waiting不随写作增长。V0读回/链接一致性、示例Node纯内存assert、现有validate.py及diff check足以验证本片；发现实际示例/引用错误才修，不运行应用、构建、浏览器或新增测试/报告。候选冻结后再做Luna窄流程验证；当前改动不宣称普通整课一次成功、提速或稳定保证。
+按实际完成保存边界；内部hunk/计数不是learning event。必要中断/反馈沿现有Stage/journal/state留最新写作位置，最终索引/state/stage/journal/review集中同步，能力waiting不随写作增长。V0读回/链接一致性、示例Node纯内存assert、现有validate.py及diff check足以验证本片；发现实际示例/引用错误才修，不运行目标应用、构建或目标应用的浏览器验证，不新增测试/报告；按需web查官方资料仍允许。候选冻结后再做Luna窄流程验证；当前改动不宣称普通整课一次成功、提速或稳定保证。
 
 single就地实际回读明确为self_review，已有实读证据有效；已选delegated时作者自查不替代独审，整稿交还主会话一次独审，复用已独审未变范围，不逐章往返，作者只持自己的稿、不写共享状态。不是所有实际用户都强制多 agent，也不新增后台服务。
 

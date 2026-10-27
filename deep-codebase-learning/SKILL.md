@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.11.28"
+  version: "1.11.29"
 ---
 
 # Deep Codebase Learning
@@ -30,7 +30,7 @@ Conversation is not the learning record. Journal is the structured record of the
 
 聊天即时澄清、明确短总结或用户明确要求的简短笔记按该交付选择充分回答当前问题，不自动扩成正式十章教材；有价值变化按原记忆协议保存，不把每条knowledge/journal记录变成正式课。用户明确调整交付形式或深度时优先遵从；“局部”本身只是范围，不等于要求简短。
 
-执行依次进入 [draft：完整初稿](references/draft-lesson.md)、[expand：当前章/内聚单元厚写](references/expand-lesson.md)、[finalize：累计审读与收尾](references/finalize-lesson.md)。single在同一会话自动接续，不是额外模型调用或固定工具次数；每次只读当前阶段入口及本章必要的模板/合同/源码/官方段，涉及5.x实际读取并直接实例化canonical完整单元七个H4，不由母会话另造八项目录，已读未变证据复用。首次源码写法输入按 [现有示范入口](references/authoring.md#源码写法输入)；内容以唯一 [教材模板](assets/templates/stage-note.md) 和 [教学合同](references/teaching.md#唯一教学交付合同) 为准。
+执行依次进入 [draft：完整初稿](references/draft-lesson.md)、[expand：当前章/内聚单元厚写](references/expand-lesson.md)、[finalize：累计审读与收尾](references/finalize-lesson.md)。single在同一会话自动接续，不是额外模型调用或固定工具次数；每次只读当前阶段入口及本章必要的模板/合同/源码/官方段，涉及5.x实际读取并直接实例化canonical完整单元七个H4，不由母会话另造八项目录，已读未变证据复用。凡开始实际5.x写作，包括局部/开发校准，均读取或复用[canonical段落任务](assets/templates/stage-note.md#当前原行组的段落任务)，不依赖先经过整课draft/expand。首次源码写法输入按 [现有示范入口](references/authoring.md#源码写法输入)；内容以唯一 [教材模板](assets/templates/stage-note.md) 和 [教学合同](references/teaching.md#唯一教学交付合同) 为准。
 
 先完整初稿、再充分扩写与交付，篇幅边界看本页 [整课交付硬约束](#整课交付硬约束)；全部适用小节与代码后语义组仍按 [试行扩写基线](references/teaching.md#试行扩写基线重要小节要展开到什么程度) 详细展开，内容充足、字数多优先，不能为少批保存压缩教学。首次行为组在充分扩写落实起稿下限，不能用“已足够”的自评豁免；纯定位/闭合、精确复用与充分旧文边界按该基线，不机械灌水，量足也不抵事实或教学缺漏。开写在同一落稿任务中推通真实流程的正常/必要失败值；按 [源码单元合同](references/teaching.md#第五章源码之前源码之中源码之后) 保留八项职责、采用七个写作位置，第4–5项必须在同一区域按连续源码→代码后原行标题及充分正文交替展示，不能分成完整代码与后置总述两块；其他六项及各章必要展开不变，不重复铺两份解释。本课原已包含源码时，按 [首单元就地校准](references/authoring.md#首个完整扩写单元的就地校准) 在完整初稿后的首个真实完整扩写单元完成既有实读与数量观测，确认写法再继续；不另增审批或审读轮次，终审复用有效证据并覆盖全稿。
 
@@ -38,8 +38,8 @@ Conversation is not the learning record. Journal is the structured record of the
 2. 执行 [记忆协议](references/memory.md) PRE-TURN LOAD，恢复最新反馈、已有教材范围、能力证据和返回点，不覆盖历史。首次在首篇正文前按 [state 模板](assets/templates/state.json) 一次建立最低state与当前Stage，写真实项目身份、当前写作位置/返回点和未知能力；已有state恢复不重置。长期学习按 [规划协议](references/planning.md) 增量补齐Inventory与必要记录，集中收尾不延迟初始化；局部正式笔记仅恢复/建立必要记录并追当前上下游，不因.codelearn为空扫描全项目生命周期。
 3. 首次提供一次 [编写模式选择](references/authoring.md)：默认单会话；环境支持且用户选择时，主会话规划与独立审查、子 agent 编写。尚未选择保持单会话，不让选择或环境缺少子 agent 阻塞首节。模式不是知识测验，不锁定模型。
 4. 长期学习整个项目时，全景尚未充分交付就先写第一节：业务问题 → 能力 → 模块边界 → 白话端到端流程，再逐层进入真实源码。有前后端则贯通。完整路线含其他能力、横向审计和重建；不以问卷、文件表或陌生问题开场。
-5. 首次写入或返修前读取 [写入约定](references/writing-io.md) 当前必要正文，已读未变复用。普通一次学习/继续请求沿三阶段完成本课充分扩写、累计审读及收尾；draft/prepared和next_action不是推迟本次展开的许可。初稿保存后下一实际操作进入expand正文，不先补最终review/交付索引或收尾V0；仅 [主路由](references/authoring.md#单一落稿任务) 所列真实中断条件允许停在未完稿。expand前在已有Stage/current topic只维护一段具体当前任务，包含章/单元、输入输出、新概念/源码组及各自原预算、充分前文回指与接续。施工单位是有具体输入、可观察结果/状态和真实消费者的内聚问题，先在当前Stage一段定少量问题/边界和贯穿主体/生命周期/关键值胶囊，变场景注明A/B；返回/回放/机制/导航不另编5.x。完整单元用canonical骨架一次厚写叙事与source include并持久存原文part，装配直接从raw parts自动渲染真实源码、原行标题/链接和source_refs；代表性单元可按[预览路径](references/writing-io.md#渲染当前part)校准，预览不参加正式装配，容量确需拆批仍保留连续源码与紧邻充分正文；当前checkpoint记实际part路径/顺序及未完位置，不对正式整书作数组转string重排，不机械一helper一套前后职责。必要资料随章读取，不无限预读整个框架；全景适配保留原深度与篇幅边界。
-6. 按 [作者流程](references/authoring.md) 累计一次内容审读覆盖每章实际小节及每个5.x单元，逐块对照源码及代码后正文，同次核事实与教学；single就地回读的有效证据保留，收尾只补未核范围和跨章衔接；按 [review 模板](assets/templates/review.md#教材通读与修订note-quality) 留每章/单元短记录，必要未核或未补整课仍 draft。single 自查，delegated 主会话独立读子稿；自身经验、标题或全链正确不补正文缺漏。核最终稿已吸收本轮版本要求与最新反馈，保留可恢复旧版和正确必要解释，局部修只复读影响链。对新建/相关变化/必要恢复的实际state用[check_state](scripts/check_state.py)核v1结构与对象型source_refs，保留合法旧v1可选/未知字段，不因报错全量重建；检查不证明来源或掌握。做必要文档 V0/保存/索引，不跑应用测试/构建/浏览器，不新增工具、大矩阵或教材 hash 仪式。
+5. 首次写入或返修前读取[写入约定](references/writing-io.md)当前必要正文，已读未变复用。普通学习/继续自动draft→expand→finalize；初稿保存后下一实际操作是厚写正文，不先收尾或等新提示，仅[主路由](references/authoring.md#单一落稿任务)中的真实中断可停在draft。整课是交付单元，章组织业务链，5.x按生命周期/结果边界选真实输入→状态/结果→消费者，不把整链塞一个大单元或每helper建七节。新写/整体厚写源码单元先按canonical在同一raw保存真实分组布局、回读后连续填正文；当前落笔位置是已写原行组及尚未解释的表达式，承接上组值，写出读法、固定值求值/绑定、触发与下一消费者，再讲必要机制，连续写足本单元；不逐组审批或更新共享记录，不为分组机械新增模型/工具调用；当前必要源码/官方资料仍按需读取，容量所需保存仍允许。Stage只留原有文件/返回点checkpoint。canonical七H4、全部原预算和source include/raw保存不变，装配时自动渲染源码/原行标题/链接与source_refs，[独立预览](references/writing-io.md#渲染当前part)仅供校准。必要资料随章读取，不预读整框架；不整书数组转换或默认批量格式脚本，真实格式问题沿安全局部修正规则。
+6. 按 [作者流程](references/authoring.md) 累计一次内容审读覆盖每章实际小节及每个5.x单元，逐块对照源码及代码后正文，同次核事实与教学；single就地回读的有效证据保留，收尾只补未核范围和跨章衔接；按 [review 模板](assets/templates/review.md#教材通读与修订note-quality) 留每章/单元短记录，必要未核或未补整课仍 draft。single 自查，delegated 主会话独立读子稿；自身经验、标题或全链正确不补正文缺漏。核最终稿已吸收本轮版本要求与最新反馈，保留可恢复旧版和正确必要解释，局部修只复读影响链。对新建/相关变化/必要恢复的实际state用[check_state](scripts/check_state.py)核v1结构与对象型source_refs，保留合法旧v1可选/未知字段，不因报错全量重建；检查不证明来源或掌握。做必要文档 V0/保存/索引，不跑目标应用测试、构建或目标应用的浏览器运行验证；按需web查官方资料仍允许，不新增工具、大矩阵或教材 hash 仪式。
 7. 每个 meaningful interaction 在结束响应及换 Topic 前执行 POST-TURN LEARNING COMMIT。完整教材实际通读、必要修稿/V0、保存和索引成功记 delivered；single 可 ready/self_review，真实独审范围可 validated，未完整稿与备课留 prepared。交付不表示用户已阅读或掌握，写出/读过笔记均不提升 mastery。聊天只报告主题、实际范围和入口，不重复整课；必要交付失败必须说明。
 
 ## 持续教学边界
