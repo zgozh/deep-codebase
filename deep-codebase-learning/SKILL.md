@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.12.0"
+  version: "1.12.1"
 ---
 
 # Deep Codebase Learning
@@ -31,7 +31,7 @@ Conversation is not the learning record. Journal is the structured record of the
 3. 首次提供一次 [编写模式选择](references/authoring.md#首次选择与所有权)：默认单会话；环境支持且用户选择时，主会话规划审查、子 agent 写独占 part。未选择保持单会话，不阻塞首节。
 4. 长期学习整个项目时，全景尚未充分交付就先写第一节：业务问题 → 能力 → 模块边界 → 白话端到端流程，再逐层进入真实源码。有前后端则贯通。完整路线含其他能力、横向审计和重建；不以问卷、文件表或陌生问题开场。
 5. 按 [写作入口](references/write-lesson.md) 逐单元写本节：源码段与解释交替，单元自查通过再写下一个。首次写入或返修前读 [写入约定](references/writing-io.md) 当前必要部分；源码写法输入按 [示范入口](references/authoring.md#源码写法输入) 只读当前匹配的完整示范段。
-6. 整稿回读一次，把缺口合成一批修所属单元；通过门禁后按 [保存顺序](references/write-lesson.md#整节流程与保存顺序) 保存正文、review、事件和 state。
+6. 整稿回读一次，把缺口合成一批修所属单元；跑 [结构审计](references/write-lesson.md#结构审计) 清零 `problems`，再按 [保存顺序](references/write-lesson.md#整节流程与保存顺序) 保存正文、review、事件和 state。
 7. 每个 meaningful interaction 按 [POST-TURN LEARNING COMMIT](references/memory.md#post-turn-learning-commit) 保存实际变化。交付不表示用户已阅读或掌握；写出或读过笔记都不提升 mastery。聊天只报告主题、实际范围和入口，不重复整课。
 
 ## 持续教学边界
@@ -52,7 +52,7 @@ Conversation is not the learning record. Journal is the structured record of the
 | 首次扫描、路线变更、横向查漏 | [planning.md](references/planning.md) |
 | 每节教学、源码、知识绕行、答疑、实验 | [teaching.md](references/teaching.md) |
 | 启动/恢复、逐轮保存、中断、源码变化 | [memory.md](references/memory.md) |
-| 写一节：形状、单元循环、门禁、保存顺序 | [write-lesson.md](references/write-lesson.md) |
+| 写一节：形状、单元循环、门禁、结构审计、保存顺序 | [write-lesson.md](references/write-lesson.md) |
 | 首次写入/返修前、写入故障恢复 | [writing-io.md](references/writing-io.md) |
 | 编写模式、所有权、返修保留 | [authoring.md](references/authoring.md) |
 | 重大深度反馈、难辨概述与充分教学 | [teaching-calibration.md](references/teaching-calibration.md) |

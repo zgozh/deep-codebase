@@ -10,7 +10,7 @@
 
 **v1.12 起按「单元循环 + 正文门禁」写作。** 每个 5.x 单元按「连续源码段（5–15 个有意义行）→ 代码后原行小标题 → 充分正文」交替写，单元写完用 `assemble_note.py --check` 自查，`thin_blocks` 非空就改这些块；整节写齐后整稿回读、批量修缺口，装配 candidate 过正文门禁（正文汉字总量、每代码行解释量、长块解释量）后才发布。物理行数不再是交付门槛，也不再分 draft/expand/finalize 三段。v1.11.31 的辅助修订教材与被冻结的自动 FAIL 记录仍保留，证据边界见[实际证据与限制](docs/validation.md)。
 
-写作按[单元循环](deep-codebase-learning/references/write-lesson.md)：首篇正文前建立最低state/Stage，只编辑叙事与source include的raw parts；一个5.x写完即用`--check`过门禁并保存，再接下一单元。整节写齐后整稿回读、批量修缺口，装配时一次自动渲染真实源码/标题/链接，过正文门禁后原字节复制发布唯一note；预览rendered不参加装配。事实小错做局部补丁，教学不足则按实际语义组完整厚写、保留正确旧文；已有具体review直接复用。十章、七位置/八职责及[正文基线](deep-codebase-learning/SKILL.md#整课交付硬约束)不变。学习者无需手动运行辅助，不隐式启动CLI作者、不改全局配置或模型、不需要服务。
+写作按[单元循环](deep-codebase-learning/references/write-lesson.md)：首篇正文前建立最低state/Stage，只编辑叙事与source include的raw parts；一个5.x写完即用`--check`过门禁并保存，再接下一单元。整节写齐后整稿回读、跑[结构审计](deep-codebase-learning/references/write-lesson.md#结构审计)（七位置、代码块前三节、块后解释、概念四要素）清零`problems`，装配时一次自动渲染真实源码/标题/链接，过正文门禁后原字节复制发布唯一note；预览rendered不参加装配。事实小错做局部补丁，教学不足则按实际语义组完整厚写、保留正确旧文；已有具体review直接复用。十章、七位置/八职责及[正文基线](deep-codebase-learning/SKILL.md#整课交付硬约束)不变。学习者无需手动运行辅助，不隐式启动CLI作者、不改全局配置或模型、不需要服务。
 
 ## 快速开始
 
