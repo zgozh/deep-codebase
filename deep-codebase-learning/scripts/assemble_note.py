@@ -1,21 +1,124 @@
-"""Join existing UTF-8 parts with two LF bytes into a new candidate; no quality assessment."""
+"""Join UTF-8 parts into a new candidate; measure teaching prose, not physical lines.
+
+The content gate counts CJK characters (U+3400-4DBF, U+4E00-9FFF) outside fenced
+code blocks and heading lines, and checks how much explanation follows each code
+block. Physical lines, blank lines and code volume never satisfy the gate.
+No semantic quality assessment happens here.
+"""
 
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 import tempfile
 
 from render_sources import SourceError, physical_lines, render_bytes
 
 
-def assemble_note(workspace, parts, output, *, source_root=None, final_note=None, min_lines=None):
+CJK = re.compile(r"[\u3400-\u4DBF\u4E00-\u9FFF]")
+FENCE_OPEN = re.compile(rb"^ {0,3}(`{3,}|~{3,})")
+HEADING = re.compile(rb"^ {0,3}#{1,6}[ \t]")
+
+DEFAULT_MIN_PROSE_CJK = 15000
+DEFAULT_MIN_DENSITY = 30
+DENSITY_MIN_CODE_LINES = 150
+LONG_BLOCK_LINES = 25
+LONG_BLOCK_MIN_PER_LINE = 8
+LONG_BLOCK_MIN_PROSE = 200
+
+
+def prose_metrics(content):
+    """Return prose/block metrics for rendered Markdown bytes."""
+    prose_cjk = 0
+    code_lines = 0
+    blocks = []
+    in_fence = False
+    fence = None
+    current_code = 0
+    pending = None
+    pending_heading = None
+    pending_prose = 0
+    for number, line in enumerate(physical_lines(content), 1):
+        marker = FENCE_OPEN.match(line)
+        if marker:
+            if not in_fence:
+                if pending is not None:
+                    pending["prose_cjk"] = pending_prose
+                    pending["heading"] = pending_heading
+                    blocks.append(pending)
+                pending, pending_heading, pending_prose = None, None, 0
+                in_fence = True
+                fence = (marker[1][:1], len(marker[1]))
+                current_code = 0
+            else:
+                closing = re.fullmatch(rb" {0,3}" + fence[0] + b"{" + str(fence[1]).encode()
+                                       + rb",}[ \t]*(?:\r\n|\r|\n)?", line)
+                if closing:
+                    in_fence = False
+                    pending = {"line": number, "code_lines": current_code}
+                continue
+            continue
+        if in_fence:
+            if line.strip():
+                code_lines += 1
+                current_code += 1
+            continue
+        if not line.strip():
+            continue
+        if HEADING.match(line):
+            if pending is not None and pending_heading is None:
+                pending_heading = line.strip().lstrip(b"#").strip().decode("utf-8", "replace")
+            continue
+        count = len(CJK.findall(line.decode("utf-8")))
+        prose_cjk += count
+        pending_prose += count
+    if pending is not None:
+        pending["prose_cjk"] = pending_prose
+        pending["heading"] = pending_heading
+        blocks.append(pending)
+    thin = []
+    for block in blocks:
+        if block["code_lines"] < LONG_BLOCK_LINES:
+            continue
+        need = max(LONG_BLOCK_MIN_PROSE, block["code_lines"] * LONG_BLOCK_MIN_PER_LINE)
+        if block["prose_cjk"] < need:
+            thin.append({"line": block["line"], "heading": block["heading"],
+                         "code_lines": block["code_lines"],
+                         "prose_cjk": block["prose_cjk"], "need": need})
+    metrics = {"prose_cjk": prose_cjk, "code_lines": code_lines,
+               "density": round(prose_cjk / code_lines, 1) if code_lines else None,
+               "code_blocks": len(blocks), "thin_blocks": thin}
+    return metrics
+
+
+def gate_failures(metrics, min_prose_cjk, min_density, density_min_lines=DENSITY_MIN_CODE_LINES):
+    failures = []
+    if min_prose_cjk is not None and metrics["prose_cjk"] < min_prose_cjk:
+        failures.append("below_min_prose")
+    if (min_density is not None and metrics["code_lines"] >= density_min_lines
+            and (metrics["density"] or 0) < min_density):
+        failures.append("below_min_density")
+    if metrics["thin_blocks"]:
+        failures.append("thin_source_blocks")
+    return failures
+
+
+def assemble_note(workspace, parts, output, *, source_root=None, final_note=None, min_lines=None,
+                  content_gate=False, min_prose_cjk=None, min_density=None, prose_floor=True,
+                  check_only=False):
     result = {"saved": False, "output": str(output), "bytes": 0, "parts": len(parts)}
     temporary = None
     try:
         if min_lines is not None and (type(min_lines) is not int or min_lines <= 0):
             result["error"] = "invalid_min_lines"
             return result
+        for name, value in (("min_prose_cjk", min_prose_cjk), ("min_density", min_density)):
+            if value is not None and (type(value) not in (int, float) or value <= 0):
+                result["error"] = "invalid_min_" + name
+                return result
+        if check_only:
+            content_gate = True
         workspace = Path(workspace).resolve()
         output = (workspace / output).resolve()
         paths = [(workspace / part).resolve() for part in parts]
@@ -35,7 +138,7 @@ def assemble_note(workspace, parts, output, *, source_root=None, final_note=None
         except ValueError:
             result["error"] = "path_outside_workspace"
             return result
-        if output.exists():
+        if not check_only and output.exists():
             result["error"] = "target_exists"
             return result
         if not paths:
@@ -63,6 +166,28 @@ def assemble_note(workspace, parts, output, *, source_root=None, final_note=None
             result.update(lines=len(physical_lines(content)), min_lines=min_lines)
             if result["lines"] < min_lines:
                 result["error"] = "below_min_lines"
+                return result
+        if content_gate:
+            metrics = prose_metrics(content)
+            result.update(metrics)
+            # A single unit part is checked for block quality; the whole-lesson
+            # prose floor applies at assembly (or when the caller passes it).
+            if min_density is None:
+                min_density = DEFAULT_MIN_DENSITY
+            if min_prose_cjk is None and not check_only and prose_floor:
+                min_prose_cjk = DEFAULT_MIN_PROSE_CJK
+            result.update(min_prose_cjk=min_prose_cjk, min_density=min_density)
+            density_min_lines = 20 if check_only else DENSITY_MIN_CODE_LINES
+            failures = gate_failures(metrics, min_prose_cjk, min_density, density_min_lines)
+            if failures:
+                result["gates"] = failures
+                result["error"] = "below_content_gate"
+                if check_only:
+                    result["ok"] = False
+                return result
+            if check_only:
+                result["ok"] = True
+                result["checked"] = True
                 return result
         output.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.NamedTemporaryFile(dir=output.parent, prefix=".assemble-note-",
@@ -97,15 +222,34 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", required=True, type=Path)
     parser.add_argument("--part", required=True, action="extend", nargs="+", type=Path)
-    parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--output", type=Path)
     parser.add_argument("--source-root", type=Path)
     parser.add_argument("--final-note", type=Path)
     parser.add_argument("--min-lines", type=int)
+    parser.add_argument("--min-prose-cjk", type=int, default=None)
+    parser.add_argument("--min-density", type=float, default=None)
+    parser.add_argument("--no-content-gate", action="store_true")
+    parser.add_argument("--no-prose-floor", action="store_true",
+                        help="exempt local/short notes from the whole-lesson prose floor; G2/G3 still apply")
+    parser.add_argument("--check", action="store_true",
+                        help="report prose metrics for the given parts; write nothing")
     args = parser.parse_args()
-    result = assemble_note(args.workspace, args.part, args.output,
+    if args.check and args.output is not None:
+        parser.error("--check writes nothing; drop --output")
+    if not args.check and args.output is None:
+        parser.error("--output is required unless --check is used")
+    output = args.output if args.output is not None else Path("check-only")
+    result = assemble_note(args.workspace, args.part, output,
                            source_root=args.source_root, final_note=args.final_note,
-                           min_lines=args.min_lines)
+                           min_lines=args.min_lines,
+                           content_gate=not args.no_content_gate,
+                           min_prose_cjk=args.min_prose_cjk,
+                           min_density=args.min_density,
+                           prose_floor=not args.no_prose_floor,
+                           check_only=args.check)
     print(json.dumps(result))
+    if args.check:
+        return 0 if result.get("ok") else 1
     return 0 if result["saved"] else 1
 
 

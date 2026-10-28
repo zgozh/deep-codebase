@@ -114,7 +114,7 @@ class AssembleNoteTests(unittest.TestCase):
         (self.root / 'cli.md').write_bytes(b'<!-- codelearn-source {"path":"source.txt","first":1,"last":1,"language":"text","title":"actual"} -->\n')
         process = subprocess.run([sys.executable, '-B', str(SOURCE), '--workspace', str(self.root),
                  '--part', 'cli.md', '--output', 'candidate.md', '--source-root', str(self.root),
-                 '--final-note', 'notes/final.md'], capture_output=True)
+                 '--final-note', 'notes/final.md', '--no-content-gate'], capture_output=True)
         self.assertEqual(process.returncode, 0, process.stderr)
         self.assertEqual(json.loads(process.stdout)['include_count'], 1)
         self.assertIn(b'actual source\n', (self.root / 'candidate.md').read_bytes())
@@ -153,7 +153,7 @@ class AssembleNoteTests(unittest.TestCase):
         output = Path("新目录/原文.md")
         process = subprocess.run([sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
                                   "--part", "second.md", "first.md", "--part", "second.md",
-                                  "--output", str(output)], capture_output=True,
+                                  "--output", str(output), "--no-content-gate"], capture_output=True,
                                  env=dict(os.environ, PYTHONIOENCODING="ascii:strict"))
         self.assertEqual(process.returncode, 0, process.stderr)
         result = json.loads(process.stdout)
@@ -301,7 +301,8 @@ class AssembleNoteTests(unittest.TestCase):
     def test_min_lines_cli_reports_failure_then_accepts_exact_boundary(self):
         (self.root / "short.md").write_bytes(b"a\nb")
         command = [sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
-                   "--part", "short.md", "--output", "cli/candidate.md", "--min-lines"]
+                   "--part", "short.md", "--output", "cli/candidate.md", "--no-content-gate",
+                   "--min-lines"]
         rejected = subprocess.run(command + ["3"], capture_output=True)
         self.assertEqual(rejected.returncode, 1, rejected.stderr)
         result = json.loads(rejected.stdout)
@@ -312,6 +313,131 @@ class AssembleNoteTests(unittest.TestCase):
         self.assertEqual(accepted.returncode, 0, accepted.stderr)
         self.assertTrue(json.loads(accepted.stdout)["saved"])
         self.assertEqual((self.root / "cli/candidate.md").read_bytes(), b"a\nb")
+
+
+class ContentGateTests(unittest.TestCase):
+    """The gate must measure teaching prose, never physical lines."""
+
+    PROSE = "这段解释先读语句，再说明参数从哪里来、值怎样变化、结果交给谁消费、失败时停在哪里。"
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def note(self, blocks):
+        parts = ["# 课\n"]
+        for index, (code, prose) in enumerate(blocks):
+            parts.append("```java\n" + code + "\n```\n")
+            parts.append("##### 原行%d–%d：当前动作\n" % (index * 10 + 1, index * 10 + len(code.splitlines())))
+            parts.append(prose + "\n")
+        return "\n".join(parts).encode("utf-8")
+
+    def code(self, lines):
+        return "\n".join("int value%d = %d;" % (i, i) for i in range(lines))
+
+    def test_long_code_block_with_short_summary_is_rejected(self):
+        (self.root / "thin.md").write_bytes(self.note([(self.code(30), "这里只是概述。")]))
+        with patch.object(assemble.tempfile, "NamedTemporaryFile") as create:
+            result = assemble.assemble_note(self.root, [Path("thin.md")],
+                                            Path("candidate.md"), content_gate=True)
+            create.assert_not_called()
+        self.assertEqual(result["error"], "below_content_gate")
+        self.assertIn("thin_source_blocks", result["gates"])
+        self.assertEqual(result["thin_blocks"][0]["code_lines"], 30)
+        self.assertGreaterEqual(result["thin_blocks"][0]["need"], 200)
+        self.assertFalse((self.root / "candidate.md").exists())
+
+    def test_dense_long_block_passes_when_thresholds_are_met(self):
+        prose = self.PROSE * 8
+        (self.root / "dense.md").write_bytes(self.note([(self.code(30), prose)]))
+        result = assemble.assemble_note(self.root, [Path("dense.md")], Path("candidate.md"),
+                                        content_gate=True, min_prose_cjk=100, min_density=1)
+        self.assertTrue(result["saved"], result)
+        self.assertEqual(result["thin_blocks"], [])
+        self.assertGreater(result["prose_cjk"], 100)
+        self.assertEqual(result["code_lines"], 30)
+
+    def test_many_code_lines_without_prose_fail_density(self):
+        blocks = [("int value%d;" % i, "值。") for i in range(200)]
+        (self.root / "density.md").write_bytes(self.note(blocks))
+        result = assemble.assemble_note(self.root, [Path("density.md")], Path("candidate.md"),
+                                        content_gate=True, min_prose_cjk=100, min_density=30)
+        self.assertEqual(result["error"], "below_content_gate")
+        self.assertIn("below_min_density", result["gates"])
+        self.assertLess(result["density"], 30)
+
+    def test_prose_metrics_exclude_code_and_headings(self):
+        content = ("# 标题中文\n\n```java\n// 中文注释\nString a = \"中文\";\n```\n\n"
+                   "##### 原行1–2：中文标题\n\n正文解释。\n").encode("utf-8")
+        metrics = assemble.prose_metrics(content)
+        self.assertEqual(metrics["prose_cjk"], 4)
+        self.assertEqual(metrics["code_lines"], 2)
+        self.assertEqual(metrics["code_blocks"], 1)
+
+    def test_check_mode_reports_without_writing(self):
+        (self.root / "dense.md").write_bytes(self.note([(self.code(30), self.PROSE * 8)]))
+        (self.root / "thin.md").write_bytes(self.note([(self.code(30), "概述。")]))
+        command = [sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
+                   "--check", "--min-prose-cjk", "100", "--min-density", "1"]
+        accepted = subprocess.run(command + ["--part", "dense.md"], capture_output=True)
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+        payload = json.loads(accepted.stdout)
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["checked"])
+        self.assertFalse((self.root / "check-only").exists())
+        rejected = subprocess.run(command + ["--part", "thin.md"], capture_output=True)
+        self.assertEqual(rejected.returncode, 1)
+        failed = json.loads(rejected.stdout)
+        self.assertFalse(failed["ok"])
+        self.assertIn("thin_source_blocks", failed["gates"])
+
+    def test_gate_runs_after_source_rendering(self):
+        source = "\n".join("line %d" % i for i in range(30)).encode("utf-8")
+        (self.root / "source.txt").write_bytes(source)
+        directive = ('<!-- codelearn-source {"path":"source.txt","first":1,"last":30,'
+                     '"language":"text","title":"实际实现"} -->\n').encode("utf-8")
+        (self.root / "thin.md").write_bytes(directive + "##### 原行1–30：实现\n\n概述。\n".encode("utf-8"))
+        options = {"source_root": self.root, "final_note": Path("notes/final.md")}
+        thin = assemble.assemble_note(self.root, [Path("thin.md")], Path("thin-out.md"),
+                                      content_gate=True, min_prose_cjk=100, min_density=1, **options)
+        self.assertEqual(thin["error"], "below_content_gate")
+        self.assertEqual(thin["include_count"], 1)
+        (self.root / "full.md").write_bytes(directive + ("##### 原行1–30：实现\n\n"
+                                         + self.PROSE * 8 + "\n").encode("utf-8"))
+        full = assemble.assemble_note(self.root, [Path("full.md")], Path("full-out.md"),
+                                      content_gate=True, min_prose_cjk=100, min_density=1, **options)
+        self.assertTrue(full["saved"], full)
+        self.assertEqual(full["code_lines"], 30)
+
+    def test_no_prose_floor_keeps_block_gates(self):
+        (self.root / "local.md").write_bytes(self.note([(self.code(30), self.PROSE * 26)]))
+        command = [sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
+                   "--part", "local.md", "--output", "local-out.md"]
+        rejected = subprocess.run(command, capture_output=True)
+        self.assertEqual(rejected.returncode, 1)
+        self.assertIn("below_min_prose", json.loads(rejected.stdout)["gates"])
+        accepted = subprocess.run(command + ["--no-prose-floor"], capture_output=True)
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+        self.assertTrue(json.loads(accepted.stdout)["saved"])
+
+    def test_check_mode_skips_the_whole_lesson_prose_floor(self):
+        (self.root / "unit.md").write_bytes(self.note([(self.code(30), self.PROSE * 26)]))
+        process = subprocess.run([sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
+                                  "--check", "--part", "unit.md"], capture_output=True)
+        self.assertEqual(process.returncode, 0, process.stderr)
+        payload = json.loads(process.stdout)
+        self.assertTrue(payload["ok"])
+        self.assertIsNone(payload["min_prose_cjk"])
+        self.assertGreaterEqual(payload["density"], 30)
+
+    def test_cli_enforces_the_gate_by_default(self):
+        (self.root / "tiny.md").write_bytes(b"# t\n\nbody\n")
+        process = subprocess.run([sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
+                                  "--part", "tiny.md", "--output", "tiny-out.md"], capture_output=True)
+        self.assertEqual(process.returncode, 1)
+        self.assertEqual(json.loads(process.stdout)["error"], "below_content_gate")
+        self.assertFalse((self.root / "tiny-out.md").exists())
 
 
 if __name__ == "__main__":

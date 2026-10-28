@@ -67,7 +67,7 @@ C 收尾七处单行替换净零行，E 净增九行，没有大删；四课也�
 | [teaching.md](../deep-codebase-learning/references/teaching.md) | 小节教学职责、适用范围及解释正文展开量的唯一定义；整课物理行下限引用 SKILL 入口，保留现有内容底线及窄例外。 |
 | [stage-note.md](../deep-codebase-learning/assets/templates/stage-note.md) | 唯一可直接落稿的十章正文形状与第五章八职责。 |
 | [authoring.md](../deep-codebase-learning/references/authoring.md) | 必要输入后先写唯一稿的完整连贯初稿，再按完整章/真实5.x充分扩写替换；累计一次事实/教学审读，定点修缺与集中收尾。 |
-| [draft-lesson.md](../deep-codebase-learning/references/draft-lesson.md)、[expand-lesson.md](../deep-codebase-learning/references/expand-lesson.md)、[finalize-lesson.md](../deep-codebase-learning/references/finalize-lesson.md) | 从authoring迁出的三个短执行入口；只组织当前任务与阶段衔接，不复制合同、数字表或创建运行工具。 |
+| `references/write-lesson.md`（v1.12 取代 draft/expand/finalize 三个入口） | 唯一写作入口；只组织单元循环、门禁与保存顺序，不复制合同或创建运行工具。 |
 | [notes.md](../deep-codebase-learning/references/notes.md) | 交付路径和触发；把易误读的“无整课总字数指标”改为明确遵循物理行下限，且不另加总字数目标。 |
 | [review.md](../deep-codebase-learning/assets/templates/review.md) | 现有一处审查记录，承载章／单元的实际范围、事实与教学结论。 |
 | [quality-example.md](../deep-codebase-learning/references/quality-example.md) | 只将已核单元当有界示范，不称整篇 gold，不要求每次全文重读；只更新受影响单元。 |

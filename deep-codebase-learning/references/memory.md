@@ -114,7 +114,7 @@ knowledge/index 只路由当前有用概念到 `knowledge/<topic-id>.md`，多�
 
 编写中每章/内聚单元原文part持久保存，并在现Stage当前任务一段记实际路径/顺序、当前章/next及未完范围；只加载当前必需part。这些写作数据不是已教或学习者证据，不为每内部toolturn重复全套索引/state/journal/review，也不提升mastery。真实有价值互动或中断仍及时最小checkpoint，最终沿下方PERSIST集中projections与一次影响范围V0；不能只留摘要代替已写正文的可恢复基线。
 
-每个meaningful interaction保存实际有价值变化，真实中断/反馈留最小checkpoint，不等整课成功；初稿保存后的阶段切换仍在本次编写中，不为了提交学习记录而主动结束。只按实际完成记录初稿/扩写/审读边界，内部hunk或计数不是新learning event。依 [作者流程](authoring.md#单一落稿任务) 完成本次已授权的扩写与累计审读，最终索引/state/stage/journal/review沿下方PERSIST集中同步，未变证据不重复检查。draft/prepared及next_action只是中间保存，不授权推迟本次展开；真实阻碍或用户暂停才以未完稿结束并记原因/返回点，不能以任务大或字数不足代替阻碍。只有充分解释及来源才支持explained；教材/阅读不升mastery，能力waiting不随写作增长。没有新价值的问候不造事件。
+每个meaningful interaction保存实际有价值变化，真实中断/反馈留最小checkpoint，不等整课成功；初稿保存后的阶段切换仍在本次编写中，不为了提交学习记录而主动结束。只按实际完成记录初稿/扩写/审读边界，内部hunk或计数不是新learning event。依 [写作入口](write-lesson.md#整节流程与保存顺序) 完成本次已授权的编写与累计审读，最终索引/state/stage/journal/review沿下方PERSIST集中同步，未变证据不重复检查。draft/prepared及next_action只是中间保存，不授权推迟本次展开；真实阻碍或用户暂停才以未完稿结束并记原因/返回点，不能以任务大或字数不足代替阻碍。只有充分解释及来源才支持explained；教材/阅读不升mastery，能力waiting不随写作增长。没有新价值的问候不造事件。
 
 1. **CLASSIFY**：判定有哪些学习事件，回答是否 independent/hinted/tutor-provided。
 2. **EXTRACT**：提取新事实、出处、用户理解、错误/纠正、问题、预测、实际结果；不要捏造未运行观察。

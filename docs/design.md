@@ -25,7 +25,7 @@ v1.11.4 默认正式交付是详细独立教材。聊天简短给范围与链接
 7. **失败与实际用法**：同一具体输入贯穿局部与全链正常/重要失败，解释停止点、残留副作用及消费者结果；真实使用、准备、操作、接入和修改影响须能按正文理解。见 [十章职责](../deep-codebase-learning/references/teaching.md#唯一教学交付合同)。
 8. **十章深度与可读性**：每章承担自己的全部适用职责，每个行为单元具可定位职责小节；连贯段落、紧邻源码和实值推导让读者读懂，标题齐、篇幅长或单一全链正确不证明全篇充分。见 [十章合同](../deep-codebase-learning/references/teaching.md#唯一教学交付合同) 与 [笔记质量](../deep-codebase-learning/references/notes.md#note-quality-gate)。
 9. **长期路线、记忆与能力**：保存偏好、实际教材范围、问题和返回点；逐步覆盖全栈及横向结构，最终独立重建。教材写出/读过不提高 mastery，能力等级只用真实学习者证据，文章完成不等于项目完成。见 [规划与横向审计](../deep-codebase-learning/references/planning.md)、[记忆协议](../deep-codebase-learning/references/memory.md) 和 [能力与重建验收](../deep-codebase-learning/references/evaluation.md)。
-10. **返修保留与内容审读**：保留可恢复基线、正确源码与必要解释；重组受影响单元，去实质重复说明去向，不缩成摘要。自查或委派后的真实独立审读必须以正文为依据覆盖所有职责；源码/知识事实正确与教得充分分别判断，经验不能补漏。见 [作者审读](../deep-codebase-learning/references/authoring.md#写出读懂并交付一节) 与 [返修保留](../deep-codebase-learning/references/authoring.md#返修保留教学内容)。
+10. **返修保留与内容审读**：保留可恢复基线、正确源码与必要解释；重组受影响单元，去实质重复说明去向，不缩成摘要。自查或委派后的真实独立审读必须以正文为依据覆盖所有职责；源码/知识事实正确与教得充分分别判断，经验不能补漏。见 [写作与审读](../deep-codebase-learning/references/write-lesson.md#整节流程与保存顺序) 与 [返修保留](../deep-codebase-learning/references/authoring.md#返修保留教学内容)。
 
 复杂或反复未达标时，在第一完整行为单元提前校准写法；整篇初稿实际通读，返修复读受影响范围，广泛重写才再全文读，不强制每篇多轮通读。发现未教的新 API、关键语法、框架机制或设计判断就指出对应正文缺口并修该处，不以小示例或历史“通过”代替本次接受。
 

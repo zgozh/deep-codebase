@@ -2,7 +2,7 @@
 
 [返回 README](../README.md)
 
-**v1.11.31为待行为验证的完整课发布门槛试用候选。** 先一次主写足量完整正文底稿，经本课原阈值成功才进入专用深度增强→累计审读收尾；充分处复用，薄处完整单元增强保正确原文/源码，不造薄全书再救量，源前中后、七H4/八职责和全部预算不减。既有回读同时看有效parts累计自然量与各实际组深度；完整课candidate和发布显式传既有普通2000/复杂3000的min-lines，assembler成功且语义合格后才保存正式note，随后review/交付索引→学习事件→state最后指针。底稿未达量仍继续主写，只存prepared，不交接或delivered；最终candidate欠量也回真实薄处成批补实质内容。短答疑/用户窄例外、预览和充分旧文局部修沿原边界；阈值不判教学或灌水，工具也不能保证作者遵循。v30继续课暴露绕过canonical工具及提前交付，行为仍待实测，详见[验证范围](validation.md)。正常使用仍只需“带我深度学习这个项目”“继续学习”，不新增服务或改变全局配置/模型。
+**v1.12 的写作流程是「按单元写透 + 正文门禁」。** 每个 5.x 单元按「连续源码段（5–15 个有意义行）→ 代码后原行小标题 → 充分正文」交替写，单元写完用 `assemble_note.py --check` 自查，`thin_blocks` 非空就改这些块；整节写齐后整稿回读、批量修缺口，装配 candidate 过正文门禁（正文汉字总量、每代码行解释量、长块解释量）后保存正式 note，随后 review/交付索引→学习事件→state 最后指针。不再用物理行数或 2000/3000 行作为交付门槛，也不再分 draft/expand/finalize 三段。短答疑/用户窄例外/局部单函数笔记只免整节总量，不免写作形状与源码精讲。详见[写作入口](../deep-codebase-learning/references/write-lesson.md)与[验证范围](validation.md)。正常使用仍只需“带我深度学习这个项目”“继续学习”，不新增服务或改变全局配置/模型。
 
 ## 安装与发现
 
@@ -119,7 +119,7 @@ Agent 识别项目根、定向扫描，在首篇正文前一次建立最低state
 
 ## 源码课应该交付什么
 
-写作自动接续三个短入口：[足量完整正文底稿](../deep-codebase-learning/references/draft-lesson.md) → [专用深度增强](../deep-codebase-learning/references/expand-lesson.md) → [累计审读与集中收尾](../deep-codebase-learning/references/finalize-lesson.md)。single仍是同一会话，不是三次额外模型调用或固定工具次数；用户只需普通首次/继续学习请求，不用逐章批准。扩写前在现有学习记录维护一段具体当前任务，原已包含源码的课先完成首个真实完整扩写单元的既有就地回读；其余适用范围仍累计实际覆盖，深度和篇幅基线不减。施工单位有具体输入、可观察结果/状态和真实消费者，可含caller/helpers/纯模板；先在Stage当前任务一段明确边界与贯穿主体/生命周期/关键值，变场景注明A/B。5.x直接实例化唯一模板七个H4位置，不把返回/机制/导航另编单元，不固定单元数。完整叙事和独立source include先持久存本课原文part，Agent只编辑raw parts，按明确顺序装配时自动渲染真实源码、代码后原行标题/链接与source_refs；预览rendered不参加装配，当前Stage一段记实际路径/顺序与返回点，不逐内部toolturn重复全套记录；本批raw改动和范围自读齐后生成新candidate，充分扩写齐后累计审读并原字节复制发布唯一note，已有note先保完整raw/Git基线并保留candidate，不每句重装或Move后重建。学习者无需手动跑helper，single不启动CLI；不以全文数组转string重排或摘要恢复原文。中途未完part仍可prepared；整课底稿欠量仍属主写未完，不能交接专用增强或当成品交付。
+写作只有一个入口：[按单元写透](../deep-codebase-learning/references/write-lesson.md)。single 仍是同一会话，不是多次额外模型调用或固定工具次数；用户只需普通首次/继续学习请求，不用逐章批准。一个 5.x 是一个写作单元：连续源码段（5–15 个有意义行）→ 该段解释（300 字起，复杂组 600 字起）→ 下一段；单元写完跑 `--check`，`thin_blocks` 非空就改这些块，再写下一个。施工单位有具体输入、可观察结果/状态和真实消费者，可含 caller/helpers/纯模板；先在 Stage 当前任务一段明确边界与贯穿主体/生命周期/关键值，变场景注明 A/B。5.x 直接实例化唯一模板七个 H4 位置，不把返回/机制/导航另编单元，不固定单元数。完整叙事和独立 source include 先持久存本课原文 part，Agent 只编辑 raw parts，按明确顺序装配时自动渲染真实源码、代码后原行标题/链接与 source_refs；预览 rendered 不参加装配。整节写齐后整稿回读、批量修缺口，过正文门禁后原字节发布唯一 note；已有 note 先保完整 raw/Git 基线并保留 candidate，不每句重装或 Move 后重建。学习者无需手动跑 helper，single 不启动 CLI。中途未完 part 仍可 prepared，但门禁未过不能当成品交付。
 
 修旧课保留当前学习位置、有效返回点和真实能力证据，同时按影响更新已有路线、Stage、索引、coverage、open_loops及next_action的过期描述。最新意图确需换下一步时保存原返回点并说明原因；不每轮全量重算，不因教材交付提升掌握或完成阶段。
 
