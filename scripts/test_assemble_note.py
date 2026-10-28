@@ -232,6 +232,87 @@ class AssembleNoteTests(unittest.TestCase):
         self.assertFalse(list(self.root.glob(".assemble-note-*")))
         self.assert_sources_unchanged()
 
+    def test_min_lines_rejects_short_result_without_output_side_effects(self):
+        raw = b"# title\nbody\n"
+        (self.root / "short.md").write_bytes(raw)
+        with patch.object(assemble.tempfile, "NamedTemporaryFile") as create:
+            result = assemble.assemble_note(self.root, [Path("short.md")],
+                        Path("absent/deep/candidate.md"), min_lines=3)
+            create.assert_not_called()
+        self.assertFalse(result["saved"])
+        self.assertEqual(result["error"], "below_min_lines")
+        self.assertEqual((result["lines"], result["min_lines"], result["bytes"]), (2, 3, 0))
+        self.assertFalse((self.root / "absent").exists())
+        self.assertFalse(list(self.root.rglob(".assemble-note-*")))
+        self.assertEqual((self.root / "short.md").read_bytes(), raw)
+        existing = assemble.assemble_note(self.root, [Path("short.md")],
+                                         Path("old.md"), min_lines=3)
+        self.assertEqual(existing["error"], "target_exists")
+        self.assert_sources_unchanged()
+
+    def test_min_lines_exact_boundary_preserves_line_endings_and_final_line(self):
+        for index, raw in enumerate([b"a\nb\n", b"a\r\nb\r\n", b"a\nb", b"a\r\nb"]):
+            with self.subTest(raw=raw):
+                (self.root / "boundary.md").write_bytes(raw)
+                output = Path(f"boundary-{index}.md")
+                result = assemble.assemble_note(self.root, [Path("boundary.md")],
+                                               output, min_lines=2)
+                self.assertTrue(result["saved"], result)
+                self.assertEqual((result["lines"], result["min_lines"]), (2, 2))
+                self.assertEqual((self.root / output).read_bytes(), raw)
+
+    def test_min_lines_counts_joined_parts_after_source_rendering(self):
+        source = b"one\ntwo\nthree\n"
+        directive = b'<!-- codelearn-source {"path":"source.txt","first":1,"last":3,"language":"text","title":"source"} -->\n'
+        (self.root / "source.txt").write_bytes(source)
+        (self.root / "include.md").write_bytes(directive)
+        options = {"source_root": self.root, "final_note": Path("notes/final.md")}
+        minimum = len((directive + b"\n\n" + self.second).splitlines()) + 1
+        result = assemble.assemble_note(self.root, [Path("include.md"), Path("second.md")],
+                                       Path("rendered.md"), min_lines=minimum, **options)
+        self.assertTrue(result["saved"], result)
+        rendered = (self.root / "rendered.md").read_bytes()
+        actual_lines = len(rendered.splitlines())
+        self.assertGreater(actual_lines, 3)
+        self.assertEqual(result["lines"], actual_lines)
+        rejected = assemble.assemble_note(self.root, [Path("include.md"), Path("second.md")],
+                       Path("not-created/short.md"), min_lines=actual_lines + 1, **options)
+        self.assertEqual(rejected["error"], "below_min_lines")
+        self.assertEqual(rejected["lines"], actual_lines)
+        self.assertFalse((self.root / "not-created").exists())
+        published = assemble.assemble_note(self.root, [Path("rendered.md")],
+                                          Path("formal.md"), min_lines=actual_lines)
+        self.assertTrue(published["saved"], published)
+        self.assertEqual((self.root / "formal.md").read_bytes(), rendered)
+        self.assertEqual((self.root / "include.md").read_bytes(), directive)
+        self.assertEqual((self.root / "source.txt").read_bytes(), source)
+
+    def test_min_lines_is_explicit_and_requires_positive_integer(self):
+        legacy = self.run_assemble(output=Path("legacy.md"))
+        self.assertEqual(set(legacy), {"saved", "output", "bytes", "parts"})
+        for threshold in [0, -1, 1.5, True, "2"]:
+            with self.subTest(threshold=threshold):
+                result = assemble.assemble_note(self.root, [Path("first.md")],
+                                   Path("invalid/output.md"), min_lines=threshold)
+                self.assertEqual(result["error"], "invalid_min_lines")
+                self.assertFalse(result["saved"])
+                self.assertFalse((self.root / "invalid").exists())
+
+    def test_min_lines_cli_reports_failure_then_accepts_exact_boundary(self):
+        (self.root / "short.md").write_bytes(b"a\nb")
+        command = [sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
+                   "--part", "short.md", "--output", "cli/candidate.md", "--min-lines"]
+        rejected = subprocess.run(command + ["3"], capture_output=True)
+        self.assertEqual(rejected.returncode, 1, rejected.stderr)
+        result = json.loads(rejected.stdout)
+        self.assertEqual((result["error"], result["lines"], result["min_lines"]),
+                         ("below_min_lines", 2, 3))
+        self.assertFalse((self.root / "cli").exists())
+        accepted = subprocess.run(command + ["2"], capture_output=True)
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+        self.assertTrue(json.loads(accepted.stdout)["saved"])
+        self.assertEqual((self.root / "cli/candidate.md").read_bytes(), b"a\nb")
+
 
 if __name__ == "__main__":
     unittest.main()

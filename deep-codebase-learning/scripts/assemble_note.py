@@ -6,13 +6,16 @@ import os
 from pathlib import Path
 import tempfile
 
-from render_sources import SourceError, render_bytes
+from render_sources import SourceError, physical_lines, render_bytes
 
 
-def assemble_note(workspace, parts, output, *, source_root=None, final_note=None):
+def assemble_note(workspace, parts, output, *, source_root=None, final_note=None, min_lines=None):
     result = {"saved": False, "output": str(output), "bytes": 0, "parts": len(parts)}
     temporary = None
     try:
+        if min_lines is not None and (type(min_lines) is not int or min_lines <= 0):
+            result["error"] = "invalid_min_lines"
+            return result
         workspace = Path(workspace).resolve()
         output = (workspace / output).resolve()
         paths = [(workspace / part).resolve() for part in parts]
@@ -56,6 +59,11 @@ def assemble_note(workspace, parts, output, *, source_root=None, final_note=None
             result["error"] = "no_source_includes"
             return result
         content = b"\n\n".join(bodies)
+        if min_lines is not None:
+            result.update(lines=len(physical_lines(content)), min_lines=min_lines)
+            if result["lines"] < min_lines:
+                result["error"] = "below_min_lines"
+                return result
         output.parent.mkdir(parents=True, exist_ok=True)
         with tempfile.NamedTemporaryFile(dir=output.parent, prefix=".assemble-note-",
                                          delete=False) as candidate:
@@ -92,9 +100,11 @@ def main():
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--source-root", type=Path)
     parser.add_argument("--final-note", type=Path)
+    parser.add_argument("--min-lines", type=int)
     args = parser.parse_args()
     result = assemble_note(args.workspace, args.part, args.output,
-                           source_root=args.source_root, final_note=args.final_note)
+                           source_root=args.source_root, final_note=args.final_note,
+                           min_lines=args.min_lines)
     print(json.dumps(result))
     return 0 if result["saved"] else 1
 
