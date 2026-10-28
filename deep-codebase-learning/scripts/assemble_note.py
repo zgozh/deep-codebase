@@ -158,7 +158,7 @@ def assemble_note(workspace, parts, output, *, source_root=None, final_note=None
                 result["include_count"] += metadata["include_count"]
                 result["source_refs"] = metadata["source_refs"]
             bodies.append(body)
-        if source_root is not None and result["include_count"] == 0:
+        if source_root is not None and result["include_count"] == 0 and not check_only:
             result["error"] = "no_source_includes"
             return result
         content = b"\n\n".join(bodies)

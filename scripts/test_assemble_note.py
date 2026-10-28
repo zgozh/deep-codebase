@@ -392,6 +392,15 @@ class ContentGateTests(unittest.TestCase):
         self.assertFalse(failed["ok"])
         self.assertIn("thin_source_blocks", failed["gates"])
 
+    def test_check_mode_allows_parts_without_includes(self):
+        (self.root / "intro.md").write_bytes(self.note([(self.code(30), self.PROSE * 8)]))
+        process = subprocess.run(
+            [sys.executable, "-B", str(SOURCE), "--workspace", str(self.root), "--check",
+             "--part", "intro.md", "--source-root", str(self.root),
+             "--final-note", "notes/final.md", "--min-density", "1"], capture_output=True)
+        self.assertEqual(process.returncode, 0, process.stderr)
+        self.assertTrue(json.loads(process.stdout)["ok"])
+
     def test_gate_runs_after_source_rendering(self):
         source = "\n".join("line %d" % i for i in range(30)).encode("utf-8")
         (self.root / "source.txt").write_bytes(source)

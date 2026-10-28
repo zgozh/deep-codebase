@@ -44,6 +44,66 @@ def cjk(text):
     return len(CJK.findall(text))
 
 
+def display_width(text):
+    return sum(2 if ord(ch) > 0x2E80 else 1 for ch in text)
+
+
+def diagram_findings(fences):
+    """Flag labels wide enough to collide with lifelines or subgraph borders."""
+    found = []
+    seen = 0
+    for fence in fences:
+        if fence["language"] != "mermaid":
+            continue
+        body = fence.get("body", [])
+        if not body:
+            continue
+        seen += 1
+        kind = body[0].split()[0]
+        entry = {"index": seen, "kind": kind, "line": fence["start"] + 1,
+                 "labels": 0, "widest": 0, "samples": [], "warnings": []}
+        participants = [line for line in body if re.match(r"^\s*participant\s+", line)]
+        subgraphs = [line for line in body if re.match(r"^\s*subgraph\b", line)]
+        if kind.startswith("sequence"):
+            if len(participants) > 8:
+                entry["warnings"].append(f"{len(participants)} participants crowd the lifelines")
+            for line in body:
+                match = re.match(r"^\s*(\w+)\s*(?:-->>|->>|-->|->|--x|-x|--\)|-\))\s*(\w+)\s*:\s*(.+?)\s*$", line)
+                if not match:
+                    continue
+                label = match.group(3).strip().strip('"')
+                limit = 14 if match.group(1) == match.group(2) else 20
+                width = display_width(label)
+                entry["labels"] += 1
+                if width > limit:
+                    entry["samples"].append((width, label))
+                    entry["widest"] = max(entry["widest"], width)
+        else:
+            if len(subgraphs) > 5:
+                entry["warnings"].append(f"{len(subgraphs)} subgraphs crowd the layout")
+            for line in body:
+                if "-->" not in line and "---" not in line:
+                    continue
+                for label in re.findall(r"\|([^|]+)\|", line):
+                    label = label.strip().strip('"')
+                    if not label:
+                        continue
+                    width = display_width(label)
+                    entry["labels"] += 1
+                    if width > 14:
+                        entry["samples"].append((width, label))
+                        entry["widest"] = max(entry["widest"], width)
+        if entry["samples"]:
+            entry["samples"].sort(reverse=True)
+            worst = ", ".join(repr(label[:12]) + f" ({width})" for width, label in entry["samples"][:3])
+            entry["warnings"].append(
+                f"{len(entry['samples'])}/{entry['labels']} labels exceed the gap; widest: {worst}")
+            entry["samples"] = [{"width": width, "label": label} for width, label in entry["samples"][:5]]
+        if entry["warnings"]:
+            found.append(entry)
+    return found
+
+
 def parse(text):
     lines = text.split("\n")
     headings = []
@@ -62,8 +122,8 @@ def parse(text):
             else:
                 in_fence = False
                 body = [l for l in lines[fence_start + 1:index] if l.strip()]
-                fences.append({"start": fence_start, "end": index,
-                               "language": language, "lines": len(body)})
+                fences.append({"start": fence_start, "end": index, "language": language,
+                               "lines": len(body), "body": body})
             continue
         if in_fence:
             continue
@@ -215,8 +275,15 @@ def audit(path):
         if not any(marker in window for marker in DEFINITION_MARKERS):
             warnings.append({"check": "term", "detail": f"{term} first used without a nearby definition"})
 
+    # Diagram labels that will collide once rendered.
+    diagrams = diagram_findings(fences)
+    for diagram in diagrams:
+        for detail in diagram["warnings"]:
+            warnings.append({"check": "diagram",
+                             "detail": f"mermaid #{diagram['index']}: {detail}"})
+
     return {"file": str(path), "units": len(units), "concepts": concepts,
-            "problems": problems, "warnings": warnings,
+            "diagrams": diagrams, "problems": problems, "warnings": warnings,
             "passed": not problems}
 
 

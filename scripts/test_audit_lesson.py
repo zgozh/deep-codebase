@@ -93,6 +93,37 @@ class AuditLessonTests(unittest.TestCase):
         self.assertTrue(result["passed"], result["problems"])
         self.assertTrue(result["warnings"])
 
+    def test_wide_sequence_label_is_a_warning(self):
+        diagram = ("## 2. 章2\n\n```mermaid\nsequenceDiagram\n"
+                   "    participant A as 用户\n    participant B as 服务端\n"
+                   "    A->>B: currentSessionId = 新 ID，sessions 插入该会话\n```\n")
+        text = note().replace("## 2. 章2\n\n", "")
+        text = text.replace("## 3. 章3", diagram + "\n## 3. 章3")
+        result = self.run_audit(text)
+        self.assertTrue(result["passed"], result["problems"])
+        self.assertIn("diagram", {w["check"] for w in result["warnings"]})
+        self.assertEqual(1, result["diagrams"][0]["widest"] >= 44)
+
+    def test_short_labels_and_low_participant_count_are_silent(self):
+        diagram = ("## 2. 章2\n\n```mermaid\nsequenceDiagram\n"
+                   "    participant A as 用户\n    participant B as 服务端\n"
+                   "    A->>B: 提交问题\n    B-->>A: 返回结果\n```\n")
+        text = note().replace("## 2. 章2\n\n", "")
+        text = text.replace("## 3. 章3", diagram + "\n## 3. 章3")
+        result = self.run_audit(text)
+        self.assertEqual([], result["diagrams"])
+        self.assertNotIn("diagram", {w["check"] for w in result["warnings"]})
+
+    def test_crowded_participants_are_a_warning(self):
+        lines = ["## 2. 章2\n", "```mermaid", "sequenceDiagram"]
+        lines += ["    participant P%d as 参与方%d" % (i, i) for i in range(9)]
+        lines += ["    P0->>P1: 调用", "```"]
+        text = note().replace("## 2. 章2\n\n", "")
+        text = text.replace("## 3. 章3", "\n".join(lines) + "\n## 3. 章3")
+        result = self.run_audit(text)
+        self.assertIn("participants crowd", " ".join(
+            d for item in result["diagrams"] for d in item["warnings"]))
+
 
 if __name__ == "__main__":
     unittest.main()
