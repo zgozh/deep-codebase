@@ -72,10 +72,15 @@ def diagram_findings(fences):
                 if not match:
                     continue
                 label = match.group(3).strip().strip('"')
-                limit = 14 if match.group(1) == match.group(2) else 20
+                if match.group(1) == match.group(2):
+                    # Mermaid draws a self-message label across its own lifeline.
+                    entry["warnings"].append(
+                        f"self-message {label[:12]!r} sits on its lifeline; use Note over")
+                    entry["labels"] += 1
+                    continue
                 width = display_width(label)
                 entry["labels"] += 1
-                if width > limit:
+                if width > 20:
                     entry["samples"].append((width, label))
                     entry["widest"] = max(entry["widest"], width)
         else:

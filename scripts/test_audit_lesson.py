@@ -114,6 +114,17 @@ class AuditLessonTests(unittest.TestCase):
         self.assertEqual([], result["diagrams"])
         self.assertNotIn("diagram", {w["check"] for w in result["warnings"]})
 
+    def test_self_message_label_is_flagged(self):
+        diagram = ("## 2. 章2\n\n```mermaid\nsequenceDiagram\n"
+                   "    participant A as 用户\n    participant B as 服务端\n"
+                   "    A->>A: 乐观插入\n    A->>B: 提交\n```\n")
+        text = note().replace("## 2. 章2\n\n", "")
+        text = text.replace("## 3. 章3", diagram + "\n## 3. 章3")
+        result = self.run_audit(text)
+        self.assertTrue(result["passed"], result["problems"])
+        self.assertIn("self-message",
+                      str([d["warnings"] for d in result["diagrams"]]))
+
     def test_crowded_participants_are_a_warning(self):
         lines = ["## 2. 章2\n", "```mermaid", "sequenceDiagram"]
         lines += ["    participant P%d as 参与方%d" % (i, i) for i in range(9)]
