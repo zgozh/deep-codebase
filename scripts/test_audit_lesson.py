@@ -114,6 +114,11 @@ class AuditLessonTests(unittest.TestCase):
         self.assertEqual([], result["diagrams"])
         self.assertNotIn("diagram", {w["check"] for w in result["warnings"]})
 
+    def test_unit_without_underlying_layer_warns(self):
+        text = note().replace("线程", "").replace("底层", "").replace("协议", "")
+        result = self.run_audit(text)
+        self.assertIn("layer_gap", {w["check"] for w in result["warnings"]})
+
     def test_chapter_depth_warns_without_failing(self):
         result = self.run_audit(note())
         self.assertTrue(result["passed"], result["problems"])

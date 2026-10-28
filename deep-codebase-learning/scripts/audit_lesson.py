@@ -27,6 +27,10 @@ POSITIONS = [
     ("usage", "怎么用"),
 ]
 
+UNDERLYING_MARKERS = ("线程", "事件循环", "序列化", "字节码", "GC", "索引", "协议", "TCP", "HTTP",
+                      "锁", "内存", "连接池", "协程", "栈", "缓冲", "事务", "socket", "epoll", "页")
+DESIGN_MARKERS = ("替代", "代价", "取舍", "权衡", "否则", "如果", "删掉", "换一种", "不这样", "另一种")
+
 EXAMPLE_MARKERS = ("例如", "比如", "举例", "示意", "就像", "设想", "假设", "想象", "示例", "演示",
                    "长这样", "写出去", "代入")
 PROJECT_MARKERS = ("本项目", "项目里", "代码里", "本课", "当前文件", "这个文件", "Ragent")
@@ -184,6 +188,13 @@ def audit(path):
         if not unit["fences"]:
             problems.append({"check": "source", "unit": title, "detail": "no source block"})
             continue
+        unit_text = section_text(lines, unit["h3"], unit["end"])
+        if any(marker in unit_text for marker in UNDERLYING_MARKERS) is False:
+            warnings.append({"check": "layer_gap", "unit": title,
+                             "detail": "no underlying mechanism (threads/serialization/protocol/index)"})
+        if not any(marker in unit_text for marker in DESIGN_MARKERS):
+            warnings.append({"check": "layer_gap", "unit": title,
+                             "detail": "no tradeoff/alternative reasoning in this unit"})
         code_h4 = next((h for h in unit["h4s"] if "4–5" in h["text"] or "4-5" in h["text"]), None)
         if code_h4 is not None:
             before = [h for h in unit["h4s"] if h["index"] < code_h4["index"]]
