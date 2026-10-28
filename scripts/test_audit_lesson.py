@@ -114,6 +114,11 @@ class AuditLessonTests(unittest.TestCase):
         self.assertEqual([], result["diagrams"])
         self.assertNotIn("diagram", {w["check"] for w in result["warnings"]})
 
+    def test_chapter_depth_warns_without_failing(self):
+        result = self.run_audit(note())
+        self.assertTrue(result["passed"], result["problems"])
+        self.assertIn("chapter_depth", {w["check"] for w in result["warnings"]})
+
     def test_self_message_label_is_flagged(self):
         diagram = ("## 2. 章2\n\n```mermaid\nsequenceDiagram\n"
                    "    participant A as 用户\n    participant B as 服务端\n"

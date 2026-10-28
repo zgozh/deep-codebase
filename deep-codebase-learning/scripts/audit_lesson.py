@@ -240,6 +240,22 @@ def audit(path):
                 problems.append({"check": "paragraphs", "unit": title,
                                  "detail": f"{fence['lines']}-line block has {paragraphs} paragraphs"})
 
+    # Non-source chapters still owe real teaching: replay, tradeoffs, review, boundaries.
+    CHAPTER_FLOORS = {"1": 800, "2": 800, "4": 800, "6": 800, "7": 1200,
+                      "8": 800, "9": 800, "10": 700}
+    for position, heading in enumerate(headings):
+        if heading["level"] != 2:
+            continue
+        match = re.match(r"^(\d{1,2})[.、\s]", heading["text"])
+        if not match or match.group(1) not in CHAPTER_FLOORS:
+            continue
+        end = next((h["index"] for h in headings[position + 1:] if h["level"] <= 2), len(lines))
+        size = cjk(section_text(lines, heading["index"], end))
+        floor = CHAPTER_FLOORS[match.group(1)]
+        if size < floor:
+            warnings.append({"check": "chapter_depth",
+                             "detail": f"chapter {match.group(1)} has {size} CJK, target {floor}"})
+
     # Chapter 3 concepts.
     chapter3 = None
     for position, heading in enumerate(headings):
