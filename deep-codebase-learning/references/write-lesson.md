@@ -74,6 +74,8 @@ python /path/to/skill/scripts/assemble_note.py --workspace /path/to/project/.cod
 python /path/to/skill/scripts/audit_lesson.py notes/阶段/正式课.md --json
 ~~~
 
+结构审计只针对十章正式课：阶段总览、索引、复习卡不是这个形状，跑它会得到一堆「缺章」噪声，不要拿它去改总结。
+
 `problems` 是硬失败，按 `unit` 找到对应小节补写；`warnings` 是低于目标值但未硬失败的项，回读时逐条判断要不要补。审计不判断事实对错，也不替代语义审读。
 
 ## 整节流程与保存顺序
