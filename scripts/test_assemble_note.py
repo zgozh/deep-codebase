@@ -349,7 +349,7 @@ class ContentGateTests(unittest.TestCase):
         self.assertFalse((self.root / "candidate.md").exists())
 
     def test_dense_long_block_passes_when_thresholds_are_met(self):
-        prose = self.PROSE * 8
+        prose = self.PROSE * 45
         (self.root / "dense.md").write_bytes(self.note([(self.code(30), prose)]))
         result = assemble.assemble_note(self.root, [Path("dense.md")], Path("candidate.md"),
                                         content_gate=True, min_prose_cjk=100, min_density=1)
@@ -357,6 +357,24 @@ class ContentGateTests(unittest.TestCase):
         self.assertEqual(result["thin_blocks"], [])
         self.assertGreater(result["prose_cjk"], 100)
         self.assertEqual(result["code_lines"], 30)
+
+    def test_chapter5_block_below_fifty_per_line_is_rejected(self):
+        text = ("# 课\n\n### 5.1 示例单元\n\n```java\n" + self.code(10)
+                + "\n```\n\n" + "这段只讲值。\n")
+        (self.root / "thin5.md").write_bytes(text.encode("utf-8"))
+        result = assemble.assemble_note(self.root, [Path("thin5.md")], Path("candidate.md"),
+                                        content_gate=True, min_prose_cjk=1, min_density=1)
+        self.assertEqual(result["error"], "below_content_gate")
+        self.assertIn("below_block_density", result["gates"])
+        self.assertEqual(result["low_density_blocks"][0]["need"], 500)
+
+    def test_non_chapter5_block_is_exempt_from_the_block_floor(self):
+        text = ("# 课\n\n### 3.1 示例概念\n\n```java\n" + self.code(10)
+                + "\n```\n\n" + "这段只讲值。\n")
+        (self.root / "ch3.md").write_bytes(text.encode("utf-8"))
+        result = assemble.assemble_note(self.root, [Path("ch3.md")], Path("candidate.md"),
+                                        content_gate=True, min_prose_cjk=1, min_density=1)
+        self.assertNotIn("below_block_density", result.get("gates", []))
 
     def test_many_code_lines_without_prose_fail_density(self):
         blocks = [("int value%d;" % i, "值。") for i in range(200)]
@@ -376,7 +394,7 @@ class ContentGateTests(unittest.TestCase):
         self.assertEqual(metrics["code_blocks"], 1)
 
     def test_check_mode_reports_without_writing(self):
-        (self.root / "dense.md").write_bytes(self.note([(self.code(30), self.PROSE * 8)]))
+        (self.root / "dense.md").write_bytes(self.note([(self.code(30), self.PROSE * 45)]))
         (self.root / "thin.md").write_bytes(self.note([(self.code(30), "概述。")]))
         command = [sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
                    "--check", "--min-prose-cjk", "100", "--min-density", "1"]
@@ -393,7 +411,7 @@ class ContentGateTests(unittest.TestCase):
         self.assertIn("thin_source_blocks", failed["gates"])
 
     def test_check_mode_allows_parts_without_includes(self):
-        (self.root / "intro.md").write_bytes(self.note([(self.code(30), self.PROSE * 8)]))
+        (self.root / "intro.md").write_bytes(self.note([(self.code(30), self.PROSE * 45)]))
         process = subprocess.run(
             [sys.executable, "-B", str(SOURCE), "--workspace", str(self.root), "--check",
              "--part", "intro.md", "--source-root", str(self.root),
@@ -413,14 +431,14 @@ class ContentGateTests(unittest.TestCase):
         self.assertEqual(thin["error"], "below_content_gate")
         self.assertEqual(thin["include_count"], 1)
         (self.root / "full.md").write_bytes(directive + ("##### 原行1–30：实现\n\n"
-                                         + self.PROSE * 8 + "\n").encode("utf-8"))
+                                         + self.PROSE * 45 + "\n").encode("utf-8"))
         full = assemble.assemble_note(self.root, [Path("full.md")], Path("full-out.md"),
                                       content_gate=True, min_prose_cjk=100, min_density=1, **options)
         self.assertTrue(full["saved"], full)
         self.assertEqual(full["code_lines"], 30)
 
     def test_no_prose_floor_keeps_block_gates(self):
-        (self.root / "local.md").write_bytes(self.note([(self.code(30), self.PROSE * 26)]))
+        (self.root / "local.md").write_bytes(self.note([(self.code(30), self.PROSE * 45)]))
         command = [sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
                    "--part", "local.md", "--output", "local-out.md"]
         rejected = subprocess.run(command, capture_output=True)
@@ -431,7 +449,7 @@ class ContentGateTests(unittest.TestCase):
         self.assertTrue(json.loads(accepted.stdout)["saved"])
 
     def test_check_mode_skips_the_whole_lesson_prose_floor(self):
-        (self.root / "unit.md").write_bytes(self.note([(self.code(30), self.PROSE * 26)]))
+        (self.root / "unit.md").write_bytes(self.note([(self.code(30), self.PROSE * 45)]))
         process = subprocess.run([sys.executable, "-B", str(SOURCE), "--workspace", str(self.root),
                                   "--check", "--part", "unit.md"], capture_output=True)
         self.assertEqual(process.returncode, 0, process.stderr)

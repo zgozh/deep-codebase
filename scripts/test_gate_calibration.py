@@ -55,8 +55,14 @@ class GateCalibrationTests(unittest.TestCase):
                 self.assertEqual(metrics["density"], case["density"])
                 self.assertEqual(len(metrics["thin_blocks"]), case["thin_blocks"])
                 failures = assemble.gate_failures(metrics, assemble.DEFAULT_MIN_PROSE_CJK,
-                                                  assemble.DEFAULT_MIN_DENSITY)
+                                                  assemble.DEFAULT_MIN_DENSITY, block_floor=False)
                 self.assertEqual("fail" if failures else "pass", case["verdict"], failures)
+                if name == "old_effective_baseline":
+                    # v1.16 adds a per-block floor: the old accepted note is thick in
+                    # total but thin after individual blocks, so it must now fail.
+                    tightened = assemble.gate_failures(metrics, assemble.DEFAULT_MIN_PROSE_CJK,
+                                                       assemble.DEFAULT_MIN_DENSITY)
+                    self.assertIn("below_block_density", tightened)
             checked += 1
         if not checked:
             self.skipTest("archived acceptance notes are not present")

@@ -50,19 +50,20 @@ python /path/to/skill/scripts/assemble_note.py --workspace /path/to/project/.cod
 | G1 | 正文汉字总量 | ≥ 15,000，整节装配时检查；单元自查不查，整节可显式覆盖 |
 | G2 | 正文汉字 / 代码行 | ≥ 30（单元自查 ≥20 代码行时生效，整节 ≥150 行时生效） |
 | G3 | 每个 ≥25 行的代码块，其后续解释 | ≥ 8 字/行且 ≥200 字 |
+| G4 | 第五章每个 ≥5 行的源码块，其后续解释 | **≥ 50 字/行**（复杂行 65） |
 
-单 part 自查只查块质量（G2/G3），不会因为「一篇单元不足 15,000 字」而误判；整节总量在最终装配时检查。需要更严的单元目标时可显式传 `--min-prose-cjk`。
+单 part 自查只查块质量（G2/G3/G4），不会因为「一篇单元不足 15,000 字」而误判；整节总量在最终装配时检查。需要更严的单元目标时可显式传 `--min-prose-cjk`。
 
-不通过时返回 `error: below_content_gate`，`gates` 说明哪几项没过，`thin_blocks` 直接列出要改的块：
+不通过时返回 `error: below_content_gate`，`gates` 说明哪几项没过，`thin_blocks` / `low_density_blocks` 直接列出要改的块：
 
 ```json
-{"saved": false, "error": "below_content_gate", "gates": ["thin_source_blocks"],
+{"saved": false, "error": "below_content_gate", "gates": ["below_block_density"],
  "prose_cjk": 4120, "density": 22.5,
- "thin_blocks": [{"line": 88, "heading": "原行88–165：...", "code_lines": 78,
-                  "prose_cjk": 520, "need": 624}]}
+ "low_density_blocks": [{"line": 88, "heading": "原行88–165：...", "code_lines": 78,
+                         "prose_cjk": 2400, "per_line": 30.8, "need": 3120}]}
 ```
 
-按 `thin_blocks` 改这些块：补当前源码的逐行读法、具体值和消费者，不是加空话。改完重跑 `--check`，通过再继续。
+按 `low_density_blocks` 加厚这些块：每个引用后面补三问（怎么读、实际触发什么、不这样会怎样），加具体类名、默认值、版本、异常与失败后果，不是加空话；每行补到 50 字以上。改完重跑 `--check`，通过再继续。
 
 门禁只挡「薄」和「堆代码」，不判事实对错，也不替语义审读。事实、机制、边界仍要在回读时对照真实源码核。
 

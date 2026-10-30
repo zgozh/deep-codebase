@@ -26,6 +26,9 @@ DENSITY_MIN_CODE_LINES = 150
 LONG_BLOCK_LINES = 25
 LONG_BLOCK_MIN_PER_LINE = 8
 LONG_BLOCK_MIN_PROSE = 200
+BLOCK_DENSITY_FLOOR = 50
+BLOCK_DENSITY_MIN_LINES = 5
+NON_SOURCE_LANGUAGES = ("mermaid", "text", "plain")
 
 
 def prose_metrics(content):
@@ -39,6 +42,8 @@ def prose_metrics(content):
     pending = None
     pending_heading = None
     pending_prose = 0
+    fence_language = ""
+    chapter5 = False
     for number, line in enumerate(physical_lines(content), 1):
         marker = FENCE_OPEN.match(line)
         if marker:
@@ -50,13 +55,15 @@ def prose_metrics(content):
                 pending, pending_heading, pending_prose = None, None, 0
                 in_fence = True
                 fence = (marker[1][:1], len(marker[1]))
+                fence_language = line[len(marker[1]):].strip().decode("utf-8", "replace")
                 current_code = 0
             else:
                 closing = re.fullmatch(rb" {0,3}" + fence[0] + b"{" + str(fence[1]).encode()
                                        + rb",}[ \t]*(?:\r\n|\r|\n)?", line)
                 if closing:
                     in_fence = False
-                    pending = {"line": number, "code_lines": current_code}
+                    pending = {"line": number, "code_lines": current_code,
+                               "language": fence_language, "chapter5": chapter5}
                 continue
             continue
         if in_fence:
@@ -67,6 +74,10 @@ def prose_metrics(content):
         if not line.strip():
             continue
         if HEADING.match(line):
+            level = len(line) - len(line.lstrip(b"#"))
+            if level <= 3:
+                text = line.lstrip(b"#").strip().decode("utf-8", "replace")
+                chapter5 = bool(re.match(r"^5[.、\s]", text))
             if pending is not None and pending_heading is None:
                 pending_heading = line.strip().lstrip(b"#").strip().decode("utf-8", "replace")
             continue
@@ -78,7 +89,21 @@ def prose_metrics(content):
         pending["heading"] = pending_heading
         blocks.append(pending)
     thin = []
+    low_density = []
     for block in blocks:
+        if (block.get("chapter5")
+                and block["code_lines"] >= BLOCK_DENSITY_MIN_LINES
+                and block.get("language", "") not in NON_SOURCE_LANGUAGES):
+            per_line = block["prose_cjk"] / block["code_lines"]
+            if per_line < BLOCK_DENSITY_FLOOR:
+                low_density.append({
+                    "line": block["line"],
+                    "heading": block["heading"],
+                    "code_lines": block["code_lines"],
+                    "prose_cjk": block["prose_cjk"],
+                    "per_line": round(per_line, 1),
+                    "need": int(BLOCK_DENSITY_FLOOR * block["code_lines"]),
+                })
         if block["code_lines"] < LONG_BLOCK_LINES:
             continue
         need = max(LONG_BLOCK_MIN_PROSE, block["code_lines"] * LONG_BLOCK_MIN_PER_LINE)
@@ -88,11 +113,13 @@ def prose_metrics(content):
                          "prose_cjk": block["prose_cjk"], "need": need})
     metrics = {"prose_cjk": prose_cjk, "code_lines": code_lines,
                "density": round(prose_cjk / code_lines, 1) if code_lines else None,
-               "code_blocks": len(blocks), "thin_blocks": thin}
+               "code_blocks": len(blocks), "thin_blocks": thin,
+               "low_density_blocks": low_density}
     return metrics
 
 
-def gate_failures(metrics, min_prose_cjk, min_density, density_min_lines=DENSITY_MIN_CODE_LINES):
+def gate_failures(metrics, min_prose_cjk, min_density, density_min_lines=DENSITY_MIN_CODE_LINES,
+                  block_floor=True):
     failures = []
     if min_prose_cjk is not None and metrics["prose_cjk"] < min_prose_cjk:
         failures.append("below_min_prose")
@@ -101,12 +128,14 @@ def gate_failures(metrics, min_prose_cjk, min_density, density_min_lines=DENSITY
         failures.append("below_min_density")
     if metrics["thin_blocks"]:
         failures.append("thin_source_blocks")
+    if block_floor and metrics.get("low_density_blocks"):
+        failures.append("below_block_density")
     return failures
 
 
 def assemble_note(workspace, parts, output, *, source_root=None, final_note=None, min_lines=None,
                   content_gate=False, min_prose_cjk=None, min_density=None, prose_floor=True,
-                  check_only=False):
+                  check_only=False, block_floor=True):
     result = {"saved": False, "output": str(output), "bytes": 0, "parts": len(parts)}
     temporary = None
     try:
@@ -178,7 +207,8 @@ def assemble_note(workspace, parts, output, *, source_root=None, final_note=None
                 min_prose_cjk = DEFAULT_MIN_PROSE_CJK
             result.update(min_prose_cjk=min_prose_cjk, min_density=min_density)
             density_min_lines = 20 if check_only else DENSITY_MIN_CODE_LINES
-            failures = gate_failures(metrics, min_prose_cjk, min_density, density_min_lines)
+            failures = gate_failures(metrics, min_prose_cjk, min_density, density_min_lines,
+                                     block_floor)
             if failures:
                 result["gates"] = failures
                 result["error"] = "below_content_gate"
@@ -230,7 +260,9 @@ def main():
     parser.add_argument("--min-density", type=float, default=None)
     parser.add_argument("--no-content-gate", action="store_true")
     parser.add_argument("--no-prose-floor", action="store_true",
-                        help="exempt local/short notes from the whole-lesson prose floor; G2/G3 still apply")
+                        help="exempt local/short notes from the whole-lesson prose floor; G2/G3/G4 still apply")
+    parser.add_argument("--no-block-floor", action="store_true",
+                        help="legacy only: re-assemble an old note without the per-block 50-CJK/line floor")
     parser.add_argument("--check", action="store_true",
                         help="report prose metrics for the given parts; write nothing")
     args = parser.parse_args()
@@ -246,7 +278,8 @@ def main():
                            min_prose_cjk=args.min_prose_cjk,
                            min_density=args.min_density,
                            prose_floor=not args.no_prose_floor,
-                           check_only=args.check)
+                           check_only=args.check,
+                           block_floor=not args.no_block_floor)
     print(json.dumps(result))
     if args.check:
         return 0 if result.get("ok") else 1
