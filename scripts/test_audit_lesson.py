@@ -20,7 +20,7 @@ def filler(size):
     return text
 
 
-def unit(name, pre_overrides=None, explain_size=420, explain_text=None):
+def unit(name, pre_overrides=None, explain_size=420):
     pre_overrides = pre_overrides or {}
     sections = []
     for title, key in [("#### 实际问题与实现思路", "problem"),
@@ -28,13 +28,12 @@ def unit(name, pre_overrides=None, explain_size=420, explain_text=None):
                        ("#### 源码定位与阅读准备", "locate")]:
         sections.append(title + "\n\n" + filler(pre_overrides.get(key, 240)) + "\n")
     code = "```ts\n" + "\n".join("const value%d = %d;" % (i, i) for i in range(6)) + "\n```\n"
-    if explain_text is None:
-        explain = filler(explain_size)
-        explain_text = explain[: len(explain) // 2] + "\n\n" + explain[len(explain) // 2:]
+    explain = filler(explain_size)
+    half = explain[: len(explain) // 2]
     body = ("### " + name + "\n\n"
             + sections[0] + sections[1] + sections[2]
             + "#### 4–5 连续源码与紧邻逐行推导\n\n" + code + "\n"
-            + explain_text + "\n"
+            + half + "\n\n" + explain[len(explain) // 2:] + "\n"
             + "#### 这一段怎样运行：边界与失败\n\n" + filler(260) + "\n"
             + "#### 运行机制与工程判断\n\n" + filler(260) + "\n"
             + "#### 怎么用、上下游、接入与修改影响\n\n" + filler(260) + "\n")
@@ -145,23 +144,6 @@ class AuditLessonTests(unittest.TestCase):
         result = self.run_audit(text)
         self.assertIn("participants crowd", " ".join(
             d for item in result["diagrams"] for d in item["warnings"]))
-
-
-    def test_narration_shaped_block_is_flagged(self):
-        paragraphs = []
-        for i in range(6):
-            line = "`const value%d = %d;`" % (i, i)
-            paragraphs.append(line + " 这一行把数放进变量，后面会用到它，读完继续下一行。" * 2)
-        result = self.run_audit(note(explain_text="\n\n".join(paragraphs)))
-        self.assertTrue(result["passed"], result["problems"])
-        self.assertIn("composition", {w["check"] for w in result["warnings"]})
-
-    def test_knowledge_shaped_block_is_silent(self):
-        para = ("这一段的判断条件是空集合时直接返回，求值顺序保证不会越界；"
-                "线程池用固定核心数，框架在容器启动时创建它，版本约定见配置。") * 2
-        result = self.run_audit(note(explain_text="\n\n".join([para] * 3)))
-        self.assertTrue(result["passed"], result["problems"])
-        self.assertNotIn("composition", {w["check"] for w in result["warnings"]})
 
 
 if __name__ == "__main__":

@@ -30,12 +30,6 @@ POSITIONS = [
 UNDERLYING_MARKERS = ("线程", "事件循环", "序列化", "字节码", "GC", "索引", "协议", "TCP", "HTTP",
                       "锁", "内存", "连接池", "协程", "栈", "缓冲", "事务", "socket", "epoll", "页")
 DESIGN_MARKERS = ("替代", "代价", "取舍", "权衡", "否则", "如果", "删掉", "换一种", "不这样", "另一种")
-FRAMEWORK_MARKERS = ("Spring", "MyBatis", "Hutool", "Jackson", "React", "Zustand", "Redisson",
-                     "OkHttp", "Guava", "Lombok", "Servlet", "Tomcat", "FastAPI", "SQLAlchemy",
-                     "Pydantic", "框架", "容器", "注解", "生命周期", "自动配置", "starter")
-LANGUAGE_MARKERS = ("求值", "绑定", "可见性", "精度", "短路", "默认值", "浅拷贝", "作用域",
-                    "重载", "泛型", "溢出", "同步", "异步")
-INLINE_CODE = re.compile(r"`([^`\n]+)`")
 
 EXAMPLE_MARKERS = ("例如", "比如", "举例", "示意", "就像", "设想", "假设", "想象", "示例", "演示",
                    "长这样", "写出去", "代入")
@@ -56,26 +50,6 @@ def cjk(text):
 
 def display_width(text):
     return sum(2 if ord(ch) > 0x2E80 else 1 for ch in text)
-
-
-def composition(text):
-    """How a block's post-code prose is built: pasted code vs stated knowledge."""
-    spans = INLINE_CODE.findall(text)
-    span_chars = sum(len(s) for s in spans)
-    compact = re.sub(r"\s", "", text)
-    paras = [p for p in re.split(r"\n\s*\n", text) if p.strip()]
-    total = cjk(text)
-    insight = any(marker in text for marker in
-                  UNDERLYING_MARKERS + FRAMEWORK_MARKERS + LANGUAGE_MARKERS)
-    return {
-        "paras": len(paras),
-        "cjk": total,
-        "avg_para": round(total / len(paras), 1) if paras else 0,
-        "quote_ratio": round(span_chars / len(compact), 3) if compact else 0,
-        "code_openers": sum(1 for p in paras if p.lstrip().startswith("`")),
-        "whole_line_quotes": sum(1 for s in spans if len(s) >= 40),
-        "insight": insight,
-    }
 
 
 def diagram_findings(fences):
@@ -205,7 +179,6 @@ def audit(path):
     if len(units) < 1:
         problems.append({"check": "units", "detail": "no source unit found under chapter 5"})
 
-    compositions = []
     for unit in units:
         title = unit["title"][:40]
         names = [h["text"] for h in unit["h4s"]]
@@ -277,40 +250,6 @@ def audit(path):
             if paragraphs < max(2, (fence["lines"] + 14) // 15):
                 problems.append({"check": "paragraphs", "unit": title,
                                  "detail": f"{fence['lines']}-line block has {paragraphs} paragraphs"})
-            entry = composition(block_text)
-            entry["line"] = fence["start"] + 1
-            entry["unit"] = title
-            compositions.append(entry)
-
-    # Composition summary: four signals, each capped so a broken draft stays readable.
-    def sample(items):
-        return ", ".join(str(item["line"]) for item in items[:6])
-
-    heavy = [c for c in compositions if c["quote_ratio"] > 0.35]
-    if heavy:
-        worst = max(heavy, key=lambda c: c["quote_ratio"])
-        warnings.append({"check": "composition",
-                         "detail": f"{len(heavy)}/{len(compositions)} blocks spend >35% of their prose "
-                                   f"inside inline code (worst line {worst['line']}: "
-                                   f"{int(worst['quote_ratio'] * 100)}%); lines {sample(heavy)}"})
-    fragmented = [c for c in compositions if c["paras"] >= 3 and c["avg_para"] < 100]
-    if fragmented:
-        worst = min(fragmented, key=lambda c: c["avg_para"])
-        warnings.append({"check": "composition",
-                         "detail": f"{len(fragmented)}/{len(compositions)} blocks average <100 CJK per "
-                                   f"paragraph (worst line {worst['line']}: {worst['avg_para']}); "
-                                   f"lines {sample(fragmented)}"})
-    openers = [c for c in compositions
-               if c["paras"] >= 3 and c["code_openers"] / c["paras"] > 0.5]
-    if openers:
-        warnings.append({"check": "composition",
-                         "detail": f"{len(openers)}/{len(compositions)} blocks open most paragraphs with "
-                                   f"a code quote; lines {sample(openers)}"})
-    blind = [c for c in compositions if not c["insight"]]
-    if blind:
-        warnings.append({"check": "composition",
-                         "detail": f"{len(blind)} blocks state no framework/underlying/language fact; "
-                                   f"lines {sample(blind)}"})
 
     # Non-source chapters still owe real teaching: replay, tradeoffs, review, boundaries.
     CHAPTER_FLOORS = {"1": 800, "2": 800, "4": 800, "6": 800, "7": 1200,
@@ -376,8 +315,7 @@ def audit(path):
                              "detail": f"mermaid #{diagram['index']}: {detail}"})
 
     return {"file": str(path), "units": len(units), "concepts": concepts,
-            "diagrams": diagrams, "composition": compositions,
-            "problems": problems, "warnings": warnings,
+            "diagrams": diagrams, "problems": problems, "warnings": warnings,
             "passed": not problems}
 
 
