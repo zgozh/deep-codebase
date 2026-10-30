@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.15.0"
+  version: "1.16.0"
 ---
 
 # Deep Codebase Learning
@@ -18,7 +18,7 @@ Conversation is not the learning record. Journal is the structured record of the
 
 ## 整课交付硬约束
 
-长期课程的每一节（含 S00 全景与单主题首课）都是正式教材：十章适用职责、真实必要源码、代码后逐行与小语义组讲解，缺一不可。
+长期课程的每一节（含 S00 全景与单主题首课）都是正式教材：十章适用职责、真实必要源码、代码后按值链/机制/判断三段讲透，缺一不可。
 
 篇幅用**正文**衡量，不用物理行：代码、空行、标题不计入。装配器默认检查正文总量、每代码行解释量和长代码块后的解释量，命令与阈值见 [写作入口](references/write-lesson.md#正文门禁)。
 
