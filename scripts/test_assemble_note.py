@@ -368,6 +368,17 @@ class ContentGateTests(unittest.TestCase):
         self.assertIn("below_block_density", result["gates"])
         self.assertEqual(result["low_density_blocks"][0]["need"], 500)
 
+    def test_quote_dominant_block_is_rejected(self):
+        prose = ("`" + "aaaaaaaaaa" * 10 + "` ") * 10 + "解释" * 250
+        text = ("# 课\n\n### 5.1 示例单元\n\n```java\n" + self.code(10)
+                + "\n```\n\n" + prose + "\n")
+        (self.root / "quoted.md").write_bytes(text.encode("utf-8"))
+        result = assemble.assemble_note(self.root, [Path("quoted.md")], Path("candidate.md"),
+                                        content_gate=True, min_prose_cjk=1, min_density=1)
+        self.assertEqual(result["error"], "below_content_gate")
+        self.assertIn("below_quote_ratio", result["gates"])
+        self.assertLess(result["low_quote_blocks"][0]["cjk_per_quote"], 1.2)
+
     def test_non_chapter5_block_is_exempt_from_the_block_floor(self):
         text = ("# 课\n\n### 3.1 示例概念\n\n```java\n" + self.code(10)
                 + "\n```\n\n" + "这段只讲值。\n")

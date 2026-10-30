@@ -27,6 +27,7 @@ LONG_BLOCK_LINES = 25
 LONG_BLOCK_MIN_PER_LINE = 8
 LONG_BLOCK_MIN_PROSE = 200
 BLOCK_DENSITY_FLOOR = 50
+QUOTE_RATIO_FLOOR = 1.2
 BLOCK_DENSITY_MIN_LINES = 5
 NON_SOURCE_LANGUAGES = ("mermaid", "text", "plain")
 
@@ -42,6 +43,7 @@ def prose_metrics(content):
     pending = None
     pending_heading = None
     pending_prose = 0
+    pending_quote = 0
     fence_language = ""
     chapter5 = False
     for number, line in enumerate(physical_lines(content), 1):
@@ -50,9 +52,10 @@ def prose_metrics(content):
             if not in_fence:
                 if pending is not None:
                     pending["prose_cjk"] = pending_prose
+                    pending["quoted"] = pending_quote
                     pending["heading"] = pending_heading
                     blocks.append(pending)
-                pending, pending_heading, pending_prose = None, None, 0
+                pending, pending_heading, pending_prose, pending_quote = None, None, 0, 0
                 in_fence = True
                 fence = (marker[1][:1], len(marker[1]))
                 fence_language = line[len(marker[1]):].strip().decode("utf-8", "replace")
@@ -81,15 +84,19 @@ def prose_metrics(content):
             if pending is not None and pending_heading is None:
                 pending_heading = line.strip().lstrip(b"#").strip().decode("utf-8", "replace")
             continue
-        count = len(CJK.findall(line.decode("utf-8")))
+        decoded = line.decode("utf-8")
+        count = len(CJK.findall(decoded))
         prose_cjk += count
         pending_prose += count
+        pending_quote += sum(len(span) for span in re.findall(r"`([^`\n]+)`", decoded))
     if pending is not None:
         pending["prose_cjk"] = pending_prose
+        pending["quoted"] = pending_quote
         pending["heading"] = pending_heading
         blocks.append(pending)
     thin = []
     low_density = []
+    low_quote = []
     for block in blocks:
         if (block.get("chapter5")
                 and block["code_lines"] >= BLOCK_DENSITY_MIN_LINES
@@ -104,6 +111,18 @@ def prose_metrics(content):
                     "per_line": round(per_line, 1),
                     "need": int(BLOCK_DENSITY_FLOOR * block["code_lines"]),
                 })
+            quoted = block.get("quoted", 0)
+            ratio = block["prose_cjk"] / quoted if quoted else 99
+            if quoted and ratio < QUOTE_RATIO_FLOOR:
+                low_quote.append({
+                    "line": block["line"],
+                    "heading": block["heading"],
+                    "code_lines": block["code_lines"],
+                    "prose_cjk": block["prose_cjk"],
+                    "quoted": quoted,
+                    "cjk_per_quote": round(ratio, 2),
+                    "need_cjk": int(QUOTE_RATIO_FLOOR * quoted) + 1,
+                })
         if block["code_lines"] < LONG_BLOCK_LINES:
             continue
         need = max(LONG_BLOCK_MIN_PROSE, block["code_lines"] * LONG_BLOCK_MIN_PER_LINE)
@@ -114,7 +133,7 @@ def prose_metrics(content):
     metrics = {"prose_cjk": prose_cjk, "code_lines": code_lines,
                "density": round(prose_cjk / code_lines, 1) if code_lines else None,
                "code_blocks": len(blocks), "thin_blocks": thin,
-               "low_density_blocks": low_density}
+               "low_density_blocks": low_density, "low_quote_blocks": low_quote}
     return metrics
 
 
@@ -130,6 +149,8 @@ def gate_failures(metrics, min_prose_cjk, min_density, density_min_lines=DENSITY
         failures.append("thin_source_blocks")
     if block_floor and metrics.get("low_density_blocks"):
         failures.append("below_block_density")
+    if block_floor and metrics.get("low_quote_blocks"):
+        failures.append("below_quote_ratio")
     return failures
 
 

@@ -258,12 +258,15 @@ def audit(path):
                                  "detail": f"{fence['lines']}-line block has {paragraphs} paragraphs"})
             insight = any(marker in block_text for marker in
                           UNDERLYING_MARKERS + FRAMEWORK_MARKERS + LANGUAGE_MARKERS)
+            quoted = sum(len(span) for span in re.findall(r"`([^`\n]+)`", block_text))
             block_stats.append({
                 "line": fence["start"] + 1,
                 "unit": title,
                 "lines": fence["lines"],
                 "cjk": size,
                 "per_line": round(size / max(1, fence["lines"]), 1),
+                "quoted": quoted,
+                "cjk_per_quote": round(size / quoted, 2) if quoted else None,
                 "insight": insight,
             })
 
@@ -284,6 +287,15 @@ def audit(path):
         warnings.append({"check": "knowledge_gap",
                          "detail": f"{len(blind)} blocks state no framework/underlying/language fact; "
                                    f"lines {sample(blind)}"})
+    quote_heavy = [b for b in block_stats
+                   if b["lines"] >= 5 and b["cjk_per_quote"] is not None
+                   and b["cjk_per_quote"] < 1.2]
+    if quote_heavy:
+        worst = min(quote_heavy, key=lambda b: b["cjk_per_quote"])
+        warnings.append({"check": "quote_dominance",
+                         "detail": f"{len(quote_heavy)}/{len(block_stats)} blocks explain less Chinese than "
+                                   f"the code they quote (worst line {worst['line']}: "
+                                   f"{worst['cjk_per_quote']} CJK per quoted char); lines {sample(quote_heavy)}"})
 
     # Non-source chapters still owe real teaching: replay, tradeoffs, review, boundaries.
     CHAPTER_FLOORS = {"1": 800, "2": 800, "4": 800, "6": 800, "7": 1200,
