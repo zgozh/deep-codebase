@@ -119,7 +119,7 @@ Agent 识别项目根、定向扫描，在首篇正文前一次建立最低state
 
 ## 源码课应该交付什么
 
-写作只有一个入口：[按单元写透](../deep-codebase-learning/references/write-lesson.md)。single 仍是同一会话，不是多次额外模型调用或固定工具次数；用户只需普通首次/继续学习请求，不用逐章批准。一个 5.x 是一个写作单元：连续源码段（5–15 个有意义行）→ 该段解释（300 字起，复杂组 600 字起）→ 下一段；单元写完跑 `--check`，`thin_blocks` 非空就改这些块，再写下一个。施工单位有具体输入、可观察结果/状态和真实消费者，可含 caller/helpers/纯模板；先在 Stage 当前任务一段明确边界与贯穿主体/生命周期/关键值，变场景注明 A/B。5.x 直接实例化唯一模板七个 H4 位置，不把返回/机制/导航另编单元，不固定单元数。完整叙事和独立 source include 先持久存本课原文 part，Agent 只编辑 raw parts，按明确顺序装配时自动渲染真实源码、代码后原行标题/链接与 source_refs；预览 rendered 不参加装配。整节写齐后整稿回读、跑结构审计并清零 `problems`，过正文门禁后原字节发布唯一 note；已有 note 先保完整 raw/Git 基线并保留 candidate，不每句重装或 Move 后重建。学习者无需手动跑 helper，single 不启动 CLI。中途未完 part 仍可 prepared，但门禁未过不能当成品交付。
+写作只有一个入口：[按单元写透](../deep-codebase-learning/references/write-lesson.md)。single 仍是同一会话，不是多次额外模型调用或固定工具次数；用户只需普通首次/继续学习请求，不用逐章批准。一个 5.x 是一个写作单元：连续源码段（5–15 个有意义行）→ 该段解释（每行 50 字，复杂行 65 字）→ 下一段；单元写完跑 `--check`，`thin_blocks` 非空就改这些块，再写下一个。施工单位有具体输入、可观察结果/状态和真实消费者，可含 caller/helpers/纯模板；先在 Stage 当前任务一段明确边界与贯穿主体/生命周期/关键值，变场景注明 A/B。5.x 直接实例化唯一模板七个 H4 位置，不把返回/机制/导航另编单元，不固定单元数。完整叙事和独立 source include 先持久存本课原文 part，Agent 只编辑 raw parts，按明确顺序装配时自动渲染真实源码、代码后原行标题/链接与 source_refs；预览 rendered 不参加装配。整节写齐后整稿回读、跑结构审计并清零 `problems`，过正文门禁后原字节发布唯一 note；已有 note 先保完整 raw/Git 基线并保留 candidate，不每句重装或 Move 后重建。学习者无需手动跑 helper，single 不启动 CLI。中途未完 part 仍可 prepared，但门禁未过不能当成品交付。
 
 修旧课保留当前学习位置、有效返回点和真实能力证据，同时按影响更新已有路线、Stage、索引、coverage、open_loops及next_action的过期描述。最新意图确需换下一步时保存原返回点并说明原因；不每轮全量重算，不因教材交付提升掌握或完成阶段。
 

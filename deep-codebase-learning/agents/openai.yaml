@@ -1,6 +1,6 @@
 interface:
   display_name: "Deep Codebase Learning"
   short_description: "Learn codebases through detailed notes and on-demand answers"
-  default_prompt: "使用 $deep-codebase-learning 带我从零深度学习当前项目，按真实业务安排路线、按十章写独立详细教材。写作按 5.x 单元推进：连续源码段（5–15 个有意义行）→ 代码后原行小标题 → 充分正文（300 字起，复杂组 600 字起）→ 下一段；单元写完用 assemble_note.py --check 自查，thin_blocks 非空就改这些块。整节写齐后整稿回读、批量修缺口，装配 candidate 过正文门禁（正文汉字总量、每代码行解释量、长块解释量）后才保存发布；不用物理行数凑量。十章职责、七位置/八职责和官方规则讲入正文不变；聊天简短给链接并随时答疑。已有 .codelearn/ 时恢复最新偏好和进度；首次提供单会话或主会话规划审查、子 agent 编写独占 part 的选择。"
+  default_prompt: "使用 $deep-codebase-learning 带我从零深度学习当前项目，按真实业务安排路线、按十章写独立详细教材。写作按 5.x 单元推进：连续源码段（5–15 个有意义行）→ 代码后原行小标题 → 充分正文（每行 50 字，复杂行 65 字；每个引用后面写清怎么读、在框架/运行时里实际触发什么、不这样会怎样）→ 下一段；单元写完用 assemble_note.py --check 自查，thin_blocks 非空就改这些块。整节写齐后整稿回读、批量修缺口，装配 candidate 过正文门禁（正文汉字总量、每代码行解释量、长块解释量）后才保存发布；不用物理行数凑量。十章职责、七位置/八职责和官方规则讲入正文不变；聊天简短给链接并随时答疑。已有 .codelearn/ 时恢复最新偏好和进度；首次提供单会话或主会话规划审查、子 agent 编写独占 part 的选择。"
 policy:
   allow_implicit_invocation: true

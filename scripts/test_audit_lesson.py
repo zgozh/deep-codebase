@@ -17,6 +17,7 @@ def filler(size):
     text = "这一段说明当前问题、真实输入与结果，例如具体值，项目里这样用，代价是不能乱用。"
     while audit_module.cjk(text) < size:
         text += "它还把边界、失败与消费者讲清楚。"
+    text += "这段代码跑在模型线程上，框架在启动时创建对象，序列化结果交给下游。"
     return text
 
 
@@ -115,7 +116,7 @@ class AuditLessonTests(unittest.TestCase):
         self.assertNotIn("diagram", {w["check"] for w in result["warnings"]})
 
     def test_unit_without_underlying_layer_warns(self):
-        text = note().replace("线程", "").replace("底层", "").replace("协议", "")
+        text = note().replace("线程", "").replace("底层", "").replace("协议", "").replace("序列化", "")
         result = self.run_audit(text)
         self.assertIn("layer_gap", {w["check"] for w in result["warnings"]})
 
@@ -144,6 +145,19 @@ class AuditLessonTests(unittest.TestCase):
         result = self.run_audit(text)
         self.assertIn("participants crowd", " ".join(
             d for item in result["diagrams"] for d in item["warnings"]))
+
+
+    def test_thin_per_line_explanation_warns(self):
+        result = self.run_audit(note(explain_size=180))
+        self.assertTrue(result["passed"], result["problems"])
+        checks = {w["check"] for w in result["warnings"]}
+        self.assertIn("density", checks)
+
+    def test_default_note_has_no_density_warning(self):
+        result = self.run_audit(note())
+        checks = {w["check"] for w in result["warnings"]}
+        self.assertNotIn("density", checks)
+        self.assertNotIn("knowledge_gap", checks)
 
 
 if __name__ == "__main__":
