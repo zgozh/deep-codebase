@@ -478,5 +478,29 @@ class ContentGateTests(unittest.TestCase):
         self.assertFalse((self.root / "tiny-out.md").exists())
 
 
+class SourceOverlapTests(unittest.TestCase):
+    """Units are separate parts, so a split can quote the same lines twice unnoticed."""
+
+    def test_reports_overlap_between_two_parts(self):
+        found = assemble.source_overlaps([
+            ("05-08.md", [("a.java", 99, 109)]),
+            ("05-09.md", [("a.java", 108, 120)]),
+        ])
+        self.assertEqual(len(found), 1)
+        self.assertEqual(found[0]["overlap"], [108, 109])
+        self.assertEqual(found[0]["first_part"][0], "05-08.md")
+
+    def test_ignores_disjoint_ranges_and_other_files(self):
+        self.assertEqual(assemble.source_overlaps([
+            ("p1", [("a.java", 1, 10)]),
+            ("p2", [("a.java", 11, 20), ("b.java", 1, 10)]),
+        ]), [])
+
+    def test_marker_parsing_skips_broken_json(self):
+        body = ('<!-- codelearn-source {"path":"a.java","first":3,"last":9} -->\n'
+                '<!-- codelearn-source {not json} -->\n').encode("utf-8")
+        self.assertEqual(assemble.include_spans(body), [("a.java", 3, 9)])
+
+
 if __name__ == "__main__":
     unittest.main()

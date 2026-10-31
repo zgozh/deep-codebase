@@ -30,6 +30,50 @@ BLOCK_DENSITY_FLOOR = 50
 QUOTE_RATIO_FLOOR = 1.2
 BLOCK_DENSITY_MIN_LINES = 5
 NON_SOURCE_LANGUAGES = ("mermaid", "text", "plain")
+INCLUDE_MARKER = re.compile(r"<!--\s*codelearn-source\s+(\{.*?\})\s*-->")
+
+
+def include_spans(body):
+    """Return [(path, first, last)] for every source include in one part."""
+    spans = []
+    for match in INCLUDE_MARKER.finditer(body.decode("utf-8", "replace")):
+        try:
+            meta = json.loads(match.group(1))
+            first = int(meta.get("first", 0))
+            last = int(meta.get("last", 0))
+        except (ValueError, TypeError):
+            continue
+        path = meta.get("path")
+        if path and first > 0 and last >= first:
+            spans.append((path, first, last))
+    return spans
+
+
+def source_overlaps(per_part):
+    """Report ranges quoted by more than one part (same file, overlapping lines).
+
+    Units are written as independent parts, so nothing stops a split of a legacy
+    unit from quoting the same source lines twice. The gate cannot see it: each
+    part passes on its own. This is a warning, not a gate failure.
+    """
+    found = []
+    for i in range(len(per_part)):
+        name_a, spans_a = per_part[i]
+        for j in range(i + 1, len(per_part)):
+            name_b, spans_b = per_part[j]
+            for path_a, first_a, last_a in spans_a:
+                for path_b, first_b, last_b in spans_b:
+                    if path_a != path_b:
+                        continue
+                    low, high = max(first_a, first_b), min(last_a, last_b)
+                    if low <= high:
+                        found.append({
+                            "path": path_a,
+                            "overlap": [low, high],
+                            "first_part": [name_a, [first_a, last_a]],
+                            "second_part": [name_b, [first_b, last_b]],
+                        })
+    return found
 
 
 def prose_metrics(content):
@@ -196,18 +240,23 @@ def assemble_note(workspace, parts, output, *, source_root=None, final_note=None
             return result
         bodies = []
         sources = {}
+        per_part_spans = []
         if source_root is not None:
             result.update(include_count=0, source_refs=[])
-        for path in paths:
+        for index, path in enumerate(paths):
             body = path.read_bytes()
             if not body.decode("utf-8").strip():
                 result["error"] = "empty_part"
                 return result
             if source_root is not None:
+                spans = include_spans(body)
+                per_part_spans.append((str(parts[index]), spans))
                 body, metadata = render_bytes(body, source_root, final_note, sources)
                 result["include_count"] += metadata["include_count"]
                 result["source_refs"] = metadata["source_refs"]
             bodies.append(body)
+        if source_root is not None:
+            result["source_overlaps"] = source_overlaps(per_part_spans)
         if source_root is not None and result["include_count"] == 0 and not check_only:
             result["error"] = "no_source_includes"
             return result
