@@ -152,10 +152,19 @@ def section_text(lines, start, end):
     return "\n".join(lines[start + 1:end])
 
 
-def audit(path):
+def audit(path, collect_fixes=False):
     lines, headings, fences = parse(Path(path).read_text(encoding="utf-8"))
     problems = []
     warnings = []
+    fixes = []
+
+    def fix(kind, line, where, action, have=None, target=None):
+        item = {"kind": kind, "line": line, "where": where, "action": action}
+        if have is not None:
+            item["have"] = have
+            item["target"] = target
+            item["need_cjk"] = max(1, target - have)
+        fixes.append(item)
 
     h1 = [h for h in headings if h["level"] == 1]
     h2 = [h for h in headings if h["level"] == 2]
@@ -221,6 +230,9 @@ def audit(path):
                 elif size < 200:
                     warnings.append({"check": "pre_depth", "unit": title,
                                      "detail": f"{heading['text'][:20]} has {size} CJK, target 200"})
+                if size < 200:
+                    fix("pre_depth", heading["index"] + 1, f"{title} / {heading['text'][:20]}",
+                        "补这一小节的正文：实际输入与值、由谁在何时触发、这段代码解决的具体问题", size, 200)
             for heading in after:
                 end = min(next((h["index"] for h in headings if h["index"] > heading["index"]),
                                unit["end"]), unit["end"])
@@ -231,6 +243,9 @@ def audit(path):
                 elif size < 250:
                     warnings.append({"check": "post_depth", "unit": title,
                                      "detail": f"{heading['text'][:20]} has {size} CJK, target 250"})
+                if size < 250:
+                    fix("post_depth", heading["index"] + 1, f"{title} / {heading['text'][:20]}",
+                        "补这一小节的正文：给定输入的运行结果、失败路径、机制判断或上下游接法", size, 250)
         first_fence = unit["fences"][0]["start"]
         if code_h4 is not None and first_fence < code_h4["index"]:
             problems.append({"check": "order", "unit": title,
@@ -282,11 +297,18 @@ def audit(path):
                          "detail": f"{len(thin)}/{len(block_stats)} blocks explain <50 CJK per source "
                                    f"line ({len(deep_thin)} of them <35; worst line {worst['line']}: "
                                    f"{worst['per_line']}); lines {sample(thin)}"})
+    for block in thin:
+        fix("density", block["line"], f"{block['unit']} / {block['lines']} 行块",
+            "按每行 65 字补：怎么读、实际触发什么、不这样会怎样；缺的是具体类名/默认值/异常/失败后果",
+            block["cjk"], block["lines"] * 65)
     blind = [b for b in block_stats if not b["insight"]]
     if blind:
         warnings.append({"check": "knowledge_gap",
                          "detail": f"{len(blind)} blocks state no framework/underlying/language fact; "
                                    f"lines {sample(blind)}"})
+    for block in blind:
+        fix("knowledge_gap", block["line"], f"{block['unit']} / {block['lines']} 行块",
+            "补两条读者看不出来的事实：一条框架/语言契约，一条底层机制或设计取舍", block["cjk"], block["cjk"] + 80)
     quote_heavy = [b for b in block_stats
                    if b["lines"] >= 5 and b["cjk_per_quote"] is not None
                    and b["cjk_per_quote"] < 1.2]
@@ -296,6 +318,10 @@ def audit(path):
                          "detail": f"{len(quote_heavy)}/{len(block_stats)} blocks explain less Chinese than "
                                    f"the code they quote (worst line {worst['line']}: "
                                    f"{worst['cjk_per_quote']} CJK per quoted char); lines {sample(quote_heavy)}"})
+    for block in quote_heavy:
+        target = int(block["quoted"] * 1.2) + 1
+        fix("quote_dominance", block["line"], f"{block['unit']} / {block['lines']} 行块",
+            "补齐讲解，让正文汉字多于引用字符（比值 ≥1.2）", block["cjk"], target)
 
     # Non-source chapters still owe real teaching: replay, tradeoffs, review, boundaries.
     CHAPTER_FLOORS = {"1": 800, "2": 800, "4": 800, "6": 800, "7": 1200,
@@ -312,6 +338,8 @@ def audit(path):
         if size < floor:
             warnings.append({"check": "chapter_depth",
                              "detail": f"chapter {match.group(1)} has {size} CJK, target {floor}"})
+            fix("chapter_depth", heading["index"] + 1, f"第 {match.group(1)} 章",
+                "补本章职责：这一章要让读者改变什么认识（路径/失败/取舍/边界），不是加小标题", size, floor)
 
     # Chapter 3 concepts.
     chapter3 = None
@@ -333,6 +361,8 @@ def audit(path):
                 problems.append({"check": "concept_depth", "detail": f"{entry['title']} only {size} CJK"})
             elif size < 400:
                 warnings.append({"check": "concept_depth", "detail": f"{entry['title']} has {size} CJK, core target 400"})
+                fix("concept_depth", h3["index"] + 1, entry["title"],
+                    "补这个概念的定义、一个具体例子、在本项目的落点和一个边界", size, 400)
             if not any(marker in text for marker in EXAMPLE_MARKERS):
                 problems.append({"check": "concept_example", "detail": f"{entry['title']} lacks an example"})
             if not any(marker in text for marker in PROJECT_MARKERS):
@@ -352,6 +382,8 @@ def audit(path):
         window = full[max(0, index - 250):index + 250]
         if not any(marker in window for marker in DEFINITION_MARKERS):
             warnings.append({"check": "term", "detail": f"{term} first used without a nearby definition"})
+            fix("term", full[:index].count("\n") + 1, term,
+                "首现处就地短释一句（这是什么、在这里指什么），不要求展开成概念课")
 
     # Diagram labels that will collide once rendered.
     diagrams = diagram_findings(fences)
@@ -359,19 +391,39 @@ def audit(path):
         for detail in diagram["warnings"]:
             warnings.append({"check": "diagram",
                              "detail": f"mermaid #{diagram['index']}: {detail}"})
+            if "self-message" in detail:
+                action = "把这个自消息改成 Note over，或拆成两次跨参与者消息"
+            elif "participants" in detail:
+                action = "参与者压到 8 个以内：合并同层，或拆成两张图"
+            elif "subgraphs" in detail:
+                action = "子图压到 5 个以内：合并同层，或拆成两张图"
+            elif "labels exceed" in detail:
+                action = "缩短标签：时序图 ≤20 显示宽度、流程图边标签 ≤14（汉字算 2）"
+            else:
+                action = "按 diagrams.md 的标签宽度规则处理"
+            fix("diagram", diagram["line"], f"mermaid #{diagram['index']}（{diagram['kind']}）", action)
 
     return {"file": str(path), "units": len(units), "concepts": concepts,
             "diagrams": diagrams, "blocks": block_stats,
             "problems": problems, "warnings": warnings,
-            "passed": not problems}
+            "passed": not problems,
+            "fixes": sorted(fixes, key=lambda item: item["line"]) if collect_fixes else []}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("note")
     parser.add_argument("--json", action="store_true")
+    parser.add_argument("--fix-list", action="store_true",
+                        help="emit one actionable item per finding, ordered by line")
     args = parser.parse_args()
-    result = audit(args.note)
+    result = audit(args.note, collect_fixes=args.fix_list)
+    if args.fix_list:
+        payload = {"file": result["file"],
+                   "count": len(result["fixes"]),
+                   "fixes": sorted(result["fixes"], key=lambda item: item["line"])}
+        print(json.dumps(payload, ensure_ascii=False, indent=1))
+        return 0
     print(json.dumps(result, ensure_ascii=False, indent=1) if args.json
           else json.dumps(result, ensure_ascii=False))
     return 0 if result["passed"] else 1

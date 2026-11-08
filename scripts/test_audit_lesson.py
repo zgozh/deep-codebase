@@ -160,5 +160,46 @@ class AuditLessonTests(unittest.TestCase):
         self.assertNotIn("knowledge_gap", checks)
 
 
+class FixListTests(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+
+    def run_audit(self, text, collect_fixes=True):
+        path = Path(self.temp.name) / "note.md"
+        path.write_text(text, encoding="utf-8")
+        return audit_module.audit(path, collect_fixes=collect_fixes)
+
+    def test_fixes_are_off_by_default(self):
+        self.assertEqual(self.run_audit(note(), collect_fixes=False)["fixes"], [])
+
+    def test_thin_block_yields_one_actionable_item(self):
+        result = self.run_audit(note(explain_size=180))
+        thin = [f for f in result["fixes"] if f["kind"] == "density"]
+        self.assertEqual(len(thin), 1)
+        self.assertGreater(thin[0]["need_cjk"], 0)
+        self.assertEqual(thin[0]["target"], thin[0]["have"] + thin[0]["need_cjk"])
+        self.assertIn("每行 65 字", thin[0]["action"])
+
+    def test_short_section_and_concept_yield_items(self):
+        result = self.run_audit(note(pre_overrides={"context": 150}))
+        kinds = {f["kind"] for f in result["fixes"]}
+        self.assertIn("pre_depth", kinds)
+        self.assertIn("concept_depth", kinds)
+
+    def test_fixes_are_sorted_by_line_when_requested(self):
+        result = self.run_audit(note(pre_overrides={"context": 150}))
+        ordered = sorted(result["fixes"], key=lambda item: item["line"])
+        self.assertEqual(result["fixes"], ordered)
+
+    def test_every_fix_names_a_line_and_an_action(self):
+        result = self.run_audit(note(explain_size=180, pre_overrides={"context": 150}))
+        for item in result["fixes"]:
+            self.assertIn("line", item)
+            self.assertGreater(item["line"], 0)
+            self.assertTrue(item["action"])
+
+
 if __name__ == "__main__":
     unittest.main()
