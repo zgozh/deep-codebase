@@ -29,6 +29,9 @@ POST_SECTION_TARGET = 250
 UNIT_OVERHEAD = 1500          # three pre + three post sections, in CJK
 # 5–15 lines per block, with 12 as the observed median split.
 BLOCK_MIN, BLOCK_TARGET, BLOCK_MAX = 5, 12, 15
+# Whole-unit floor, matching audit_lesson.UNIT_CJK_FLOOR: below this the unit cannot
+# carry a real behaviour, so the plan says "merge it" instead of "write less".
+UNIT_CJK_FLOOR = 5000
 
 COMMENT_PREFIXES = ("//", "/*", "*/", "*", "#", "--", "<!--")
 
@@ -74,35 +77,63 @@ RULES = [
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", required=True, help="source file the unit will read")
-    parser.add_argument("--first", required=True, type=int)
-    parser.add_argument("--last", required=True, type=int)
-    parser.add_argument("--root", default=".", help="repo root the path is relative to")
+    parser.add_argument("--source", help="source file the unit will read")
+    parser.add_argument("--first", type=int)
+    parser.add_argument("--last", type=int)
+    parser.add_argument("--range", action="append", default=[], metavar="FILE:FIRST-LAST",
+                        help="one range per flag; repeat for units that span several files")
+    parser.add_argument("--root", default=".", help="repo root the paths are relative to")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
-    path = Path(args.root) / args.source
-    if not path.is_file():
-        raise SystemExit(f"source not found: {path}")
-    try:
-        total, meaningful = meaningful_lines(path, args.first, args.last)
-    except ValueError as error:
-        raise SystemExit(str(error))
+    ranges = list(args.range)
+    if args.source:
+        if args.first is None or args.last is None:
+            raise SystemExit("--source needs --first and --last, or use --range FILE:FIRST-LAST")
+        ranges.insert(0, f"{args.source}:{args.first}-{args.last}")
+    if not ranges:
+        raise SystemExit("give --source/--first/--last or at least one --range")
 
-    result = {"source": str(path), "first": args.first, "last": args.last,
-              "range_lines": total, **plan(meaningful), "rules": RULES}
+    root = Path(args.root)
+    measured = []
+    for spec in ranges:
+        path_part, _, span = spec.rpartition(":")
+        first_part, _, last_part = span.partition("-")
+        try:
+            first, last = int(first_part), int(last_part)
+        except ValueError:
+            raise SystemExit(f"bad range {spec!r}; expected FILE:FIRST-LAST")
+        source = root / path_part
+        if not source.is_file():
+            raise SystemExit(f"source not found: {source}")
+        try:
+            total, meaningful = meaningful_lines(source, first, last)
+        except ValueError as error:
+            raise SystemExit(f"{path_part}: {error}")
+        measured.append({"source": path_part, "first": first, "last": last,
+                         "range_lines": total, "meaningful_lines": meaningful})
+
+    meaningful = sum(item["meaningful_lines"] for item in measured)
+    result = {"ranges": measured, "root": str(root), **plan(meaningful), "rules": RULES}
 
     if args.json:
         print(json.dumps(result, ensure_ascii=False, indent=1))
         return 0
 
-    print(f"源码范围 {args.source} 原行 {args.first}–{args.last}：{total} 行，"
-          f"其中有意义行 {meaningful} 行（去掉空行与纯注释行）")
+    for item in measured:
+        print(f"源码范围 {item['source']} 原行 {item['first']}–{item['last']}："
+              f"{item['range_lines']} 行，其中有意义行 {item['meaningful_lines']} 行"
+              f"（去掉空行与纯注释行）")
+    if len(measured) > 1:
+        print(f"本单元合计有意义行 {meaningful} 行（{len(measured)} 个范围）")
     print()
     print(f"本单元正文预算：底线 {result['floor_cjk']} 汉字（每行 50）"
           f"，起稿目标 {result['target_cjk']} 汉字（每行 65）")
     print(f"加上七个位置：底线 {result['unit_total_floor']}，目标 {result['unit_total_target']} 汉字")
     print(f"建议切成 {result['suggested_blocks']} 块（每块约 {BLOCK_TARGET} 行）")
+    if result["unit_total_target"] < UNIT_CJK_FLOOR:
+        print(f"注意：这个范围的目标总量 {result['unit_total_target']} 低于单元下限 {UNIT_CJK_FLOOR}，"
+              f"源码太少撑不起一个单元。前后小节写得比下限厚可能补得上；差得远就合并相邻职责或放宽范围，不要拉长句子凑数。")
     print()
     print("块行数 → 该块至少要写多少字（底线 / 目标）")
     for row in result["per_block"]:

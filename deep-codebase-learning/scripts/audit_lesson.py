@@ -36,6 +36,11 @@ FRAMEWORK_MARKERS = ("Spring", "MyBatis", "Hutool", "Jackson", "React", "Zustand
 LANGUAGE_MARKERS = ("求值", "绑定", "可见性", "精度", "短路", "默认值", "浅拷贝", "作用域",
                     "重载", "泛型", "溢出", "同步", "异步")
 
+# Whole-unit floor, from the benchmark lesson measured in references/measured-baseline.md:
+# its 25 units run 5,387 (min) to 8,390 (median) CJK. Per-block density alone cannot
+# separate a compliant-but-hollow unit from a thick one, so the total is checked too.
+UNIT_CJK_FLOOR = 5000
+
 EXAMPLE_MARKERS = ("例如", "比如", "举例", "示意", "就像", "设想", "假设", "想象", "示例", "演示",
                    "长这样", "写出去", "代入")
 PROJECT_MARKERS = ("本项目", "项目里", "代码里", "本课", "当前文件", "这个文件", "Ragent")
@@ -204,6 +209,17 @@ def audit(path, collect_fixes=False):
             problems.append({"check": "source", "unit": title, "detail": "no source block"})
             continue
         unit_text = section_text(lines, unit["h3"], unit["end"])
+        # Whole-unit thickness. The block floor only keeps each block from being a caption;
+        # it cannot tell a 3,600-CJK unit from an 8,400-CJK one, and the benchmark lesson's
+        # units sit at 5,387 (min) to 8,390 (median). Without this, a lesson can pass every
+        # block check while explaining a third of what the benchmark does per unit.
+        unit_cjk = cjk(unit_text)
+        if unit_cjk < UNIT_CJK_FLOOR:
+            warnings.append({"check": "unit_depth", "unit": title,
+                             "detail": f"{unit_cjk} CJK in the whole unit, floor {UNIT_CJK_FLOOR}"})
+            fix("unit_depth", unit["h3"] + 1, title,
+                "整单元偏薄：按每行 65 字补块后讲解，或把前/后小节写足；源码太少撑不起一个单元时应当合并",
+                unit_cjk, UNIT_CJK_FLOOR)
         if any(marker in unit_text for marker in UNDERLYING_MARKERS) is False:
             warnings.append({"check": "layer_gap", "unit": title,
                              "detail": "no underlying mechanism (threads/serialization/protocol/index)"})
