@@ -3,7 +3,7 @@ name: deep-codebase-learning
 description: 默认面向初学者，以可独立阅读的详细笔记引导长期深度学习真实项目。用户说“带我深度学习这个项目”、help me learn this codebase、系统读源码或重建核心系统，或已有 .codelearn/ 并要求“继续学习”/continue learning、总结主题/阶段/会话时使用。自动规划全栈路线、讲透注释源码和必要原理、逐轮保存记忆；默认单会话，首次提供可选主会话规划审查与子 agent 编写模式。聊天随时答疑；单次代码问答或明确直接开发时不强制套用课程。
 license: MIT
 metadata:
-  version: "1.17.0"
+  version: "1.18.0"
 ---
 
 # Deep Codebase Learning
@@ -18,7 +18,7 @@ Conversation is not the learning record. Journal is the structured record of the
 
 ## 整课交付硬约束
 
-长期课程的每一节（含 S00 全景与单主题首课）都是正式教材：十章适用职责、真实必要源码、代码后逐行与小语义组讲解，缺一不可。块后讲解按**每行 50 个汉字**写足（复杂行 65），每个引用后面讲清怎么读、实际触发什么、不这样会怎样；讲解比引用的代码短，说明这块还没讲透——G5 会直接拒绝这种块。
+长期课程的每一节（含 S00 全景与单主题首课）都是正式教材：十章适用职责、真实必要源码、代码后逐行与小语义组讲解，缺一不可。块后讲解按**每行 50 个汉字**写足（复杂行 65），每个引用后面讲清怎么读、实际触发什么、不这样会怎样；讲解比引用的代码短，说明这块还没讲透——G5 会直接拒绝这种块。50 是下界不是目标：实测过门禁的长课中位数在 64.8 字/行、讲解/引用 1.48，块 10 行左右，分布见 [实测基线](references/measured-baseline.md)。
 
 既有笔记早于当前合同（七位置不全、块后一两句、30–50 行大块）时，按 [改旧稿流程](references/revision.md) 一个单元一轮地重排与加厚，不按新稿重写：源码、锚点、事实沿用，先映射七位置，再切片大块，再补三问。
 
@@ -57,6 +57,8 @@ Conversation is not the learning record. Journal is the structured record of the
 | 每节教学、源码、知识绕行、答疑、实验 | [teaching.md](references/teaching.md) |
 | 启动/恢复、逐轮保存、中断、源码变化 | [memory.md](references/memory.md) |
 | 写一节：形状、单元循环、门禁、结构审计、保存顺序 | [write-lesson.md](references/write-lesson.md) |
+| 校准「一块该多厚、一节切几个单元」 | [实测基线](references/measured-baseline.md)、[长课骨架](references/layout-outline.md) |
+| 源码写法示范、语句讲到什么粒度 | [单元示范](references/unit-example.md)、[字面读法对照](references/value-binding.md) |
 | 首次写入/返修前、写入故障恢复 | [writing-io.md](references/writing-io.md) |
 | 编写模式、所有权、返修保留 | [authoring.md](references/authoring.md) |
 | 重大深度反馈、难辨概述与充分教学 | [teaching-calibration.md](references/teaching-calibration.md) |

@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.18.0（示范换成真实过门禁的稿子 + 实测基线 + 示例回归护栏）
+
+起因：v1.17 及以前自带的两份示范，都过不了本 skill 自己的门禁。用 `audit_lesson.py` 实测——`source-unit-example.md`（默认源码写法输入）14 个块里 7 个每行解释不足 50 字（5 个不足 35，最差 14.0），中位数 47.4，**低于它自己文档化的 G4 下限**；`quality-example.md`（整课布局参照）60 个 problems，其中 33 处是七个写作位置缺位，源码块中位数只有 3 行。作者照着这两份写，产出的正是门禁会拒绝的形状。
+
+- 新增 `references/unit-example.md`：从 `S00-T03-05`（ragent-official，Apache-2.0）**逐字摘出两个真实单元**——5.2.1（Java/Spring 有界池与分布式许可）与 5.7.2（TypeScript/React Store 到气泡）。16 个块，每行解释最低 50.8、中位 76.0，讲解/引用最低 1.22，块级 `problems` 为 0。摘录只把相对源码链接改成纯文本「文件名 + 原行」，其余一字未改。
+- 新增 `references/measured-baseline.md`：把「每行 50 字」从口号换成分布——实测一份过门禁的长课（25 单元 / 165 块）每行解释 min 32.2、p25 55.0、p50 64.8，讲解/引用 p50 1.48，块 p50 10 行；并列出该标杆稿自己的欠账（3 个 G5 不过、6 个块不足、8 处块前小节不足、6 个术语未释、20 处跨 part 重叠），说明「标杆给形状、不给豁免」。
+- 新增 `references/layout-outline.md`：十章 + 25 个 5.x 单元 + 七位置 H4 的骨架，只留标题，用来看「一节切几个单元、一个单元几个块」（实测每单元 ≤8 块、≤91 行源码）。
+- 新增 `references/value-binding.md`：旧 `source-unit-example.md` 里唯一合规的部分（Java 函数值与结果接收对照）独立成页，定位为「一句话讲用途 vs 讲到类型/求值/结果接收」的语句级标准。
+- 删除 `references/quality-example.md` 与 `references/source-unit-example.md`：两份都低于当前合同，且会误导作者。历史留在 git。
+- 新增 `scripts/check_examples.py`：复量自带示范（块级 `problems` 必须 0，每行不足 50 字的块占比 ≤10%），并检查 skill 内全部相对 Markdown 链接。本次即由它抓到摘录里 22 处指向原项目的死链——这类缺陷在没有护栏时只能等读者踩到。
+- `SKILL.md`、`references/write-lesson.md`：把「每行 50 字」明确为**下界**，起稿按 65 算，并指向实测基线；`SKILL.md` 按需加载表新增三行（校准厚度与切分、源码写法示范）。
+- `references/authoring.md`、`assets/templates/stage-note.md`、`README.md`、`README.en.md`、`docs/usage.md`、`docs/examples.md` 全部改指向新示范；历史文档（`docs/validation.md`、`docs/improvement-plan-*.md`）保持原样，它们是当时的记录，不追改。
+- 许可：新增 `references/licenses/ragent-Apache-2.0.txt`；`flask-BSD-3-Clause.txt` 随 Flask 示例退场一并删除。
+
 ## 1.17.0（跨单元重叠检查 + 省钱执行模式）
 
 - 装配新增 `source_overlaps`：同一源码文件的引用行段在两个 part 之间重叠时，返回文件名与重叠区间。单 part 门禁看不见这类重复（v1.17 实测：05-08 与 05-09 各引用了 `FairDistributedRateLimiter.java` 108–109，两个作者都没错）。

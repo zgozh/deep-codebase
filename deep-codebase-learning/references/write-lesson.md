@@ -55,6 +55,8 @@ python /path/to/skill/scripts/assemble_note.py --workspace /path/to/project/.cod
 
 单 part 自查只查块质量（G2/G3/G4），不会因为「一篇单元不足 15,000 字」而误判；整节总量在最终装配时检查。需要更严的单元目标时可显式传 `--min-prose-cjk`。
 
+**50 是下界，不是目标值。** 实测一份过门禁的长课（25 个单元、165 个块）：每行解释中位数 64.8、p25 55.0，讲解/引用中位数 1.48，块中位数 10 行。按 50 逐块贴线写，任何一处少写两句就掉下去；按 65 起稿，回修时才留得下余量。分位数、各类越界比例与复算命令见 [实测基线](measured-baseline.md)。
+
 不通过时返回 `error: below_content_gate`，`gates` 说明哪几项没过，`thin_blocks` / `low_density_blocks` 直接列出要改的块：
 
 ```json
