@@ -13,6 +13,7 @@
 - `SKILL.md`、`references/write-lesson.md`：把「每行 50 字」明确为**下界**，起稿按 65 算，并指向实测基线；`SKILL.md` 按需加载表新增三行（校准厚度与切分、源码写法示范）。
 - `references/authoring.md`、`assets/templates/stage-note.md`、`README.md`、`README.en.md`、`docs/usage.md`、`docs/examples.md` 全部改指向新示范；历史文档（`docs/validation.md`、`docs/improvement-plan-*.md`）保持原样，它们是当时的记录，不追改。
 - 许可：新增 `references/licenses/ragent-Apache-2.0.txt`；`flask-BSD-3-Clause.txt` 随 Flask 示例退场一并删除。
+- 前向验证（`reports/v118-forward/scorecard.md`）：用新参考改 `S01-RAG问答` 三篇既有笔记，`audit_lesson.py` 前后同口径。每行不足 50 字的块 **23 → 0**；最差一篇的 p50 **35.4 → 68.2**；三篇 warnings **43 → 22**。同时暴露两点：v1.17 同时产出过 p50 61.5 与 p50 35.4 的稿子，说明旧示范下的质量并不稳定；剩余缺口集中在 `knowledge_gap`（24 块）与 Mermaid 标签宽度（12 处），都是示范帮不上、只能回源码的活。
 
 ## 1.17.0（跨单元重叠检查 + 省钱执行模式）
 
