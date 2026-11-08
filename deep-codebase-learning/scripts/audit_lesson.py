@@ -36,16 +36,22 @@ FRAMEWORK_MARKERS = ("Spring", "MyBatis", "Hutool", "Jackson", "React", "Zustand
 LANGUAGE_MARKERS = ("求值", "绑定", "可见性", "精度", "短路", "默认值", "浅拷贝", "作用域",
                     "重载", "泛型", "溢出", "同步", "异步")
 
-# Whole-unit floor, from the benchmark lesson measured in references/measured-baseline.md:
-# its 25 units run 5,387 (min) to 8,390 (median) CJK. Per-block density alone cannot
-# separate a compliant-but-hollow unit from a thick one, so the total is checked too.
-UNIT_CJK_FLOOR = 5000
+# Whole-unit floor. A flat number would compare a 16-line unit with a 106-line one: the
+# benchmark lesson's units run 5,387 (min) to 8,390 (median) CJK precisely because each
+# carries ~106 meaningful source lines. So the floor scales with the source the unit owns:
+# 65 CJK per meaningful line (the measured median) plus 1,500 for the seven positions,
+# never below UNIT_CJK_BASE (a unit with five lines still owes a complete explanation).
+UNIT_CJK_BASE = 3500
+UNIT_CJK_PER_LINE = 65
+UNIT_CJK_OVERHEAD = 1500
 
 EXAMPLE_MARKERS = ("例如", "比如", "举例", "示意", "就像", "设想", "假设", "想象", "示例", "演示",
                    "长这样", "写出去", "代入")
 PROJECT_MARKERS = ("本项目", "项目里", "代码里", "本课", "当前文件", "这个文件", "Ragent")
 BOUNDARY_MARKERS = ("代价", "不能", "否则", "区别", "误", "坑", "局限", "边界", "风险", "失败", "如果", "一旦", "避免")
 DEFINITION_MARKERS = ("是", "指", "叫", "称为", "表示", "就是", "所谓", "即", "意味着")
+
+COMMENT_PREFIXES = ("//", "/*", "*/", "*", "#", "--", "<!--")
 
 TERMS = [
     "受控组件", "合成事件", "批处理", "闭包", "浅合并", "快照", "幂等", "切面",
@@ -214,12 +220,20 @@ def audit(path, collect_fixes=False):
         # units sit at 5,387 (min) to 8,390 (median). Without this, a lesson can pass every
         # block check while explaining a third of what the benchmark does per unit.
         unit_cjk = cjk(unit_text)
-        if unit_cjk < UNIT_CJK_FLOOR:
+        source_lines = 0
+        for fence in unit["fences"]:
+            if fence["language"] in ("mermaid", "text", "plain", "json", "http", "xml"):
+                continue
+            source_lines += sum(1 for line in (fence.get("body") or [])
+                                if line.strip() and not line.strip().startswith(COMMENT_PREFIXES))
+        unit_floor = max(UNIT_CJK_BASE, source_lines * UNIT_CJK_PER_LINE + UNIT_CJK_OVERHEAD)
+        if unit_cjk < unit_floor:
             warnings.append({"check": "unit_depth", "unit": title,
-                             "detail": f"{unit_cjk} CJK in the whole unit, floor {UNIT_CJK_FLOOR}"})
+                             "detail": f"{unit_cjk} CJK for {source_lines} source lines, "
+                                       f"floor {unit_floor}"})
             fix("unit_depth", unit["h3"] + 1, title,
                 "整单元偏薄：按每行 65 字补块后讲解，或把前/后小节写足；源码太少撑不起一个单元时应当合并",
-                unit_cjk, UNIT_CJK_FLOOR)
+                unit_cjk, unit_floor)
         if any(marker in unit_text for marker in UNDERLYING_MARKERS) is False:
             warnings.append({"check": "layer_gap", "unit": title,
                              "detail": "no underlying mechanism (threads/serialization/protocol/index)"})
