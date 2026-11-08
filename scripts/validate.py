@@ -28,6 +28,25 @@ def local_targets(content):
     return re.findall(r"(?<!!)\[[^\]\n]*\]\(([^)]+)\)", prose)
 
 
+def fences_balanced(content):
+    """A fence opens with a run of >=3 backticks and closes with a run at least as long.
+
+    Counting raw "```" substrings misfires twice: a longer fence (````text````) that
+    quotes a shorter one, and an inline "```" inside prose. Both are legal Markdown.
+    """
+    opened = None
+    for line in content.splitlines():
+        match = re.match(r"^ {0,3}(`{3,})", line)
+        if not match:
+            continue
+        run = len(match.group(1))
+        if opened is None:
+            opened = run
+        elif run >= opened:
+            opened = None
+    return opened is None
+
+
 def heading_ids(content):
     headings = re.findall(r"^#{1,6}\s+(.+)$", content, re.MULTILINE)
     ids, counts = set(), {}
@@ -58,7 +77,7 @@ def validate():
             yaml.safe_load(content)
         if path.suffix != ".md":
             continue
-        check(content.count("```") % 2 == 0, f"Unclosed code fence: {relative}")
+        check(fences_balanced(content), f"Unclosed code fence: {relative}")
         check("[TODO:" not in content, f"Unfinished scaffold: {relative}")
         check(not re.search(r"[A-Za-z]:[/\\](?:Users|develop)[/\\]", content), f"Personal path: {relative}")
         for target in local_targets(content):

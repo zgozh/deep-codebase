@@ -4,7 +4,7 @@
 
 本轮专用厚写把当前源码与正确原文、具体缺口、匹配示范、实际写回位置相邻分隔，复用现有例文片段而不增第三本示范。设计依据是 OpenAI [reasoning best practices](https://developers.openai.com/api/docs/guides/reasoning-best-practices) 的直接指令、材料分隔与一致示例，以及 [rethinking skills and prompts](https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra) 的精确触发、渐进披露和按目标模型验证；Anthropic [context engineering](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) 与 [prompting best practices](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices) 支持高信号上下文、匹配的少量示范和明确材料边界。现有合同和首次完整例文输入保留，之后只按缺口复用必要片段，不把这些文章变成运行时必读材料或追加检查清单。[论坛作者经验](https://www.reddit.com/r/ClaudeAI/comments/1opxgq4/i_was_wrong_about_agent_skills_and_how_i_refactor/)仅作第一手设计参照，未经独立验证；不采用无可靠证据的提升百分比或强制XML。上述来源是设计依据，不能证明Luna教学深度、稳定性或耗时改善。
 
-本方案已落实当前共享指令与模板，基线仍为v1.11.27。当前只编辑raw parts，装配时自动渲染真实源码，累计审读后原字节复制发布；预览不参与装配。小勘误做补丁，教学不足用具体语义组/例值/保留范围驱动完整厚写。默认源码写法输入切为[完整单元示范](../deep-codebase-learning/references/source-unit-example.md)，旧整课示例按需参考；合同、数字与schema1不变，CLI捕获不是产品选项。
+本方案已落实当前共享指令与模板，基线仍为v1.11.27。当前只编辑raw parts，装配时自动渲染真实源码，累计审读后原字节复制发布；预览不参与装配。小勘误做补丁，教学不足用具体语义组/例值/保留范围驱动完整厚写。默认源码写法输入切为完整单元示范（原文文件 v1.18.0 已删除），旧整课示例按需参考；合同、数字与schema1不变，CLI捕获不是产品选项。
 
 R23普通首用JS传输失败无稿；R24自动初稿/扩写达到2931行仍整课未过；R25集中返修2976行改善部分解释，仍非严格整课通过。R26经Root全文核对和4项集中修正，仅单元校准接受。机械raw直装已验证，不等于普通单会话完整课程稳定或快速通过；具体体量/耗时与边界见[最新验证记录](validation.md#当前结论试用版有已知验证限制)。以下是保留的设计依据及历史进展，不能将旧快照待验状态或工具流程当作当前用法。
 
@@ -70,7 +70,7 @@ C 收尾七处单行替换净零行，E 净增九行，没有大删；四课也�
 | `references/write-lesson.md`（v1.12 取代 draft/expand/finalize 三个入口） | 唯一写作入口；只组织单元循环、门禁与保存顺序，不复制合同或创建运行工具。 |
 | [notes.md](../deep-codebase-learning/references/notes.md) | 交付路径和触发；把易误读的“无整课总字数指标”改为明确遵循物理行下限，且不另加总字数目标。 |
 | [review.md](../deep-codebase-learning/assets/templates/review.md) | 现有一处审查记录，承载章／单元的实际范围、事实与教学结论。 |
-| [quality-example.md](../deep-codebase-learning/references/quality-example.md) | 只将已核单元当有界示范，不称整篇 gold，不要求每次全文重读；只更新受影响单元。 |
+| quality-example.md（原文文件 v1.18.0 已删除） | 只将已核单元当有界示范，不称整篇 gold，不要求每次全文重读；只更新受影响单元。 |
 | [memory.md](../deep-codebase-learning/references/memory.md)、[evaluation.md](../deep-codebase-learning/references/evaluation.md)及 state | 现有 state 字段、必填 schema 和目标项目学习记录保持不变，schema 仍为 v1；仅作必要说明及泛 WAIT／next_action 指针行为的定点澄清，不设计 state 升级。 |
 | README 与适用 docs | 实施后同步最终真实行为与限制，不能提前写成发布承诺。 |
 

@@ -174,7 +174,7 @@ R34后续最终修订稿仅作为该有界源码单元的静态教学合格证�
 - R23普通首用读源与最低state准备已保存，但两次JS包装在patch执行前解析失败，初稿和正式note均不存在；冻结FAIL，不救旧稿。
 - R24普通继续确实自动draft→expand，2931自然物理行、240201 bytes，真实墙钟1h32m51.787s；17个render输出、6次成功装配。note与candidate同字节但仍draft/prepared，源码教学及事实/原行问题使整课未通过。
 - R25集中返修32m45.218s，2976行、248088 bytes（增加7887 bytes）；16个raw parts直接装配，源码模式4次成功装配、0次独立render。converter/元组与SQL解释有改善，AuthActions仍缺不同动作/时机的充分逐组精读，不是严格整课通过。
-- R26只校准一个真实源码单元：最终raw 32694 bytes/167行，preview 36427 bytes/322行；Root全文读取并作4项集中修正后仅接受该单元。打包为[完整源码单元示范](../deep-codebase-learning/references/source-unit-example.md)，加短许可说明后37773 bytes/324行，14条固定版本源码链接，附[Flask BSD-3-Clause许可](../deep-codebase-learning/references/licenses/flask-BSD-3-Clause.txt)。这不是普通完整课程稳定、快速通过的证据。
+- R26只校准一个真实源码单元：最终raw 32694 bytes/167行，preview 36427 bytes/322行；Root全文读取并作4项集中修正后仅接受该单元。打包为完整源码单元示范（原文文件 v1.18.0 已删除），加短许可说明后37773 bytes/324行，14条固定版本源码链接，附Flask BSD-3-Clause许可（许可文件随 Flask 示例在 v1.18.0 删除）。这不是普通完整课程稳定、快速通过的证据。
 
 既有机械检查证据为assembler 11项、check_state 7项、renderer 9项通过加1项本机symlink权限跳过；只覆盖运输/结构边界，不是教学PASS。High/TPS至多是未实测建议，不宣称提速。开发准备fixture的乱码/指针问题不归因新版运行。以下按当时快照保留历史记录，早期CLI/分步render流程不代表当前产品路径。
 

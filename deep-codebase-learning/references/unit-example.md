@@ -317,7 +317,7 @@
 
 调用链：`MessageList` 的 `itemContent`（5.7.1）把数组元素交给 `MessageItem` → `MessageItem` 按 `role` 分两条路 → 助手走 Markdown 分支，把 `content`/`messageId`/`sources` 传给 `MarkdownRenderer` → `MarkdownRenderer` 把 Markdown 字符串交给 `ReactMarkdown`，用 `remark` 插件解析、用 `components` 覆盖代码块与链接 → 代码块再嵌一个 `CopyButton`。控件方向相反：气泡只负责「什么时候显示」，点击后调的是 Store 里的 action（`submitFeedback`、`toggleSourcesPanel`、`sendMessage`、`loadRecommended`）。
 
-真实触发沿用同一组输入：`assistant-LOCAL-1` 正在流式，`content` 从 `"你"` 涨到 `"你好"`，`status="streaming"`；同一时刻另有一条已完成的用户消息 `user-1`、一条已完成的助手消息 `M-301`（带 `sources` 与 `feedback=null`）、一条被拒绝的助手消息 `M-300`（`messageStatus="REJECTED"`）。为了读代码块路径，再把 `content` 换成一段真实回答：普通段落、一个围栏代码块、一个行内代码、一个引用角标 `[1](#cite-1)`。
+真实触发沿用同一组输入：`assistant-LOCAL-1` 正在流式，`content` 从 `"你"` 涨到 `"你好"`，`status="streaming"`；同一时刻另有一条已完成的用户消息 `user-1`、一条已完成的助手消息 `M-301`（带 `sources` 与 `feedback=null`）、一条被拒绝的助手消息 `M-300`（`messageStatus="REJECTED"`）。为了读代码块路径，再把 `content` 换成一段真实回答：普通段落、一个围栏代码块、一个行内代码、一个引用角标 `[1]`。
 
 版本与上一个单元一致：react 18.3.1、react-markdown 声明 `^9.0.1` 实际装 9.1.0、react-syntax-highlighter（Prism 版）。9.1.0 的依赖里有 `remark-parse ^11`、`remark-rehype ^11`、`mdast-util-to-hast ^13`，所以「Markdown 字符串 → mdast → hast → React 元素」这条管线是库内固定动作，不是本项目自己写的解析器。
 
@@ -398,7 +398,7 @@
 
 `messageId={message.id}` 在 `MarkdownRenderer` 里有两个用途：解析正文里的 `[N](#cite-N)` 角标时把它交给 `SourceCitation`（`MarkdownRenderer.tsx:264–275`），以及让来源面板知道「这是哪条消息的来源」。流式期间它是临时 id（`assistant-…`），FINISH 之后才换成真实 `M-301`——这个替换对渲染没有影响，但对「点角标打开来源面板」有影响，因为面板是按 messageId 查的。
 
-第三个 prop `sources={message.sources}` 在流式期间通常是 `undefined`：来源列表随 FINISH 的 `CompletionPayload` 一起到（5.6）。这就是为什么 `sources` 在类型上是可选的（`types/index.ts:46`），也是为什么渲染层必须能处理「正文里已经有 `[1](#cite-1)`、但 `sources` 还没到」的中间态。
+第三个 prop `sources={message.sources}` 在流式期间通常是 `undefined`：来源列表随 FINISH 的 `CompletionPayload` 一起到（5.6）。这就是为什么 `sources` 在类型上是可选的（`types/index.ts:46`），也是为什么渲染层必须能处理「正文里已经有 `[1]`、但 `sources` 还没到」的中间态。
 
 `hasContent` 用 `trim()` 判断，但传下去的是原字符串。这个不对称是刻意的：模型有时会先输出几个换行或空格，如果按原字符串判空，会出现「正文区已经存在但看起来什么都没有」的空窗；而传原字符串保证 Markdown 解析看到的是作者原本的缩进和空行——把 `trim()` 的结果传下去，依赖缩进的代码块会立刻失效。
 
@@ -487,7 +487,7 @@ export function MarkdownRenderer({ content, messageId, sources }: MarkdownRender
 
 紧接着的 196 行是一条注释，它记录了这段代码最反直觉的一点：react-markdown v9 不再给自定义组件传 `inline` 属性，所以「这是行内代码还是代码块」只能靠内容反推——没有换行就当行内，有换行就当代码块。这个启发式会有边界，下一组和「同输入局部运行」会给出实测。
 
-实际触发什么？模型输出 ```ts 开头、内容是多行的围栏代码块时：`rehypeRaw`/`rehypeSanitize` 不改变代码内容（代码里的 `<` 已是文本节点），`code` 组件收到 `className="language-ts"` 与以 `\n` 结尾的文本，正则取到 `ts`，裁掉一个尾换行，`value` 里有换行 → 走代码块分支（下一组）。行内代码 `` `useMemo` `` 进来时 `className` 是 `undefined`，`value` 里没有换行 → 走行内分支。
+实际触发什么？模型输出以三个反引号加 ts 开头的围栏代码块时：`rehypeRaw`/`rehypeSanitize` 不改变代码内容（代码里的 `<` 已是文本节点），`code` 组件收到 `className="language-ts"` 与以 `\n` 结尾的文本，正则取到 `ts`，裁掉一个尾换行，`value` 里有换行 → 走代码块分支（下一组）。行内代码 `` `useMemo` `` 进来时 `className` 是 `undefined`，`value` 里没有换行 → 走行内分支。
 
 不这样写会怎样？去掉 `rehypeSanitize`：模型输出 `<img src=x onerror=...>` 会在浏览器里真的执行，这是最容易理解的一条安全边界。去掉 `\n` 裁剪：代码块底部多一条空行、复制按钮复制出的文本多一个换行。把 `replace(/\n$/, "")` 换成 `trim()`：首行缩进丢失，粘贴到编辑器里缩进全乱。把 `\w+` 放宽成 `.+`：`language-c++` 能拿到 `c++`，但 Prism 没有这个语言名，会退化成不高亮——功能上等价，只是少一次「猜错」。
 
@@ -561,13 +561,13 @@ D 行内代码 useMemo               → 无类名，文本 "useMemo"
 
 这两个推论都直接决定渲染结果。第一，文本子节点总是带一个结尾换行（mdast-util-to-hast 的 code 处理器给值补换行，见 node_modules/mdast-util-to-hast/lib/handlers/code.js 第 18 行），裁掉一个尾换行之后，单行围栏代码块的值里一个换行都没有——它会命中「没有换行就当行内」的判据，渲染成行内代码，没有表头、没有语言标签、也没有复制按钮。单行代码块在视觉上不是代码块，是启发式的直接后果。第二，未闭合围栏照样解析成带语言类名的代码节点，所以流式中途的多行代码块会提前进入代码块分支，表头与复制按钮先出现，内容是半截。
 
-React 那一半只能推演（仓库没有测试运行器，package.json 只有 dev 与 build）。t1：正文「你」，存在性条件成立、等待条件不成立、非思考，渲染出一个渲染器，解析出单个段落，引用索引为空数组，三个控件条件全假，气泡里只有一段文字。t2：正文「你好」，重新解析，仍是一段。t3：FINISH 到达，状态变 done、id 换成 M-301、来源变成数组、落库状态 NORMAL，三个控件条件同时变真；若正文里有 [1](#cite-1)，引用索引因来源变化而重算，角标从禁用变成可点。t4：点来源按钮 → toggleSourcesPanel → Store 改 openedSourceMessageId → 右侧面板出现。
+React 那一半只能推演（仓库没有测试运行器，package.json 只有 dev 与 build）。t1：正文「你」，存在性条件成立、等待条件不成立、非思考，渲染出一个渲染器，解析出单个段落，引用索引为空数组，三个控件条件全假，气泡里只有一段文字。t2：正文「你好」，重新解析，仍是一段。t3：FINISH 到达，状态变 done、id 换成 M-301、来源变成数组、落库状态 NORMAL，三个控件条件同时变真；若正文里有 [1]，引用索引因来源变化而重算，角标从禁用变成可点。t4：点来源按钮 → toggleSourcesPanel → Store 改 openedSourceMessageId → 右侧面板出现。
 
 失败一：单行代码块没有复制入口。用户写一句单行 ts 围栏时，看到的是行内样式，复制按钮不存在。要修就得放弃「有没有换行」这个启发式——v9 虽然不给 inline，但可以看父节点（code 在 pre 里就是代码块），或者按节点位置判断。当前没做，属于已知且被接受的偏差。
 
 失败二：每个 delta 都重新解析全文并重新高亮。正文每帧都变，引用索引缓存失效重算，ReactMarkdown 重新解析整段 Markdown，代码块里的 SyntaxHighlighter 重新跑一遍 Prism；一个回答里有几段代码，每来一个 delta 都把前面所有代码块重新高亮一次。缓解办法是按块缓存（按空行切块，未变化的块复用上次的 React 元素），当前没有做。
 
-失败三：引用角标的中间态。SourceCitation 用「有没有来源与 messageId」决定可不可点（第 29 行）：来源还没到时，渲染层按编号查不到来源，角标是 disabled 胶囊、悬浮没有卡片、点了没反应。流式期间模型已经写出 [1](#cite-1)、来源却要等 FINISH——用户看到「有个角标但点不动」。这是渲染层对未完成的第三种处理：不禁用整块内容，只禁用依赖缺失数据的交互。
+失败三：引用角标的中间态。SourceCitation 用「有没有来源与 messageId」决定可不可点（第 29 行）：来源还没到时，渲染层按编号查不到来源，角标是 disabled 胶囊、悬浮没有卡片、点了没反应。流式期间模型已经写出 [1]、来源却要等 FINISH——用户看到「有个角标但点不动」。这是渲染层对未完成的第三种处理：不禁用整块内容，只禁用依赖缺失数据的交互。
 
 失败四：拒绝消息仍然显示反馈按钮。showFeedback（19–23 行）只要求助手、非流式、有真实 id、不是临时前缀，没有检查落库状态；推荐追问的判据额外要求 NORMAL。所以被拒绝的 M-300 会显示复制与点赞点踩、不显示推荐追问。给一条「系统繁忙」点赞，请求被后端按业务规则拒绝，Store 回滚并弹错误——不是崩溃，但界面上有一个注定失败的按钮。
 

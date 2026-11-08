@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.21.1（发布校验修复）
+
+v1.18–v1.21 的提交在 GitHub Actions 上一直红着，`scripts/validate.py` 报 `Unclosed code fence`。逐项排查后发现四处真问题和一处脚本缺陷：
+
+- **真问题**：`unit-example.md` 正文里有一句「模型输出 ```ts 开头」，行内三个反引号被朴素计数当成围栏 → 改为「以三个反引号加 ts 开头」。
+- **真问题**：摘录自带的引用锚点 `[1](#cite-1)` 在本文件里没有对应的标题 → 改为纯文本 `[1]`（与「源码链接改纯文本」同一处理）。
+- **真问题**：`docs/` 里 3 处链接指向 v1.18 删除的 `quality-example.md`、`source-unit-example.md`、`flask-BSD-3-Clause.txt` → 改为文字说明。
+- **真问题**：`assets/templates/state.json` 的 `skill_version` 停在 `1.17.0`，四次版本升级都没同步 → 校验器要求与 `SKILL.md` 一致，现为 `1.21.1`。
+- **脚本缺陷**：`validate.py` 用 `content.count("```")` 判断围栏是否闭合，会被「四反引号块引用三反引号」和「行内三反引号」误判 → 改为逐行解析：开围栏记录长度，闭围栏需长度 ≥ 开启。
+- 顺带：`.workbuddy/` 是本地工作区数据，之前被误跟踪 → `git rm --cached` 并加入 `.gitignore`。
+
+本地复跑 `validate.py`：`PASS: 67 release files; 285 local links/anchors`、`PASS: skill v1.21.1, schema v1`、`PASS: staged/tracked publication scope`。
+
 ## 1.21.0（单元下限按源码行缩放）
 
 v1.20 的 `unit_depth` 用固定 5,000 汉字当门槛，量出了一批「不达标」。回头核公式才发现是门槛本身的问题：基准篇的单元平均 **106 行有意义源码**，正文中位 8,390，正好等于 `106 × 65 + 1,500`——**5,000 只是 106 行单元的结论，不是所有单元的标准**。拿它去量一个 8 行源码的单元，等于要求它按 106 行的规模展开，报出来的「缺口」是统计假象。
